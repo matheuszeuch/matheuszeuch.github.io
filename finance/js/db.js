@@ -55,17 +55,66 @@ db.reset = function() {
   db.defaultValues();
 }
 
-db.dump = function() {
+db.options = {
+  token: '4af482a586a5c0dac68b02d3b87d27c98c2ac107',
+  githuburl: 'https://api.github.com/repos/matheuszeuch/matheuszeuch.github.io/contents/finance/backups/websqldump.sql',
+}
+
+db.restore = function() {
+  $.ajax({
+    url: db.options.githuburl,
+  }).done(function(r){
+    db.dropTables();
+    db.transaction(
+      function (transaction) {
+        var sql = Base64.decode(r.content).split('\n');
+        for (i=0; i<=(sql.length-1); i++) {
+          transaction.executeSql(sql[i]);
+        }
+      }
+    );
+  });
+}
+
+db.backup = function() {
+  //debug("Starting the backup...");
   websqldump.export({
     database: databaseOptions.fileName,
+    linebreaks: true,
     success: function(sql) {
-      debug(sql.length);
       var sqlmin = LZString.compress(sql);
-      debug(sqlmin.length);
-      //var sql_decompressed = LZString.decompress(sqlmin);
+      var content = Base64.encode(sql);
+      var token = db.options.token;
+      var githuburl = db.options.githuburl; 
+      $.ajax({
+        url: githuburl,
+      }).done(function(r){
+        //debug("Backup file already exists. Updating it now...");
+        $.ajax({
+          url: githuburl,
+          type: 'PUT',
+          headers: {"Authorization": "token "+ token},
+          data: '{"content": "'+ content +'", "sha": "'+ r.sha +'", "committer": {"name": "Matheus Zeuch", "email": "matheuszeuch@gmail.com"}, "message":""}'
+        }).done(function(r){
+          //debug("Backup completed successfully!");
+        });
+      }).fail(function (jqXHR, textStatus) {
+        if (jqXHR.status === 404) {
+          //debug("Backup file doesn't exists. Creating one now...");
+          $.ajax({
+            url: githuburl,
+            type: 'PUT',
+            headers: {"Authorization": "token "+ token},
+            data: '{"content": "'+ content +'", "committer": {"name": "Matheus Zeuch", "email": "matheuszeuch@gmail.com"}, "message":""}'
+          }).done(function(r){
+            //debug("Backup completed successfully!");
+          });
+        }
+      });
     }
   });
 }
+
 
 //db.reset();
 

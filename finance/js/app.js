@@ -21,5 +21,4 @@ document.addEventListener('init', function(event) {
   // This only happens once at the beginning of the app.
   if (page.id === 'homePage') {
   }
-
 });
