@@ -7,7 +7,6 @@ document.addEventListener('init', function(event) {
   //bouncefix.add('scrollfix');
   $(document).on("touchmove", function(evt) { evt.preventDefault(); });
   $(document).on("touchmove", ".content", function(evt) { if (this.scrollHeight > this.offsetHeight) { evt.stopPropagation(); }}, false);
-  });
 
   debug = function(text) {
     $("#console").append("<p>" + text + "</p>");
