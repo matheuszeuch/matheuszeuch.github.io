@@ -111,6 +111,10 @@ db.backup = function() {
           data: '{"content": "'+ content +'", "sha": "'+ r.sha +'", "committer": {"name": "Matheus Zeuch", "email": "matheuszeuch@gmail.com"}, "message":""}'
         }).done(function(r){
           debug("Backup realizado com sucesso!");
+        }).fail(function(jqXHR, textStatus){
+          db.refreshViews();
+          debug('Backup falhou!');
+          debug(jqXHR);
         });
       }).fail(function (jqXHR, textStatus) {
         if (jqXHR.status === 404) {
