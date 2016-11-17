@@ -1,5 +1,5 @@
 CREATE TABLE sqlite_sequence(name,seq);
-INSERT INTO sqlite_sequence(name,seq) VALUES ("Event","4");
+INSERT INTO sqlite_sequence(name,seq) VALUES ("Event","5");
 CREATE TABLE Account ( AccountID INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, AccountTypeID INTEGER);
 CREATE TABLE AccountType ( AccountTypeID INTEGER PRIMARY KEY, Name TEXT);
 CREATE TABLE Category ( CategoryID INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, ParentCategoryID INTEGER, CategoryTypeID INTEGER);
@@ -12,3 +12,4 @@ INSERT INTO Event(EventID,Date,Amount,CategoryID,Description,AccountID) VALUES (
 INSERT INTO Event(EventID,Date,Amount,CategoryID,Description,AccountID) VALUES ("2","null","20,00","null","Almoço","null");
 INSERT INTO Event(EventID,Date,Amount,CategoryID,Description,AccountID) VALUES ("3","null","15,00","null","Janta","null");
 INSERT INTO Event(EventID,Date,Amount,CategoryID,Description,AccountID) VALUES ("4","null","180,00","null","Combustível","null");
+INSERT INTO Event(EventID,Date,Amount,CategoryID,Description,AccountID) VALUES ("5","null","25,00","null","Presente","null");
