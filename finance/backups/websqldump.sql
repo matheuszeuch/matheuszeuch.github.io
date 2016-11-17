@@ -8,6 +8,6 @@ INSERT INTO CategoryType(CategoryTypeID,Name,Multiplier) VALUES ("1","Receitas",
 INSERT INTO CategoryType(CategoryTypeID,Name,Multiplier) VALUES ("2","Despesas","-1");
 CREATE TABLE Recurrence ( RecurrenceID INTEGER PRIMARY KEY AUTOINCREMENT, CategoryID INTEGER, Amount REAL, Description TEXT, RecurrenceTypeID INTEGER, RecurrenceValue INTEGER);
 CREATE TABLE Event ( EventID INTEGER PRIMARY KEY AUTOINCREMENT, Date INTEGER, Amount REAL, CategoryID INTEGER, Description TEXT, AccountID INTEGER);
-INSERT INTO Event(EventID,Date,Amount,CategoryID,Description,AccountID) VALUES ("1","null","123","null","321","null");
-INSERT INTO Event(EventID,Date,Amount,CategoryID,Description,AccountID) VALUES ("2","null","10,1","null","abcdefg","null");
-INSERT INTO Event(EventID,Date,Amount,CategoryID,Description,AccountID) VALUES ("3","null","10.5","null","qwert","null");
+INSERT INTO Event(EventID,Date,Amount,CategoryID,Description,AccountID) VALUES ("1","null","5,00","null","Café","null");
+INSERT INTO Event(EventID,Date,Amount,CategoryID,Description,AccountID) VALUES ("2","null","20,00","null","Almoço","null");
+INSERT INTO Event(EventID,Date,Amount,CategoryID,Description,AccountID) VALUES ("3","null","15,00","null","Janta","null");
