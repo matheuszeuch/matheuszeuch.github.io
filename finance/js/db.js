@@ -15,6 +15,7 @@ db = openDatabase(
 );
 
 db.dropTables = function() {
+  debug("Deletando as tabelas...");
   db.transaction(
     function (transaction) {
       transaction.executeSql('DROP TABLE Account;');
@@ -27,7 +28,12 @@ db.dropTables = function() {
   );
 }
 
+db.refreshViews = function() {
+  myApp.services.transactions.refresh();
+}
+
 db.createTables = function() {
+  debug("Criando as tabelas...");
   db.transaction(
     function( transaction ){
       transaction.executeSql("CREATE TABLE IF NOT EXISTS Account ( AccountID INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, AccountTypeID INTEGER)");
@@ -41,6 +47,7 @@ db.createTables = function() {
 }
 
 db.defaultValues = function() {
+  debug("Inserindo os dados padrões...");
   db.transaction(
     function (transaction) {
       transaction.executeSql("INSERT OR REPLACE INTO CategoryType (CategoryTypeID, Name, Multiplier) VALUES (1, 'Receitas', 1)");
@@ -50,34 +57,41 @@ db.defaultValues = function() {
 }
 
 db.reset = function() {
+  debug("Resetando o banco de dados...");
   db.dropTables();
   db.createTables();
   db.defaultValues();
+  db.refreshViews();
+  debug("Banco resetado com sucesso!");
 }
 
 db.options = {
-  token: '9b911cfba51d2fc5d741315435e7a6878bd2113d',
+  token: '8b9545358e7b1d96ddcf57087b809befa31005a4',
   githuburl: 'https://api.github.com/repos/matheuszeuch/matheuszeuch.github.io/contents/finance/backups/websqldump.sql',
 }
 
+db.sql = function(query) {
+  db.transaction(function(transaction){transaction.executeSql(query);});
+}
+
 db.restore = function() {
+  debug('Restaurando o backup...');
   $.ajax({
     url: db.options.githuburl,
   }).done(function(r){
     db.dropTables();
-    db.transaction(
-      function (transaction) {
-        var sql = Base64.decode(r.content).split('\n');
-        for (i=0; i<=(sql.length-1); i++) {
-          transaction.executeSql(sql[i]);
-        }
-      }
-    );
+    var sql = Base64.decode(r.content).split('\n');
+    for (i=0; i<=(sql.length-1); i++) {db.sql(sql[i]);}
+    db.refreshViews();
+    debug('Backup restaurado com sucesso!');
+  }).fail(function(jqXHR, textStatus){
+    db.refreshViews();
+    debug('Restauração do backup falhou!');
   });
 }
 
 db.backup = function() {
-  //debug("Starting the backup...");
+  debug("Iniciando o backup...");
   websqldump.export({
     database: databaseOptions.fileName,
     linebreaks: true,
@@ -89,25 +103,25 @@ db.backup = function() {
       $.ajax({
         url: githuburl,
       }).done(function(r){
-        //debug("Backup file already exists. Updating it now...");
+        debug("Arquivo de backup já existe. Atualizando...");
         $.ajax({
           url: githuburl,
           type: 'PUT',
           headers: {"Authorization": "token "+ token},
           data: '{"content": "'+ content +'", "sha": "'+ r.sha +'", "committer": {"name": "Matheus Zeuch", "email": "matheuszeuch@gmail.com"}, "message":""}'
         }).done(function(r){
-          //debug("Backup completed successfully!");
+          debug("Backup realizado com sucesso!");
         });
       }).fail(function (jqXHR, textStatus) {
         if (jqXHR.status === 404) {
-          //debug("Backup file doesn't exists. Creating one now...");
+          debug("Arquivo de backup não existe. Criando...");
           $.ajax({
             url: githuburl,
             type: 'PUT',
             headers: {"Authorization": "token "+ token},
             data: '{"content": "'+ content +'", "committer": {"name": "Matheus Zeuch", "email": "matheuszeuch@gmail.com"}, "message":""}'
           }).done(function(r){
-            //debug("Backup completed successfully!");
+            debug("Backup realizando com sucesso!");
           });
         }
       });

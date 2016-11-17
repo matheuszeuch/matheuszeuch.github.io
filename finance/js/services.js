@@ -23,6 +23,7 @@ myApp.services = {
 
         refresh: function()  {
             this.load(this.refreshList);
+            debug("Atualizando lista de transações...");
         },
 
         load: function(callback) {
