@@ -4,7 +4,7 @@ window.debug = {};
 
 document.addEventListener('init', function(event) {
   //document.ontouchmove = function(e) {e.preventDefault()};
-  bouncefix.add('content');
+  //bouncefix.add('content');
 
   debug = function(text) {
     $("#console").append("<p>" + text + "</p>");
