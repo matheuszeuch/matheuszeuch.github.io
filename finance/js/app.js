@@ -5,10 +5,8 @@ window.debug = {};
 document.addEventListener('init', function(event) {
   //document.ontouchmove = function(e) {e.preventDefault()};
   //bouncefix.add('scrollfix');
-  $(function() {
-    $(document).on("touchmove", function(evt) { evt.preventDefault() });
-    $(document).on("touchmove", ".scrollable", function(evt) { evt.stopPropagation() });
-  });
+  $(document).on("touchmove", function(evt) { evt.preventDefault() });
+  $(document).on("touchmove", ".content", function(evt) { evt.stopPropagation() });
 
   debug = function(text) {
     $("#console").append("<p>" + text + "</p>");

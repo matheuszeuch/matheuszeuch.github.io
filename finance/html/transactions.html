@@ -5,15 +5,14 @@
     <div class="right"><ons-toolbar-button onclick="myNavigator.pushPage('html/new.html')">Add</ons-toolbar-button></div>
   </ons-toolbar>
 
+  <!--
   <ons-pull-hook id="pull-hook">
     <span ng-switch-when="initial"><ons-icon size="35px" icon="ion-arrow-down-a"></ons-icon> Pull down to refresh</span>
   </ons-pull-hook>
+  -->
 
-  <ons-list id="transactionsList" class="scrollable"></ons-list>
-
-  <div style="text-align: center">
-    <!--<div id="transactionsList" style="text-align:left;padding:0 20px;"></div>-->
-    <!--<ons-button modifier="large" onclick="myNavigator.pushPage('html/new.html')">Add Transaction</ons-button>-->
+  <div class="content">
+    <ons-list id="transactionsList"></ons-list>
   </div>
 
 </ons-page>
