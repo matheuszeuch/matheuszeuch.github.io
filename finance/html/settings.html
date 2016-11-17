@@ -1,12 +1,23 @@
 <ons-page id="settingsPage">
+
   <ons-toolbar>
     <div class="center">Settings</div>
   </ons-toolbar>
 
-  <div style="text-align: center">
-    <p>Settings</p>
-    <ons-button modifier="large" onclick="db.reset();">Reset DB</ons-button>
-    <ons-button modifier="large" onclick="db.backup();">Backup DB</ons-button>
-    <ons-button modifier="large" onclick="db.restore();">Restore DB</ons-button>
+  <div class="content">
+    <ons-list>
+      <ons-list-header>Settings</ons-list-header>
+      <ons-list-item modifier="nodivider" class="taller"><ons-input type="text" input-id="username" modifier="underbar" content-left>Username:</ons-input></ons-list-item>
+      <ons-list-item modifier="nodivider"><ons-button modifier="large" onclick="myApp.services.settings.save();">Save</ons-button></ons-list-item>
+      <ons-list-header>Storage</ons-list-header>
+      <ons-list-item modifier="nodivider"><ons-button modifier="large" onclick="db.reset();">Reset DB</ons-button></ons-list-item>
+      <ons-list-item modifier="nodivider"><ons-button modifier="large" onclick="db.backup();">Backup DB</ons-button></ons-list-item>
+      <ons-list-item modifier="nodivider"><ons-button modifier="large" onclick="db.restore();">Restore DB</ons-button></ons-list-item>
+    </ons-list>
+
+
+
+
   </div>
+
 </ons-page>

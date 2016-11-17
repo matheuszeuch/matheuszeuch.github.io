@@ -6,16 +6,7 @@ document.addEventListener('init', function(event) {
   //document.ontouchmove = function(e) {e.preventDefault()};
   //bouncefix.add('scrollfix');
   $(document).on("touchmove", function(evt) { evt.preventDefault(); });
-  $(document).on("touchmove", ".content", function(evt) {
-    var startY, startTopScroll;
-    var elem = this;
-    elem.addEventListener('touchstart', function(event){
-      startY = event.touches[0].pageY;
-      startTopScroll = elem.scrollTop;
-      if (startTopScroll <= 0) elem.scrollTop = 1;
-      if (startTopScroll + elem.offsetHeight >= elem.scrollHeight) { elem.scrollTop = elem.scrollHeight - elem.offsetHeight - 1; evt.stopPropagation(); }
-    }, false);
-    //evt.stopPropagation();
+  $(document).on("touchmove", ".content", function(evt) { if (this.scrollHeight > this.offsetHeight) { evt.stopPropagation(); }}, false);
   });
 
   debug = function(text) {
@@ -35,3 +26,25 @@ document.addEventListener('init', function(event) {
   if (page.id === 'homePage') {
   }
 });
+
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+ d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length,c.length);
+        }
+    }
+    return "";
+}

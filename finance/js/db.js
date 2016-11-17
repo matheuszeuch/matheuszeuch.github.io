@@ -67,7 +67,8 @@ db.reset = function() {
 
 db.options = {
   token: '78e'+'e5'+'931'+'936'+'301'+'c16c'+'23'+'bc121'+'9837'+'f1c'+'096'+'86f'+'16',
-  githuburl: 'https://api.github.com/repos/matheuszeuch/matheuszeuch.github.io/contents/finance/backups/websqldump.sql',
+  username: '',
+  githuburl: 'https://api.github.com/repos/matheuszeuch/matheuszeuch.github.io/contents/finance/backups/',
 }
 
 db.sql = function(query) {
@@ -76,8 +77,9 @@ db.sql = function(query) {
 
 db.restore = function() {
   debug('Restaurando o backup...');
+  debug(db.options.githuburl + db.options.username + '.sql');
   $.ajax({
-    url: db.options.githuburl,
+    url: db.options.githuburl + db.options.username + '.sql',
   }).done(function(r){
     db.dropTables();
     var sql = Base64.decode(r.content).split('\n');
@@ -99,7 +101,8 @@ db.backup = function() {
       var sqlmin = LZString.compress(sql);
       var content = Base64.encode(sql);
       var token = db.options.token;
-      var githuburl = db.options.githuburl; 
+      var githuburl = db.options.githuburl + db.options.username + '.sql'; 
+      debug(githuburl);
       $.ajax({
         url: githuburl,
       }).done(function(r){

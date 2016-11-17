@@ -4,6 +4,30 @@
 
 myApp.services = {
 
+    settings: {
+        save: function() {
+            var user = $('#username').val();
+            setCookie('username', user, 365*10);
+            db.options.username = user;
+        },
+
+        load: function() {
+            var username = getCookie('username');
+            if (username) {
+                $('#username').val(username);
+                myApp.services.settings.save();
+            } else {
+                ons.notification.prompt({
+                    message: 'Digite seu usuário:',
+                    callback: function(user) {
+                        $('#username').val(user);
+                        myApp.services.settings.save();
+                    }
+                });
+            }
+        },
+    },
+
     transactions: {
         save: function() {
             //debug("saving transaction");
@@ -23,7 +47,7 @@ myApp.services = {
 
         refresh: function()  {
             this.load(this.refreshList);
-            debug("Atualizando lista de transações...");
+            //debug("Atualizando lista de transações...");
         },
 
         load: function(callback) {

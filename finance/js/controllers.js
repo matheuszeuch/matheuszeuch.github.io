@@ -4,6 +4,10 @@
 
 myApp.controllers = {
 
+  settingsPage: function() {
+    myApp.services.settings.load();
+  },
+
   navigatorPage: function(page) {
   },
 
