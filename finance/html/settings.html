@@ -2,13 +2,13 @@
 
   <ons-toolbar>
     <div class="center">Settings</div>
-    <div class="right"><ons-toolbar-button onclick="myApp.services.settings.save();"><strong>Save</strong></ons-toolbar-button></div>
   </ons-toolbar>
 
   <div class="content">
     <ons-list>
-      <ons-list-header>Settings</ons-list-header>
+      <ons-list-header></ons-list-header>
       <ons-list-item modifier="chevron" tappable onclick="myNavigator.pushPage('settingsConfig.html')">Account</ons-list-item>
+      <ons-list-header></ons-list-header>
       <ons-list-item modifier="chevron" tappable onclick="myNavigator.pushPage('settingsStorage.html')">Storage</ons-list-item>
     </ons-list>
   </div>
@@ -19,12 +19,15 @@
       <ons-toolbar>
         <div class="left"><ons-back-button>Back</ons-back-button></div>
         <div class="center">Account</div>
-        <div class="right"><ons-toolbar-button onclick="myApp.services.settings.save();"><strong>Save</strong></ons-toolbar-button></div>
+        <div class="right"><ons-toolbar-button onclick="myApp.services.settings.save();"><strong>OK</strong></ons-toolbar-button></div>
       </ons-toolbar>
       <div class="content">
         <ons-list>
-          <ons-list-header>My Account</ons-list-header>
-          <ons-list-item modifier="nodivider" class="taller"><ons-input type="text" input-id="username" modifier="underbar" content-left>Username:</ons-input></ons-list-item>
+          <ons-list-header>My Account:</ons-list-header>
+          <ons-list-item modifier="longdivider">
+            <div class="left">Username</div>
+            <div class="center"><ons-input type="text" input-id="username"></ons-input></div>
+          </ons-list-item>
         </ons-list>
       </div>
     </ons-page>
@@ -39,10 +42,12 @@
       </ons-toolbar>
       <div class="content">
         <ons-list>
-          <ons-list-header>Local Database</ons-list-header>
-          <ons-list-item modifier="nodivider"><ons-button modifier="large" onclick="db.reset();">Reset</ons-button></ons-list-item>
-          <ons-list-item modifier="nodivider"><ons-button modifier="large" onclick="db.backup();">Backup to Cloud</ons-button></ons-list-item>
-          <ons-list-item modifier="nodivider"><ons-button modifier="large" onclick="db.restore();">Restore from Cloud</ons-button></ons-list-item>
+          <ons-list-header></ons-list-header>
+          <ons-list-item modifier="nodivider"><ons-button modifier="large quiet" onclick="db.backup();">Backup to Cloud</ons-button></ons-list-item>
+          <ons-list-header></ons-list-header>
+          <ons-list-item modifier="nodivider"><ons-button modifier="large quiet" onclick="db.restore();">Restore from Cloud</ons-button></ons-list-item>
+          <ons-list-header></ons-list-header>
+          <ons-list-item modifier="nodivider"><ons-button modifier="large quiet" onclick="db.reset();" style="color:red">Delete Database</ons-button></ons-list-item>
         </ons-list>
       </div>
     </ons-page>
