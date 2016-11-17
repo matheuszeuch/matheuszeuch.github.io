@@ -5,7 +5,27 @@
 myApp.controllers = {
 
   settingsPage: function() {
-    myApp.services.settings.load();
+    //myApp.services.settings.load();
+    var username = getCookie('username');
+    if (username && username != 'undefined') {
+      db.options.username = getCookie('username');
+    } else {
+      ons.notification.prompt({
+        message: 'Inform your username:',
+        callback: function(prompt) {
+          if (prompt && prompt != 'undefined') {
+              setCookie('username', prompt, 365*10);
+              db.options.username = prompt;
+              db.executeRestore();
+          }
+        }
+      });
+    }
+  },
+
+  settingsConfigPage: function() {
+    var username = getCookie('username');
+    if (username && username != 'undefined') $('#username').val(username);
   },
 
   navigatorPage: function(page) {

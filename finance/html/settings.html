@@ -2,18 +2,52 @@
 
   <ons-toolbar>
     <div class="center">Settings</div>
+    <div class="right"><ons-toolbar-button onclick="myApp.services.settings.save();"><strong>Save</strong></ons-toolbar-button></div>
   </ons-toolbar>
 
   <div class="content">
     <ons-list>
       <ons-list-header>Settings</ons-list-header>
-      <ons-list-item modifier="nodivider" class="taller"><ons-input type="text" input-id="username" modifier="underbar" content-left>Username:</ons-input></ons-list-item>
-      <ons-list-item modifier="nodivider"><ons-button modifier="large" onclick="myApp.services.settings.save();">Save</ons-button></ons-list-item>
-      <ons-list-header>Storage</ons-list-header>
-      <ons-list-item modifier="nodivider"><ons-button modifier="large" onclick="db.reset();">Reset DB</ons-button></ons-list-item>
-      <ons-list-item modifier="nodivider"><ons-button modifier="large" onclick="db.backup();">Backup DB</ons-button></ons-list-item>
-      <ons-list-item modifier="nodivider"><ons-button modifier="large" onclick="db.restore();">Restore DB</ons-button></ons-list-item>
+      <ons-list-item modifier="chevron" tappable onclick="myNavigator.pushPage('settingsConfig.html')">Account</ons-list-item>
+      <ons-list-item modifier="chevron" tappable onclick="myNavigator.pushPage('settingsStorage.html')">Storage</ons-list-item>
     </ons-list>
   </div>
 
+
+  <ons-template id="settingsConfig.html">
+    <ons-page id="settingsConfigPage">
+      <ons-toolbar>
+        <div class="left"><ons-back-button>Back</ons-back-button></div>
+        <div class="center">Account</div>
+        <div class="right"><ons-toolbar-button onclick="myApp.services.settings.save();"><strong>Save</strong></ons-toolbar-button></div>
+      </ons-toolbar>
+      <div class="content">
+        <ons-list>
+          <ons-list-header>My Account</ons-list-header>
+          <ons-list-item modifier="nodivider" class="taller"><ons-input type="text" input-id="username" modifier="underbar" content-left>Username:</ons-input></ons-list-item>
+        </ons-list>
+      </div>
+    </ons-page>
+  </ons-template>
+
+
+  <ons-template id="settingsStorage.html">
+    <ons-page id="settingsStoragePage">
+      <ons-toolbar>
+        <div class="left"><ons-back-button>Back</ons-back-button></div>
+        <div class="center">Storage</div>
+      </ons-toolbar>
+      <div class="content">
+        <ons-list>
+          <ons-list-header>Local Database</ons-list-header>
+          <ons-list-item modifier="nodivider"><ons-button modifier="large" onclick="db.reset();">Reset</ons-button></ons-list-item>
+          <ons-list-item modifier="nodivider"><ons-button modifier="large" onclick="db.backup();">Backup to Cloud</ons-button></ons-list-item>
+          <ons-list-item modifier="nodivider"><ons-button modifier="large" onclick="db.restore();">Restore from Cloud</ons-button></ons-list-item>
+        </ons-list>
+      </div>
+    </ons-page>
+  </ons-template>
+
 </ons-page>
+
+

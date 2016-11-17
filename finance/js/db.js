@@ -57,12 +57,17 @@ db.defaultValues = function() {
 }
 
 db.reset = function() {
-  debug("Resetando o banco de dados...");
-  db.dropTables();
-  db.createTables();
-  db.defaultValues();
-  db.refreshViews();
-  debug("Banco resetado com sucesso!");
+  ons.notification.confirm({message:'Confirm?', callback: function(confirmed) {
+    if (!confirmed) return;
+    debug("Resetando o banco de dados...");
+    db.dropTables();
+    db.createTables();
+    db.defaultValues();
+    db.refreshViews();
+    debug("Banco resetado com sucesso!");
+    ons.notification.alert({message:'Success!'});
+    myNavigator.popPage();
+  }});
 }
 
 db.options = {
@@ -75,7 +80,7 @@ db.sql = function(query) {
   db.transaction(function(transaction){transaction.executeSql(query);});
 }
 
-db.restore = function() {
+db.executeRestore = function() {
   debug('Restaurando o backup...');
   debug(db.options.githuburl + db.options.username + '.sql');
   $.ajax({
@@ -90,6 +95,15 @@ db.restore = function() {
     db.refreshViews();
     debug('Restauração do backup falhou!');
   });
+}
+
+db.restore = function() {
+  ons.notification.confirm({message:'Confirm?', callback: function(confirmed) {
+    if (!confirmed) return;
+    db.executeRestore();
+    myNavigator.popPage();
+    ons.notification.alert({message:'Success!'});
+  }});
 }
 
 db.backup = function() {
@@ -114,6 +128,8 @@ db.backup = function() {
           data: '{"content": "'+ content +'", "sha": "'+ r.sha +'", "committer": {"name": "Matheus Zeuch", "email": "matheuszeuch@gmail.com"}, "message":""}'
         }).done(function(r){
           debug("Backup realizado com sucesso!");
+          myNavigator.popPage();
+          ons.notification.alert({message:'Success!'});
         }).fail(function(jqXHR, textStatus){
           db.refreshViews();
           debug('Backup falhou!');
@@ -129,6 +145,8 @@ db.backup = function() {
             data: '{"content": "'+ content +'", "committer": {"name": "Matheus Zeuch", "email": "matheuszeuch@gmail.com"}, "message":""}'
           }).done(function(r){
             debug("Backup realizando com sucesso!");
+            myNavigator.popPage();
+            ons.notification.alert({message:'Success!'});
           });
         }
       });
