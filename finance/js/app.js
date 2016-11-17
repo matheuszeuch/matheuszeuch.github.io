@@ -13,9 +13,9 @@ document.addEventListener('init', function(event) {
       startY = event.touches[0].pageY;
       startTopScroll = elem.scrollTop;
       if (startTopScroll <= 0) elem.scrollTop = 1;
-      if (startTopScroll + elem.offsetHeight >= elem.scrollHeight) elem.scrollTop = elem.scrollHeight - elem.offsetHeight - 1;
+      if (startTopScroll + elem.offsetHeight >= elem.scrollHeight) { elem.scrollTop = elem.scrollHeight - elem.offsetHeight - 1; evt.stopPropagation(); }
     }, false);
-    evt.stopPropagation();
+    //evt.stopPropagation();
   });
 
   debug = function(text) {
