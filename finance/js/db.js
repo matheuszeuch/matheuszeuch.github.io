@@ -56,7 +56,7 @@ db.reset = function() {
 }
 
 db.options = {
-  token: '4af482a586a5c0dac68b02d3b87d27c98c2ac107',
+  token: '9b911cfba51d2fc5d741315435e7a6878bd2113d',
   githuburl: 'https://api.github.com/repos/matheuszeuch/matheuszeuch.github.io/contents/finance/backups/websqldump.sql',
 }
 
