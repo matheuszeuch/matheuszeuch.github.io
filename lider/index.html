@@ -195,46 +195,7 @@
   }
 
   /* ── PRESENTATION MODE (feat 13) ── */
-  body.presentation-mode #screen-game {
-    padding: 48px 40px 80px;
-  }
-  body.presentation-mode .scenario-title {
-    font-size: 26px;
-  }
-  body.presentation-mode .scenario-desc {
-    font-size: 17px;
-  }
-  body.presentation-mode .choice-text {
-    font-size: 16px;
-  }
-  body.presentation-mode .game-header {
-    margin-bottom: 36px;
-  }
-  body.presentation-mode #progress-text {
-    font-size: 14px;
-  }
-  body.presentation-mode .progress-bar {
-    height: 7px;
-  }
-  .pres-toggle {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 100px;
-    padding: 8px 16px;
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-    cursor: pointer;
-    z-index: 100;
-    transition: all 0.2s;
-    display: none;
-  }
-  .pres-toggle:hover { border-color: var(--accent2); color: var(--accent2); }
-  #screen-game.active ~ .pres-toggle,
-  body.presentation-mode .pres-toggle { display: flex; align-items: center; gap: 6px; }
+
 
   /* ── HISTORY TABLE (feat 3) ── */
   .history-section {
@@ -743,6 +704,139 @@
   .dev-cat { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
   .dev-msg { font-size: 12px; color: var(--muted); line-height: 1.6; }
 
+
+  /* ── INSTAGRAM SHARE CARD ── */
+  .ig-card-wrap {
+    margin-bottom: 24px;
+    animation: resultCascade 0.5s cubic-bezier(0.22,1,0.36,1) 0.6s both;
+  }
+  .ig-card {
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    background: linear-gradient(145deg, #0f1e26 0%, #1e3345 50%, #0f2233 100%);
+    padding: 32px 24px 28px;
+    text-align: center;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+  }
+  .ig-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 30% 10%, rgba(90,207,207,0.12), transparent 55%),
+                radial-gradient(ellipse at 80% 80%, rgba(240,180,41,0.1), transparent 50%);
+    pointer-events: none;
+  }
+  .ig-card-game-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: rgba(255,255,255,0.35);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .ig-card-icon {
+    font-size: 48px;
+    display: block;
+    margin-bottom: 12px;
+    position: relative;
+    filter: drop-shadow(0 2px 12px rgba(90,207,207,0.4));
+  }
+  .ig-card-profile {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 40px;
+    line-height: 1;
+    color: #fff;
+    position: relative;
+    margin-bottom: 4px;
+  }
+  .ig-card-profile em {
+    color: #5ecfcf;
+    font-style: normal;
+    display: block;
+  }
+  .ig-card-desc {
+    font-size: 13px;
+    color: rgba(232,244,248,0.65);
+    line-height: 1.6;
+    margin: 14px 0 18px;
+    position: relative;
+    font-weight: 300;
+    max-width: 280px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .ig-card-score-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 18px;
+    position: relative;
+  }
+  .ig-card-score-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    color: #f0b429;
+    line-height: 1;
+  }
+  .ig-card-score-meta {
+    text-align: left;
+  }
+  .ig-card-score-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    line-height: 1.4;
+  }
+  .ig-card-traits {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .ig-card-trait {
+    background: rgba(90,207,207,0.12);
+    border: 1px solid rgba(90,207,207,0.25);
+    border-radius: 100px;
+    padding: 4px 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: #5ecfcf;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .ig-card-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.08);
+    margin: 0 0 16px;
+    position: relative;
+  }
+  .ig-card-footer {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    position: relative;
+  }
+  .ig-card-footer span {
+    color: rgba(240,180,41,0.6);
+  }
+  .ig-hint {
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 10px;
+    letter-spacing: 0.06em;
+  }
+
   .q-count-btn {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -910,6 +1004,36 @@
           <div><div style="font-weight:700;margin-bottom:3px;">Todos os perfis visíveis ao final</div><div style="font-size:13px;color:var(--muted);line-height:1.6;">Na tela de resultado, é possível explorar todos os 5 arquétipos de liderança — útil para o grupo comparar e discutir os diferentes estilos.</div></div>
         </div>
       </div>
+      <div style="height:1px;background:var(--border);margin:24px 0;"></div>
+
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--accent2);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:16px;">&#127775; Perfis de Liderança</div>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:8px;">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--accent);margin-bottom:4px;">ESTRATEGISTA VISIONÁRIO</div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:8px;">Decisões orientadas por impacto de longo prazo e posicionamento. Enxerga além do imediato e pensa em sistemas. Pode precisar de mais atenção ao cuidado com pessoas e execução.</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;"><span style="background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:3px 10px;font-size:11px;color:var(--accent2);font-family:'DM Mono',monospace;">Pensamento sistêmico</span><span style="background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:3px 10px;font-size:11px;color:var(--accent2);font-family:'DM Mono',monospace;">Visão de futuro</span><span style="background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:3px 10px;font-size:11px;color:var(--accent2);font-family:'DM Mono',monospace;">Alta tolerância à ambiguidade</span></div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--accent);margin-bottom:4px;">LÍDER HUMANISTA</div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:8px;">Pessoas são o ativo central. Desenvolve talentos, medeia conflitos com habilidade e constrói equipes de alta confiança. Desafio: equilibrar cuidado com exigência de performance.</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;"><span style="background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:3px 10px;font-size:11px;color:var(--accent2);font-family:'DM Mono',monospace;">Empatia estratégica</span><span style="background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:3px 10px;font-size:11px;color:var(--accent2);font-family:'DM Mono',monospace;">Desenvolvimento de talentos</span><span style="background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:3px 10px;font-size:11px;color:var(--accent2);font-family:'DM Mono',monospace;">Gestão de conflito</span></div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--accent);margin-bottom:4px;">EXECUTOR DE ELITE</div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:8px;">Entrega com disciplina, clareza e foco em resultado. Transforma metas em realidade. O próximo nível de liderança pede mais espaço para as pessoas e decisões de longo prazo.</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;"><span style="background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:3px 10px;font-size:11px;color:var(--accent2);font-family:'DM Mono',monospace;">Orientação a resultado</span><span style="background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:3px 10px;font-size:11px;color:var(--accent2);font-family:'DM Mono',monospace;">Disciplina operacional</span><span style="background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:3px 10px;font-size:11px;color:var(--accent2);font-family:'DM Mono',monospace;">Confiabilidade</span></div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--accent);margin-bottom:4px;">GUARDIÃO ÉTICO</div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:8px;">Integridade é a marca registrada. Toma as decisões certas mesmo quando são difíceis. Constrói organizações de alta confiança — o maior ativo de qualquer instituição.</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;"><span style="background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:3px 10px;font-size:11px;color:var(--accent2);font-family:'DM Mono',monospace;">Integridade</span><span style="background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:3px 10px;font-size:11px;color:var(--accent2);font-family:'DM Mono',monospace;">Coragem moral</span><span style="background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:3px 10px;font-size:11px;color:var(--accent2);font-family:'DM Mono',monospace;">Princípios sólidos</span></div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--accent);margin-bottom:4px;">LÍDER EQUILIBRADO</div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:8px;">Navega com competência entre múltiplas dimensões da liderança. Adapta o estilo ao contexto, pensa em pessoas e resultados, age com integridade. Perfil de quem está pronto para crescer.</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;"><span style="background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:3px 10px;font-size:11px;color:var(--accent2);font-family:'DM Mono',monospace;">Adaptabilidade</span><span style="background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:3px 10px;font-size:11px;color:var(--accent2);font-family:'DM Mono',monospace;">Visão integrada</span><span style="background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:3px 10px;font-size:11px;color:var(--accent2);font-family:'DM Mono',monospace;">Inteligência contextual</span></div>
+        </div>
+      </div>
     </div>
     <button class="btn-primary" onclick="startGame()">&#9654; Começar agora</button>
     <button class="btn-ghost" onclick="showScreen('screen-intro')">&#8592; Voltar</button>
@@ -976,10 +1100,29 @@
         <div class="history-list" id="history-list"></div>
       </div>
       <div class="result-breakdown" id="result-breakdown"></div>
-      <div id="all-profiles-section" style="display:none;margin-bottom:24px;">
+      <div id="all-profiles-section" style="margin-bottom:24px;">
         <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;">Explorar todos os perfis</div>
         <div class="profile-tabs" id="profile-tabs"></div>
         <div class="profile-explorer" id="profile-explorer"></div>
+      </div>
+      <div class="ig-card-wrap">
+        <div class="ig-card" id="ig-card">
+          <div class="ig-card-game-label">Simulador de Decisões de Liderança</div>
+          <span class="ig-card-icon" id="ig-icon"></span>
+          <div class="ig-card-profile" id="ig-profile-name"></div>
+          <div class="ig-card-desc" id="ig-desc"></div>
+          <div class="ig-card-score-row">
+            <div class="ig-card-score-num" id="ig-score"></div>
+            <div class="ig-card-score-meta">
+              <div class="ig-card-score-label" id="ig-score-max"></div>
+              <div class="ig-card-score-label">pontos</div>
+            </div>
+          </div>
+          <div class="ig-card-traits" id="ig-traits"></div>
+          <div class="ig-card-divider"></div>
+          <div class="ig-card-footer">matheuszeuch.github.io/lider &nbsp;·&nbsp; <span>jogue também</span></div>
+        </div>
+        <div class="ig-hint">&#128247; Tire um print desta tela para compartilhar</div>
       </div>
       <button class="btn-primary" onclick="startGame()">&#8634; Jogar novamente</button>
       <button class="btn-ghost" onclick="showScreen('screen-intro')">&#8592; Início</button>
@@ -998,8 +1141,6 @@
 <!-- CONFETTI -->
 <div class="confetti-container" id="confetti-container"></div>
 
-<!-- PRESENTATION MODE TOGGLE -->
-<button class="pres-toggle" id="pres-toggle" onclick="togglePresentationMode()" style="display:none;">&#9654; Apresentação</button>
 
 <script>
 var SCENARIOS = [
@@ -1567,16 +1708,6 @@ var CATEGORY_ICONS = {
   'Visão e Propósito': '🌱'
 };
 
-// ── FEAT 13: PRESENTATION MODE ──
-var presentationMode = false;
-function togglePresentationMode() {
-  presentationMode = !presentationMode;
-  document.body.classList.toggle('presentation-mode', presentationMode);
-  var btn = document.getElementById('pres-toggle');
-  btn.innerHTML = presentationMode ? '&#8854; Apresentação' : '&#9654; Apresentação';
-  btn.style.color = presentationMode ? 'var(--accent2)' : '';
-  btn.style.borderColor = presentationMode ? 'var(--accent2)' : '';
-}
 
 // ── FEAT 19: CONFETTI ──
 function launchConfetti() {
@@ -1656,6 +1787,25 @@ function applyDifficulty(choices, bestIdx) {
   });
 }
 
+
+
+
+// ── INSTAGRAM SHARE CARD ──
+function buildInstagramCard(profileKey, score, maxPts) {
+  var p = PROFILES[profileKey];
+  var parts = p.name.split('\n');
+  var icons = {
+    estrategista: '🎯', humanista: '🤝', executor: '⚡', etico: '⚖️', equilibrado: '🌟'
+  };
+  document.getElementById('ig-icon').textContent = icons[profileKey] || '🏆';
+  document.getElementById('ig-profile-name').innerHTML = parts[0] + '<em>' + parts[1] + '</em>';
+  document.getElementById('ig-desc').textContent = p.desc;
+  document.getElementById('ig-score').textContent = score;
+  document.getElementById('ig-score-max').textContent = 'de ' + maxPts;
+  document.getElementById('ig-traits').innerHTML = p.traits.map(function(t) {
+    return '<span class="ig-card-trait">' + t + '</span>';
+  }).join('');
+}
 
 // ── SOUND ENGINE (Web Audio API — no external files) ──
 var _ac = null;
@@ -1808,7 +1958,6 @@ function startGame() {
     historyItems: []
   };
   showScreen('screen-game');
-  document.getElementById('pres-toggle').style.display = 'flex';
   if (!learningMode) {
     var s = state.shuffledScenarios[0];
     showTransition(1, state.shuffledScenarios.length, s.category, function() { loadScenario(true); });
@@ -2069,9 +2218,6 @@ function showFeedback(choiceIndex, scenario, chosen, switched) {
 
 function cancelGame() {
   clearInterval(state.timer);
-  document.getElementById('pres-toggle').style.display = 'none';
-  document.body.classList.remove('presentation-mode');
-  presentationMode = false;
   showScreen('screen-intro');
 }
 
@@ -2103,19 +2249,19 @@ function nextScenario() {
 
 function showResult() {
   showScreen('screen-result');
-  document.getElementById('pres-toggle').style.display = 'none';
 
   var maxPts = questionCount === 10 ? 1000 : questionCount === 20 ? 2000 : 3000;
+  var profile = determineProfile();
+
   sfxFanfare(state.score / maxPts);
   if (state.score / maxPts >= 0.75) {
     setTimeout(launchConfetti, 400);
   }
   buildHistory();
+  buildInstagramCard(profile, state.score, maxPts);
 
   document.getElementById('final-score').textContent = state.score;
   document.getElementById('score-max').textContent = 'de ' + maxPts + ' pontos' + (timerEnabled ? '' : ' (sem tempo)');
-
-  var profile = determineProfile();
   var p = PROFILES[profile];
   var parts = p.name.split('\n');
   document.getElementById('profile-name').innerHTML = parts[0] + '<br><em>' + parts[1] + '</em>';
@@ -2136,20 +2282,13 @@ function showResult() {
     '</div>';
   }).join('');
 
-  // All profiles explorer (learning mode only)
-  var allProfilesSection = document.getElementById('all-profiles-section');
-  if (learningMode) {
-    allProfilesSection.style.display = 'block';
-    var profileKeys = ['estrategista', 'humanista', 'executor', 'etico', 'equilibrado'];
-    var profileLabels = { estrategista: 'Estrategista', humanista: 'Humanista', executor: 'Executor', etico: 'Guardião Ético', equilibrado: 'Equilibrado' };
-    document.getElementById('profile-tabs').innerHTML = profileKeys.map(function(key) {
-      return '<button class="profile-tab" id="ptab-' + key + '" onclick="showProfileTab(\'' + key + '\')">' + profileLabels[key] + '</button>';
-    }).join('');
-    showProfileTab(profile);
-  } else {
-    allProfilesSection.style.display = 'none';
-  }
-
+  // All profiles explorer — always visible
+  var profileKeys = ['estrategista', 'humanista', 'executor', 'etico', 'equilibrado'];
+  var profileLabels = { estrategista: 'Estrategista', humanista: 'Humanista', executor: 'Executor', etico: 'Guardião Ético', equilibrado: 'Equilibrado' };
+  document.getElementById('profile-tabs').innerHTML = profileKeys.map(function(key) {
+    return '<button class="profile-tab" id="ptab-' + key + '" onclick="showProfileTab(\'' + key + '\')">' + profileLabels[key] + '</button>';
+  }).join('');
+  showProfileTab(profile);
   // Category breakdown
   var catRows = Object.keys(state.categoryScores).map(function(cat) {
     return '<div class="breakdown-row"><span class="cat">' + cat + '</span><span class="pts-val">' + state.categoryScores[cat] + ' pts</span></div>';
