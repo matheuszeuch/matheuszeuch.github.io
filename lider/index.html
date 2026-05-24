@@ -1081,7 +1081,7 @@
       <div class="stat-card" id="stat-timer-card"><div class="num" id="stat-timer-val">60s</div><div class="label">Por decisão</div></div>
       <div class="stat-card"><div class="num">5</div><div class="label">Perfis</div></div>
     </div>
-    <div style="margin-bottom:16px;">
+    <div style="margin-bottom:16px;" id="q-count-wrap">
       <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;">Número de questões</div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
         <button class="q-count-btn" id="btn-q10" onclick="setQuestionCount(10)">
@@ -2476,8 +2476,10 @@ function setQuestionCount(n) {
   document.getElementById('btn-q10').classList.toggle('active', n === 10);
   document.getElementById('btn-q20').classList.toggle('active', n === 20);
   document.getElementById('btn-q30').classList.toggle('active', n === 30);
-  document.getElementById('stat-q-num').textContent = n;
-  document.getElementById('intro-subtitle').textContent = 'Você está no comando. ' + n + ' situações reais. Cada escolha revela seu estilo de liderança — e suas consequências.';
+  if (!toxicMode) {
+    document.getElementById('stat-q-num').textContent = n;
+    document.getElementById('intro-subtitle').textContent = 'Você está no comando. ' + n + ' situações reais. Cada escolha revela seu estilo de liderança — e suas consequências.';
+  }
 }
 
 function toggleLearning() {
@@ -2976,12 +2978,14 @@ function toggleToxicMode() {
     document.querySelector('.intro-title').innerHTML = 'CHEFE<em>.</em>';
     document.getElementById('intro-subtitle').textContent = 'Você é o chefe agora. 10 situações reais. Cada escolha tem consequências — para sua equipe.';
     document.getElementById('stat-q-num').textContent = '10';
+    document.getElementById('q-count-wrap').style.display = 'none';
   } else {
     sw.classList.remove('on');
     sub.textContent = 'Desativado — você lidera com boas práticas';
     document.querySelector('.intro-title').innerHTML = 'LÍDER<em>.</em>';
     document.getElementById('intro-subtitle').textContent = 'Você está no comando. ' + questionCount + ' situações reais. Cada escolha revela seu estilo de liderança — e suas consequências.';
     document.getElementById('stat-q-num').textContent = questionCount;
+    document.getElementById('q-count-wrap').style.display = 'block';
   }
 }
 
