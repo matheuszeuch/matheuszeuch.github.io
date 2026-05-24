@@ -147,24 +147,6 @@
     animation: fadeIn 0.3s ease 0.2s both;
   }
 
-  /* ── DIFFICULTY BADGE (feat 8) ── */
-  .diff-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    padding: 3px 10px;
-    border-radius: 100px;
-    position: absolute;
-    top: 12px;
-    left: 16px;
-  }
-  .diff-normal { background: color-mix(in srgb, var(--accent2) 15%, transparent); color: var(--accent2); border: 1px solid color-mix(in srgb, var(--accent2) 30%, transparent); }
-  .diff-hard { background: color-mix(in srgb, var(--accent3) 15%, transparent); color: var(--accent3); border: 1px solid color-mix(in srgb, var(--accent3) 30%, transparent); }
-
   /* ── CATEGORY ICONS (feat 17) ── */
   .category-icon {
     font-size: 18px;
@@ -253,6 +235,39 @@
     font-weight: 700;
     min-width: 40px;
     text-align: right;
+  }
+
+
+  /* ── RADAR CHART ── */
+  .radar-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 0 4px;
+  }
+  .radar-svg { overflow: visible; }
+  .radar-labels {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+    width: 100%;
+    margin-top: 12px;
+  }
+  .radar-label-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .radar-label-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: var(--accent2);
   }
 
   /* ── ENHANCED COMPONENTS ── */
@@ -705,6 +720,33 @@
   .dev-msg { font-size: 12px; color: var(--muted); line-height: 1.6; }
 
 
+
+  /* ── INSIGHT PHRASE ── */
+  .insight-wrap {
+    background: linear-gradient(135deg, color-mix(in srgb, var(--accent2) 8%, transparent), color-mix(in srgb, var(--accent) 5%, transparent));
+    border: 1px solid color-mix(in srgb, var(--accent2) 25%, transparent);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 24px;
+    text-align: center;
+    animation: resultCascade 0.5s cubic-bezier(0.22,1,0.36,1) 0.35s both;
+  }
+  .insight-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--accent2);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 10px;
+  }
+  .insight-phrase {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    line-height: 1.2;
+    color: var(--text);
+  }
+  .insight-phrase em { color: var(--accent); font-style: normal; }
+
   /* ── INSTAGRAM SHARE CARD ── */
   .ig-card-wrap {
     margin-bottom: 24px;
@@ -837,6 +879,135 @@
     letter-spacing: 0.06em;
   }
 
+
+  /* ── NAME INPUT ── */
+  .name-input-wrap {
+    margin-bottom: 28px;
+  }
+  .name-input-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 10px;
+    display: block;
+  }
+  .name-input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .name-input::placeholder { color: var(--muted); font-weight: 300; }
+  .name-input:focus {
+    border-color: var(--accent2);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent2) 15%, transparent);
+  }
+
+
+  /* ── TOXIC MODE ── */
+  body.toxic-mode {
+    --bg: #1a0a0a;
+    --surface: #2a1010;
+    --surface2: #3a1515;
+    --border: #5a2020;
+    --accent: #ff4444;
+    --accent2: #ff8c42;
+    --accent3: #ffd166;
+    --text: #fff0f0;
+    --muted: #aa7070;
+  }
+  body.toxic-mode .intro-title { color: var(--accent3); }
+  body.toxic-mode .intro-title em { color: var(--accent); }
+
+  .toxic-toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: color-mix(in srgb, #ff4444 8%, var(--surface));
+    border: 1px solid color-mix(in srgb, #ff4444 30%, var(--border));
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .toxic-toggle-btn:hover { border-color: #ff4444; }
+  .toxic-toggle-btn .timer-toggle-icon { font-size: 20px; }
+  .toxic-toggle-btn .timer-toggle-label { font-size: 14px; font-weight: 600; color: var(--text); }
+  .toxic-toggle-btn .timer-toggle-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  /* damage meter */
+  .damage-meter {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .damage-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .damage-label { font-size: 12px; color: var(--muted); width: 110px; flex-shrink: 0; text-transform: uppercase; letter-spacing: 0.05em; font-family: 'DM Mono', monospace; }
+  .damage-bar { flex: 1; height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
+  .damage-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #ff8c42, #ff4444); transition: width 1s cubic-bezier(0.4,0,0.2,1); }
+  .damage-val { font-family: 'DM Mono', monospace; font-size: 11px; color: #ff4444; width: 32px; text-align: right; }
+
+  .toxic-result-card {
+    background: color-mix(in srgb, #ff4444 8%, var(--surface));
+    border: 1px solid color-mix(in srgb, #ff4444 25%, var(--border));
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+    animation: resultCascade 0.5s cubic-bezier(0.22,1,0.36,1) 0.2s both;
+  }
+  .toxic-result-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, #ff4444, #ff8c42, #ffd166, #ff8c42, #ff4444);
+    background-size: 200% auto;
+    animation: shimmer 2s linear infinite;
+  }
+  .toxic-boss-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 38px;
+    line-height: 1.1;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .toxic-boss-title em { color: #ff4444; font-style: normal; }
+  .toxic-boss-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+    font-weight: 300;
+    margin-bottom: 16px;
+  }
+
+  /* toxic ig card */
+  .ig-card.toxic {
+    background: linear-gradient(145deg, #1a0808 0%, #2d1010 50%, #1a0a0a 100%);
+  }
+  .ig-card.toxic .ig-card-profile em { color: #ff4444; }
+  .ig-card.toxic .ig-card-score-num { color: #ff8c42; }
+  .ig-card.toxic .ig-card-trait {
+    background: rgba(255,68,68,0.12);
+    border-color: rgba(255,68,68,0.25);
+    color: #ff8c42;
+  }
+
   .q-count-btn {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -911,21 +1082,6 @@
       <div class="stat-card"><div class="num">5</div><div class="label">Perfis</div></div>
     </div>
     <div style="margin-bottom:16px;">
-      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;">Dificuldade</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-        <button class="q-count-btn active" id="btn-diff-normal" onclick="setDifficulty('normal')">
-          <div style="font-size:18px;margin-bottom:4px;">&#128312;</div>
-          <div style="font-weight:700;font-size:13px;">Normal</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:2px;">Opções distintas</div>
-        </button>
-        <button class="q-count-btn" id="btn-diff-hard" onclick="setDifficulty('hard')">
-          <div style="font-size:18px;margin-bottom:4px;">&#128313;</div>
-          <div style="font-weight:700;font-size:13px;">Difícil</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:2px;">Opções mais parecidas</div>
-        </button>
-      </div>
-    </div>
-    <div style="margin-bottom:16px;">
       <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;">Número de questões</div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
         <button class="q-count-btn" id="btn-q10" onclick="setQuestionCount(10)">
@@ -953,6 +1109,21 @@
       <div class="toggle-switch" id="toggle-learning"><div class="toggle-knob"></div></div>
     </div>
 
+    <div class="toxic-toggle-btn" onclick="toggleToxicMode()" id="toxic-toggle-btn">
+      <div class="timer-toggle-left">
+        <span class="timer-toggle-icon">&#128520;</span>
+        <div>
+          <div class="timer-toggle-label">Modo Chefe Tóxico</div>
+          <div class="timer-toggle-sub" id="toxic-toggle-sub">Desativado — você lidera com boas práticas</div>
+        </div>
+      </div>
+      <div class="toggle-switch" id="toggle-toxic"><div class="toggle-knob"></div></div>
+    </div>
+
+    <div class="name-input-wrap">
+      <label class="name-input-label" for="player-name">Seu nome (opcional)</label>
+      <input class="name-input" id="player-name" type="text" placeholder="Como você quer ser chamado?" maxlength="30" oninput="saveName(this.value)">
+    </div>
     <button class="btn-primary" onclick="startGame()">&#9654; Iniciar Simulação</button>
     <button class="btn-ghost" onclick="showScreen('screen-instructions')">Como funciona</button>
   </section>
@@ -1061,7 +1232,6 @@
     </div>
 
     <div class="scenario-card">
-      <span id="diff-badge" class="diff-badge diff-normal" style="display:none;"></span>
       <div class="scenario-num" id="scenario-num">01</div>
       <div class="category-icon" id="scenario-category-icon"></div>
       <div class="scenario-title" id="scenario-title"></div>
@@ -1085,12 +1255,16 @@
       <div class="result-label">Sua Pontuação Final</div>
       <div class="result-big" id="final-score">0</div>
       <div class="result-label" id="score-max">de 2000 pontos</div>
+      <div class="insight-wrap" id="insight-wrap">
+        <div class="insight-label">&#10024; Sua marca de liderança</div>
+        <div class="insight-phrase" id="insight-phrase"></div>
+      </div>
       <div class="profile-card">
         <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;">Seu Perfil de Liderança</div>
         <div class="profile-archetype" id="profile-name"></div>
         <div class="profile-desc" id="profile-desc"></div>
         <div class="profile-traits" id="profile-traits"></div>
-        <div class="profile-dimensions" id="profile-dims"></div>
+        <div class="radar-wrap"><svg class="radar-svg" id="radar-svg" width="220" height="220" viewBox="-110 -110 220 220"></svg></div>
       </div>
       <div class="history-section" id="history-section">
         <button class="history-toggle" onclick="toggleHistory(this)">
@@ -1107,10 +1281,11 @@
       </div>
       <div class="ig-card-wrap">
         <div class="ig-card" id="ig-card">
-          <div class="ig-card-game-label">Simulador de Decisões de Liderança</div>
+          <div class="ig-card-game-label" id="ig-player-label">Simulador de Decisões de Liderança</div>
           <span class="ig-card-icon" id="ig-icon"></span>
           <div class="ig-card-profile" id="ig-profile-name"></div>
           <div class="ig-card-desc" id="ig-desc"></div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:rgba(90,207,207,0.9);line-height:1.3;margin:-4px 0 14px;padding:0 8px;" id="ig-insight"></div>
           <div class="ig-card-score-row">
             <div class="ig-card-score-num" id="ig-score"></div>
             <div class="ig-card-score-meta">
@@ -1126,6 +1301,51 @@
       </div>
       <button class="btn-primary" onclick="startGame()">&#8634; Jogar novamente</button>
       <button class="btn-ghost" onclick="showScreen('screen-intro')">&#8592; Início</button>
+    </div>
+  </section>
+
+
+  <!-- TOXIC RESULT SCREEN -->
+  <section class="screen" id="screen-toxic-result">
+    <div class="result-screen">
+      <div class="result-label">&#128520; Relatório de Danos</div>
+      <div class="result-big" id="toxic-damage-score" style="color:#ff4444;">0</div>
+      <div class="result-label" id="toxic-damage-label" style="color:#ff8c42;">pontos de dano causados</div>
+
+      <div class="toxic-result-card" id="toxic-boss-card">
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:#ff8c42;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;">Seu arquétipo de chefe tóxico</div>
+        <div class="toxic-boss-title" id="toxic-boss-name"></div>
+        <div class="toxic-boss-desc" id="toxic-boss-desc"></div>
+        <div class="profile-traits" id="toxic-boss-traits"></div>
+      </div>
+
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:20px;animation:resultCascade 0.5s cubic-bezier(0.22,1,0.36,1) 0.35s both;">
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:16px;">Danos por dimensão</div>
+        <div class="damage-meter" id="damage-meter"></div>
+      </div>
+
+      <div class="ig-card-wrap">
+        <div class="ig-card toxic" id="toxic-ig-card">
+          <div class="ig-card-game-label" id="toxic-ig-label">Simulador de Decisões de Liderança</div>
+          <span class="ig-card-icon" id="toxic-ig-icon">😈</span>
+          <div class="ig-card-profile" id="toxic-ig-profile"></div>
+          <div class="ig-card-desc" id="toxic-ig-desc"></div>
+          <div class="ig-card-score-row">
+            <div class="ig-card-score-num" id="toxic-ig-score"></div>
+            <div class="ig-card-score-meta">
+              <div class="ig-card-score-label" id="toxic-ig-max"></div>
+              <div class="ig-card-score-label">pts de dano</div>
+            </div>
+          </div>
+          <div class="ig-card-traits" id="toxic-ig-traits"></div>
+          <div class="ig-card-divider"></div>
+          <div class="ig-card-footer">matheuszeuch.github.io/lider &nbsp;·&nbsp; <span>você consegue pior?</span></div>
+        </div>
+        <div class="ig-hint">&#128247; Compartilhe seu relatório de danos</div>
+      </div>
+
+      <button class="btn-primary" style="background:#ff4444;margin-bottom:0;" onclick="startGame()">&#8634; Causar mais dano</button>
+      <button class="btn-ghost" onclick="exitToxicMode()" style="margin-top:12px;">&#8592; Voltar ao modo normal</button>
     </div>
   </section>
 
@@ -1150,10 +1370,10 @@ var SCENARIOS = [
     title: "Um membro da equipe está entregando abaixo do esperado há 3 semanas.",
     desc: "Diego, seu analista mais experiente, começou a falhar prazos e sua qualidade caiu visivelmente. A equipe está percebendo. Você ainda não conversou diretamente com ele sobre isso.",
     choices: [
-      { text: "Enviar um e-mail ao time reforçando os padrões de qualidade e prazos esperados de todos.", score: 40, dimension: "comunicacao", consequence: "O e-mail gera desconforto. Diego sabe que é sobre ele, mas o problema real não é endereçado. A situação se arrasta por mais duas semanas até forçar uma conversa inevitável." },
-      { text: "Escalar para o RH e iniciar um processo formal de advertência por baixa performance.", score: 15, dimension: "etica", consequence: "O processo formal chega como um choque. Sem conversa prévia, Diego fica na defensiva, o clima deteriora e você perde credibilidade por pular etapas básicas de gestão." },
-      { text: "Chamar Diego para uma conversa privada e entender o que está acontecendo antes de agir.", score: 100, dimension: "pessoas", consequence: "Diego revela um problema familiar. Com suporte e plano de retomada, recupera a performance em duas semanas. A equipe percebe sua liderança humana e a confiança no time aumenta." },
-      { text: "Redistribuir as tarefas de Diego entre o time para proteger o projeto sem confrontá-lo.", score: 20, dimension: "resultados", consequence: "O projeto segue, mas Diego percebe o que aconteceu e se sente humilhado. Sua desmotivação piora. O time nota que problemas de performance são varridos para debaixo do tapete." }
+      { text: "Redistribuir as tarefas de Diego temporariamente — proteger o projeto é prioridade e a conversa pode vir depois.", score: 40, dimension: "comunicacao", consequence: "O e-mail gera desconforto. Diego sabe que é sobre ele, mas o problema real não é endereçado. A situação se arrasta por mais duas semanas até forçar uma conversa inevitável." },
+      { text: "Enviar um e-mail ao time reforçando expectativas de qualidade — cria consciência sem confronto direto.", score: 15, dimension: "etica", consequence: "O processo formal chega como um choque. Sem conversa prévia, Diego fica na defensiva, o clima deteriora e você perde credibilidade por pular etapas básicas de gestão." },
+      { text: "Chamar Diego para uma conversa privada e entender o que está acontecendo antes de tomar qualquer decisão.", score: 100, dimension: "pessoas", consequence: "Diego revela um problema familiar. Com suporte e plano de retomada, recupera a performance em duas semanas. A equipe percebe sua liderança humana e a confiança no time aumenta." },
+      { text: "Registrar formalmente os atrasos no sistema de RH para ter histórico caso o problema persista.", score: 20, dimension: "resultados", consequence: "O projeto segue, mas Diego percebe o que aconteceu e se sente humilhado. Sua desmotivação piora. O time nota que problemas de performance são varridos para debaixo do tapete." }
     ],
     bestIndex: 2,
     feedbackGood: "Confrontar com empatia antes de punir é o que separa gestores de líderes. Diego pode estar passando por algo pessoal. A conversa direta preserva a relação e abre espaço para solução.",
@@ -1166,10 +1386,10 @@ var SCENARIOS = [
     title: "Seu diretor pede uma decisão rápida com dados incompletos.",
     desc: "Faltam 2 horas para a reunião de diretoria. Seu chefe quer que você apresente uma recomendação sobre expandir para um novo mercado — mas você tem apenas 40% dos dados necessários para uma análise robusta.",
     choices: [
-      { text: "Pedir adiamento da apresentação e só recomendar quando os dados forem suficientes.", score: 50, dimension: "etica", consequence: "O adiamento é aceito, mas cria percepção de que você não opera bem sob pressão. A oportunidade de mostrar maturidade executiva é perdida." },
-      { text: "Montar uma recomendação confiante com premissas otimistas para não decepcionar o diretor.", score: 10, dimension: "comunicacao", consequence: "A recomendação é aprovada, mas os dados reais contradizem as premissas. Sua credibilidade é comprometida e a decisão precisa ser revertida com custo alto." },
-      { text: "Delegar a apresentação para alguém da equipe e deixar que ela apresente no seu lugar.", score: 5, dimension: "pessoas", consequence: "A equipe fica exposta sem preparo adequado, o resultado é fraco e você perde pontos de liderança por ausência num momento crítico." },
-      { text: "Apresentar o que tem, nomear as incertezas com clareza e propor prazo para completar a análise.", score: 100, dimension: "estrategia", consequence: "A diretoria valoriza a honestidade intelectual. Você ganha tempo para completar a análise e sua reputação como executivo confiável sai fortalecida da reunião." }
+      { text: "Pedir adiamento da apresentação — chegar sem análise completa passa imagem de despreparo.", score: 50, dimension: "etica", consequence: "O adiamento é aceito, mas cria percepção de que você não opera bem sob pressão. A oportunidade de mostrar maturidade executiva é perdida." },
+      { text: "Montar uma recomendação com as premissas mais conservadoras disponíveis e apresentar com confiança.", score: 10, dimension: "comunicacao", consequence: "A recomendação é aprovada, mas os dados reais contradizem as premissas. Sua credibilidade é comprometida e a decisão precisa ser revertida com custo alto." },
+      { text: "Delegar a apresentação para alguém da equipe com instrução de apresentar o que temos.", score: 5, dimension: "pessoas", consequence: "A equipe fica exposta sem preparo adequado, o resultado é fraco e você perde pontos de liderança por ausência num momento crítico." },
+      { text: "Apresentar o que tem, nomear as incertezas com clareza e propor um prazo para completar a análise.", score: 100, dimension: "estrategia", consequence: "A diretoria valoriza a honestidade intelectual. Você ganha tempo para completar a análise e sua reputação como executivo confiável sai fortalecida da reunião." }
     ],
     bestIndex: 3,
     feedbackGood: "Apresentar com transparência sobre as limitações vale muito mais do que uma recomendação falsa de confiança. Executivos confiam em quem nomeia incertezas — não em quem as esconde.",
@@ -1182,10 +1402,10 @@ var SCENARIOS = [
     title: "Você descobre uma irregularidade nos números do relatório trimestral.",
     desc: "Revisando os dados antes da publicação, você nota que os números de performance foram ajustados para parecerem melhores. Seu gestor diz: 'não é grande coisa, todo mundo faz isso'. O relatório vai para acionistas.",
     choices: [
-      { text: "Pedir transferência de área para não aparecer como responsável pelo relatório.", score: 15, dimension: "pessoas", consequence: "A transferência é aprovada, mas o relatório sai com irregularidades. Quando o problema vem à tona, sua fuga da situação é lembrada e sua imagem sofre consequências." },
+      { text: "Propor ao gestor uma revisão dos dados antes de assinar, mas respeitar a decisão final dele se insistir.", score: 15, dimension: "pessoas", consequence: "A transferência é aprovada, mas o relatório sai com irregularidades. Quando o problema vem à tona, sua fuga da situação é lembrada e sua imagem sofre consequências." },
       { text: "Recusar assinar o relatório e escalar para o compliance ou para acima na hierarquia.", score: 100, dimension: "etica", consequence: "O compliance intervém e os dados são corrigidos. A tensão com o gestor é real, mas sua reputação de integridade se solidifica. Você passa a ser visto como alguém em quem a empresa pode confiar." },
-      { text: "Propor corrigir os dados agora, mas ceder caso o gestor insista em manter como está.", score: 40, dimension: "etica", consequence: "O gestor insiste e você cede. O relatório sai impreciso. Meses depois, a auditoria identifica a inconsistência — e você estava na lista de signatários." },
-      { text: "Assinar o relatório para não criar atrito com o gestor por algo considerado menor.", score: 0, dimension: "etica", consequence: "Um acionista questiona os números em assembleia. A investigação revela a manipulação e você é identificado como cúmplice. Sua carreira na empresa chega ao fim." }
+      { text: "Assinar o relatório — o ajuste é pequeno e criar atrito com o gestor pode custar mais do que vale.", score: 40, dimension: "etica", consequence: "O gestor insiste e você cede. O relatório sai impreciso. Meses depois, a auditoria identifica a inconsistência — e você estava na lista de signatários." },
+      { text: "Pedir que o departamento jurídico revise o relatório antes de qualquer decisão.", score: 0, dimension: "etica", consequence: "Um acionista questiona os números em assembleia. A investigação revela a manipulação e você é identificado como cúmplice. Sua carreira na empresa chega ao fim." }
     ],
     bestIndex: 1,
     feedbackGood: "Ética não é negociável quando envolve terceiros — especialmente acionistas. Líderes que constroem reputações duradouras escolhem o certo mesmo quando é caro.",
@@ -1198,10 +1418,10 @@ var SCENARIOS = [
     title: "Dois membros da sua equipe estão em conflito aberto e isso está afetando o time.",
     desc: "Ana e Rodrigo, dois líderes técnicos, estão em desentendimento crescente sobre a arquitetura do projeto. As discussões estão ficando pessoais e outros membros da equipe estão escolhendo lados.",
     choices: [
-      { text: "Convocar uma reunião coletiva para discutir o conflito abertamente com toda a equipe.", score: 30, dimension: "comunicacao", consequence: "A reunião coletiva amplifica o conflito. Ana e Rodrigo ficam na defensiva, os lados ficam mais marcados e o clima piora nas semanas seguintes." },
-      { text: "Tomar a decisão técnica você mesmo e comunicar ao time, encerrando o debate.", score: 55, dimension: "estrategia", consequence: "O debate técnico cessa, mas a tensão entre Ana e Rodrigo continua. Sem resolução relacional, o próximo desacordo explode com mais intensidade." },
-      { text: "Não intervir por ora e aguardar que o próprio time resolva o desentendimento.", score: 0, dimension: "pessoas", consequence: "O conflito escala. Um dos dois pede transferência. A equipe perde um talento e você é questionado pela liderança por não ter agido a tempo." },
-      { text: "Conversar individualmente com cada um e depois facilitar uma reunião entre os dois.", score: 100, dimension: "pessoas", consequence: "As conversas individuais revelam um mal-entendido de escopo. A reunião conjunta resolve o impasse técnico e restaura a relação. O time volta a funcionar com coesão." }
+      { text: "Convocar uma reunião de equipe para discutir a questão técnica com transparência — problemas escondidos crescem.", score: 30, dimension: "comunicacao", consequence: "A reunião coletiva amplifica o conflito. Ana e Rodrigo ficam na defensiva, os lados ficam mais marcados e o clima piora nas semanas seguintes." },
+      { text: "Tomar a decisão técnica você mesmo e comunicar ao time — clareza de liderança encerra debates improdutivos.", score: 55, dimension: "estrategia", consequence: "O debate técnico cessa, mas a tensão entre Ana e Rodrigo continua. Sem resolução relacional, o próximo desacordo explode com mais intensidade." },
+      { text: "Deixar que o próprio time encontre a solução — intervenção prematura remove autonomia dos especialistas.", score: 0, dimension: "pessoas", consequence: "O conflito escala. Um dos dois pede transferência. A equipe perde um talento e você é questionado pela liderança por não ter agido a tempo." },
+      { text: "Conversar individualmente com cada um primeiro e depois facilitar uma reunião entre os dois.", score: 100, dimension: "pessoas", consequence: "As conversas individuais revelam um mal-entendido de escopo. A reunião conjunta resolve o impasse técnico e restaura a relação. O time volta a funcionar com coesão." }
     ],
     bestIndex: 3,
     feedbackGood: "Conversas individuais permitem que cada um se expresse sem defesa, revelam a raiz real do conflito e criam condições para mediação eficaz.",
@@ -1214,10 +1434,10 @@ var SCENARIOS = [
     title: "Uma oportunidade inesperada aparece — mas exige desviar recursos do projeto principal.",
     desc: "Um potencial cliente grande quer uma proposta em 5 dias para um contrato que pode representar 30% da receita anual. O problema: sua equipe está 100% alocada num projeto crítico com entrega em 3 semanas.",
     choices: [
-      { text: "Declinar a proposta — o time está no limite e foco é uma vantagem competitiva real.", score: 70, dimension: "estrategia", consequence: "O projeto atual é entregue com qualidade. O cliente potencial encontra outro fornecedor. A decisão de foco foi correta, mas a falta de exploração de alternativas deixa a dúvida." },
-      { text: "Pedir ao time horas extras para tentar entregar os dois projetos ao mesmo tempo.", score: 15, dimension: "pessoas", consequence: "A equipe sobre-trabalha por duas semanas. Um sênior adoece por estresse. A qualidade de ambas as entregas cai e dois membros pedem demissão no mês seguinte." },
-      { text: "Avaliar o que pode ser realocado sem comprometer o projeto e propor uma solução criativa.", score: 95, dimension: "estrategia", consequence: "Você identifica que 20% da equipe pode ser realocada sem risco. Apresenta proposta ao cliente, que impressiona pela agilidade. O contrato é fechado e o projeto atual entrega no prazo." },
-      { text: "Aceitar a oportunidade e lidar com os impactos no projeto principal conforme surgirem.", score: 25, dimension: "resultados", consequence: "O projeto atual atrasa 10 dias. O cliente existente fica insatisfeito. O novo contrato entra, mas você paga o preço em reputação de entrega e relacionamento." }
+      { text: "Aceitar a oportunidade — projetos críticos sempre têm espaço para ajuste quando a liderança prioriza.", score: 70, dimension: "estrategia", consequence: "O projeto atual é entregue com qualidade. O cliente potencial encontra outro fornecedor. A decisão de foco foi correta, mas a falta de exploração de alternativas deixa a dúvida." },
+      { text: "Pedir ao time horas extras para entregar os dois — oportunidades como essa não voltam e o time entende.", score: 15, dimension: "pessoas", consequence: "A equipe sobre-trabalha por duas semanas. Um sênior adoece por estresse. A qualidade de ambas as entregas cai e dois membros pedem demissão no mês seguinte." },
+      { text: "Avaliar o que pode ser realocado sem comprometer o projeto atual e propor uma solução ao cliente.", score: 95, dimension: "estrategia", consequence: "Você identifica que 20% da equipe pode ser realocada sem risco. Apresenta proposta ao cliente, que impressiona pela agilidade. O contrato é fechado e o projeto atual entrega no prazo." },
+      { text: "Declinar a proposta — comprometer o projeto atual para perseguir uma oportunidade nova é risco demais.", score: 25, dimension: "resultados", consequence: "O projeto atual atrasa 10 dias. O cliente existente fica insatisfeito. O novo contrato entra, mas você paga o preço em reputação de entrega e relacionamento." }
     ],
     bestIndex: 2,
     feedbackGood: "Liderança estratégica é criar opções onde parece não existir nenhuma. Antes de dizer sim ou não, explore: o que é negociável? Prazo do cliente? Escopo atual? Subcontratação?",
@@ -1230,10 +1450,10 @@ var SCENARIOS = [
     title: "Você precisa dar feedback negativo para alguém que se acha acima de críticas.",
     desc: "Carla é muito competente tecnicamente e sabe disso. Ela tende a ignorar feedback e reagiu mal na última vez que você tentou abordar um ponto de melhoria. Mas o comportamento dela está impactando a equipe.",
     choices: [
-      { text: "Dar o retorno na frente do time para que ela veja o impacto que causa nos colegas.", score: 0, dimension: "comunicacao", consequence: "Carla contra-ataca publicamente. O episódio vira um conflito aberto. Você perde a confiança de toda a equipe por violar uma regra básica de respeito no trabalho." },
-      { text: "Preparar uma conversa com exemplos concretos, focando no impacto — não no julgamento.", score: 100, dimension: "comunicacao", consequence: "Carla ouve com resistência inicial, mas os exemplos concretos a desarmam. Ela reconhece o impacto e propõe mudanças ela mesma. A relação com a equipe melhora nas semanas seguintes." },
-      { text: "Aguardar a próxima avaliação formal de desempenho para abordar os pontos de melhoria.", score: 20, dimension: "pessoas", consequence: "O comportamento de Carla continua por mais 3 meses até a avaliação. Dois membros reclamam formalmente do clima. Você é questionado por não ter agido antes." },
-      { text: "Acionar o RH para conduzir o feedback em seu lugar, dado o histórico de reações dela.", score: 15, dimension: "etica", consequence: "Carla fica ofendida com a intermediação sem conversa prévia. A relação se deteriora e ela começa a questionar sua liderança abertamente com a equipe." }
+      { text: "Aguardar a próxima avaliação formal de desempenho — feedback fora de ciclo pode parecer perseguição.", score: 0, dimension: "comunicacao", consequence: "Carla contra-ataca publicamente. O episódio vira um conflito aberto. Você perde a confiança de toda a equipe por violar uma regra básica de respeito no trabalho." },
+      { text: "Preparar uma conversa com exemplos concretos, focando no impacto — não no julgamento da pessoa.", score: 100, dimension: "comunicacao", consequence: "Carla ouve com resistência inicial, mas os exemplos concretos a desarmam. Ela reconhece o impacto e propõe mudanças ela mesma. A relação com a equipe melhora nas semanas seguintes." },
+      { text: "Acionar o RH para uma conversa estruturada — temas sensíveis exigem suporte institucional.", score: 20, dimension: "pessoas", consequence: "O comportamento de Carla continua por mais 3 meses até a avaliação. Dois membros reclamam formalmente do clima. Você é questionado por não ter agido antes." },
+      { text: "Endereçar o comportamento numa reunião de time onde todos possam contribuir com a perspectiva.", score: 15, dimension: "etica", consequence: "Carla fica ofendida com a intermediação sem conversa prévia. A relação se deteriora e ela começa a questionar sua liderança abertamente com a equipe." }
     ],
     bestIndex: 1,
     feedbackGood: "Feedback eficaz é específico, baseado em fatos e centrado em impacto. Com pessoas de alta autoestima técnica, o enquadramento é tudo: fale sobre o que aconteceu, não sobre quem a pessoa é.",
@@ -1246,9 +1466,9 @@ var SCENARIOS = [
     title: "Seu melhor colaborador recebe uma oferta de outra empresa e está pensando em sair.",
     desc: "Lucas, seu analista sênior mais produtivo, te procura e diz que recebeu uma proposta 20% acima do salário atual. Ele gosta da empresa mas diz que se sente estagnado. O RH diz que não há budget para contra-oferta.",
     choices: [
-      { text: "Ir ao RH argumentando que perder Lucas custará muito mais do que 20% e pressionar a exceção.", score: 80, dimension: "estrategia", consequence: "O RH aprova um ajuste salarial. Lucas fica, mas a estagnação não é endereçada. Em 6 meses, recebe outra oferta e desta vez aceita." },
-      { text: "Desejar boa sorte e iniciar a substituição sem tentar uma conversa mais aprofundada.", score: 20, dimension: "resultados", consequence: "Lucas sai. A substituição leva 4 meses e o novo analista precisa de outros 3 para atingir o mesmo nível. A equipe ressente a perda." },
-      { text: "Pedir que Lucas aguarde 6 meses sem apresentar nada concreto além da promessa de resolver.", score: 10, dimension: "comunicacao", consequence: "Lucas aceita a oferta. Antes de sair, conta ao time que recebeu promessas vazias. O moral cai e dois colaboradores começam a olhar para fora." },
+      { text: "Ir ao RH argumentando que perder Lucas custará muito mais e pressionar pela exceção salarial.", score: 80, dimension: "estrategia", consequence: "O RH aprova um ajuste salarial. Lucas fica, mas a estagnação não é endereçada. Em 6 meses, recebe outra oferta e desta vez aceita." },
+      { text: "Desejar boa sorte e iniciar a substituição — reter alguém com uma oferta melhor cria precedente ruim.", score: 20, dimension: "resultados", consequence: "Lucas sai. A substituição leva 4 meses e o novo analista precisa de outros 3 para atingir o mesmo nível. A equipe ressente a perda." },
+      { text: "Pedir que Lucas aguarde 30 dias enquanto você trabalha internamente em opções de retenção.", score: 10, dimension: "comunicacao", consequence: "Lucas aceita a oferta. Antes de sair, conta ao time que recebeu promessas vazias. O moral cai e dois colaboradores começam a olhar para fora." },
       { text: "Conversar com Lucas para entender o que ele quer além do salário e criar um plano de crescimento.", score: 95, dimension: "pessoas", consequence: "Lucas revela que o salário é secundário — ele quer liderar um projeto estratégico. Você viabiliza em 30 dias. Ele recusa a oferta e se torna um dos maiores promotores da empresa." }
     ],
     bestIndex: 3,
@@ -1262,10 +1482,10 @@ var SCENARIOS = [
     title: "Você descobre que um colega próximo está inflando suas horas no sistema.",
     desc: "Marcelo é seu amigo de longa data na empresa e um colega querido pela equipe. Revisando um relatório por acaso, você percebe inconsistências claras nas horas que ele está lançando. Ninguém mais percebeu ainda.",
     choices: [
-      { text: "Ignorar a situação — Marcelo é amigo e certamente tem uma explicação legítima.", score: 0, dimension: "etica", consequence: "Três meses depois, a auditoria encontra o padrão e identifica que você tinha acesso ao relatório na época. Você é questionado por omissão junto com Marcelo." },
-      { text: "Monitorar por mais um mês para acumular mais evidências antes de tomar qualquer decisão.", score: 15, dimension: "estrategia", consequence: "Durante o monitoramento o padrão se repete. Quando você age, a situação é mais grave — e sua demora em reportar também é questionada pela investigação." },
-      { text: "Conversar em privado com Marcelo antes de qualquer ação — pode ser um erro de sistema.", score: 90, dimension: "etica", consequence: "Marcelo confirma que foi erro de lançamento, não intencional. Corrige imediatamente e agradece a discrição. A amizade é preservada e a integridade do processo também." },
-      { text: "Reportar diretamente ao gestor ou compliance sem ter uma conversa prévia com Marcelo.", score: 60, dimension: "etica", consequence: "O compliance investiga e confirma irregularidades. Marcelo é advertido formalmente. A amizade termina quando ele descobre que você reportou sem conversar primeiro." }
+      { text: "Reportar diretamente ao gestor ou compliance — irregularidades financeiras exigem ação institucional imediata.", score: 0, dimension: "etica", consequence: "Três meses depois, a auditoria encontra o padrão e identifica que você tinha acesso ao relatório na época. Você é questionado por omissão junto com Marcelo." },
+      { text: "Monitorar por mais um mês para acumular evidências sólidas antes de agir — evitar acusação precipitada.", score: 15, dimension: "estrategia", consequence: "Durante o monitoramento o padrão se repete. Quando você age, a situação é mais grave — e sua demora em reportar também é questionada pela investigação." },
+      { text: "Conversar em privado com Marcelo antes de qualquer ação — pode ser um erro de lançamento.", score: 90, dimension: "etica", consequence: "Marcelo confirma que foi erro de lançamento, não intencional. Corrige imediatamente e agradece a discrição. A amizade é preservada e a integridade do processo também." },
+      { text: "Ignorar por ora e esperar que o sistema de auditoria identifique — não é sua área de responsabilidade.", score: 60, dimension: "etica", consequence: "O compliance investiga e confirma irregularidades. Marcelo é advertido formalmente. A amizade termina quando ele descobre que você reportou sem conversar primeiro." }
     ],
     bestIndex: 2,
     feedbackGood: "A sequência correta: dar ao amigo a chance de explicar antes de escalar. Se for intencional, a conversa direta o coloca diante da situação com dignidade.",
@@ -1278,10 +1498,10 @@ var SCENARIOS = [
     title: "Você precisa implementar uma mudança impopular que vem da diretoria.",
     desc: "A diretoria decidiu eliminar o modelo de home office total e exige presença mínima de 3 dias por semana. Você discorda parcialmente, mas a decisão é final. Sua equipe está furiosa e olha para você como aliado.",
     choices: [
-      { text: "Negociar com a diretoria uma exceção para a sua equipe antes de comunicar qualquer mudança.", score: 70, dimension: "estrategia", consequence: "A diretoria concede flexibilidade menor. A transição é mais suave, mas a demora na comunicação gerou rumores que criaram ansiedade desnecessária no time." },
+      { text: "Dizer ao time que tentou reverter a decisão mas não conseguiu — mostra que você estava do lado deles.", score: 70, dimension: "estrategia", consequence: "A diretoria concede flexibilidade menor. A transição é mais suave, mas a demora na comunicação gerou rumores que criaram ansiedade desnecessária no time." },
       { text: "Explicar o racional da decisão para o time e assumir sua parte como líder na implementação.", score: 100, dimension: "comunicacao", consequence: "A equipe ainda não gosta da mudança, mas respeita a transparência. Você negocia algumas flexibilidades de horário dentro da política e o clima se estabiliza em três semanas." },
-      { text: "Dizer ao time que tentou mudar mas não conseguiu — e que você também discorda da decisão.", score: 30, dimension: "comunicacao", consequence: "O time se sente aliado inicialmente, mas logo percebe que nenhuma solução prática está sendo defendida. Sua liderança perde força e a resistência aumenta." },
-      { text: "Implementar a política diretamente sem abrir espaço para discussão ou perguntas do time.", score: 35, dimension: "resultados", consequence: "A política é implementada, mas sem contexto, o ressentimento cresce silenciosamente. Em 60 dias, dois colaboradores pedem demissão citando cultura como motivo." }
+      { text: "Implementar a política diretamente — comunicação excessiva sobre decisões já tomadas gera mais resistência.", score: 30, dimension: "comunicacao", consequence: "O time se sente aliado inicialmente, mas logo percebe que nenhuma solução prática está sendo defendida. Sua liderança perde força e a resistência aumenta." },
+      { text: "Negociar com a diretoria uma exceção temporária para sua equipe enquanto adaptam a rotina.", score: 35, dimension: "resultados", consequence: "A política é implementada, mas sem contexto, o ressentimento cresce silenciosamente. Em 60 dias, dois colaboradores pedem demissão citando cultura como motivo." }
     ],
     bestIndex: 1,
     feedbackGood: "Um líder que se distancia de decisões que vêm de cima perde credibilidade. Assuma a decisão como sua também e ajude o time a se adaptar com clareza.",
@@ -1294,10 +1514,10 @@ var SCENARIOS = [
     title: "Você tem a oportunidade de redesenhar como sua equipe trabalha — mas exige esforço agora.",
     desc: "Uma janela rara se abre: três semanas de demanda mais leve. Você pode usar o tempo para entregar mais projetos menores, ou para redesenhar processos, desenvolver a equipe e construir algo mais sustentável.",
     choices: [
-      { text: "Dividir o período entre projetos menores e algum desenvolvimento — metade para cada frente.", score: 70, dimension: "resultados", consequence: "Você avança nas duas frentes, mas sem profundidade. Os projetos entregam pouco e o desenvolvimento fica incompleto — sem impacto real na capacidade do time." },
-      { text: "Dar um respiro ao time — eles precisam recarregar antes do próximo ciclo intenso.", score: 60, dimension: "pessoas", consequence: "A equipe recupera energia e o moral melhora. Mas a janela de construção se fecha sem nada estrutural criado. O próximo ciclo intenso chega com as mesmas ineficiências." },
-      { text: "Preencher com projetos menores para demonstrar produtividade constante à diretoria.", score: 25, dimension: "resultados", consequence: "Os projetos menores entram, mas a equipe sente que desperdiçou uma janela rara. A diretoria vê entregáveis, mas não percebe nenhum ganho estrutural." },
-      { text: "Usar as semanas para redesenhar processos e desenvolver o time — menos entrega, mais fundação.", score: 100, dimension: "estrategia", consequence: "As três semanas produzem um novo processo e dois colaboradores com novas habilidades. No trimestre seguinte, a equipe entrega 30% mais rápido e com menos retrabalho." }
+      { text: "Preencher o período com projetos menores — manter ritmo de entrega é fundamental para a credibilidade da área.", score: 70, dimension: "resultados", consequence: "Você avança nas duas frentes, mas sem profundidade. Os projetos entregam pouco e o desenvolvimento fica incompleto — sem impacto real na capacidade do time." },
+      { text: "Dar um respiro ao time — após meses intensos, recarregar as energias é tão estratégico quanto produzir.", score: 60, dimension: "pessoas", consequence: "A equipe recupera energia e o moral melhora. Mas a janela de construção se fecha sem nada estrutural criado. O próximo ciclo intenso chega com as mesmas ineficiências." },
+      { text: "Dividir o período entre projetos e iniciativas de desenvolvimento — equilíbrio é sempre prudente.", score: 25, dimension: "resultados", consequence: "Os projetos menores entram, mas a equipe sente que desperdiçou uma janela rara. A diretoria vê entregáveis, mas não percebe nenhum ganho estrutural." },
+      { text: "Usar as semanas para redesenhar processos e desenvolver o time — menos entrega agora, mais capacidade depois.", score: 100, dimension: "estrategia", consequence: "As três semanas produzem um novo processo e dois colaboradores com novas habilidades. No trimestre seguinte, a equipe entrega 30% mais rápido e com menos retrabalho." }
     ],
     bestIndex: 3,
     feedbackGood: "O investimento mais raro em liderança é o tempo de construção deliberada. Equipes com processos sólidos e pessoas desenvolvidas entregam muito mais no longo prazo.",
@@ -1310,10 +1530,10 @@ var SCENARIOS = [
     title: "Um colaborador pede mais autonomia, mas ainda comete erros frequentes.",
     desc: "Fernanda, analista há 8 meses, pede para liderar sozinha o próximo projeto. Ela é proativa e tem atitude, mas seus últimos entregáveis tiveram falhas relevantes que você precisou corrigir.",
     choices: [
-      { text: "Aceitar o pedido dando a ela autonomia total, sem adicionar nenhuma estrutura de suporte.", score: 25, dimension: "pessoas", consequence: "Fernanda comete erros sem perceber a tempo. O projeto atrasa e você precisa intervir na reta final. A experiência abala a confiança dela consigo mesma." },
-      { text: "Propor um projeto menor primeiro para que ela prove capacidade antes do maior.", score: 75, dimension: "estrategia", consequence: "Fernanda entrega bem o menor e ganha o maior na sequência. Funciona, mas a demora frustrou sua motivação inicial. O resultado é bom, mas mais tardio do que poderia ser." },
-      { text: "Dar o projeto a ela com checkpoints definidos e suporte estruturado durante a execução.", score: 100, dimension: "pessoas", consequence: "Fernanda entrega com alguns ajustes nos checkpoints, mas com qualidade final alta. Ela ganha confiança e os erros anteriores diminuem visivelmente. Você desenvolveu uma nova líder." },
-      { text: "Negar o pedido — ela ainda comete erros e o risco para este projeto é alto demais agora.", score: 20, dimension: "resultados", consequence: "Fernanda se sente bloqueada e desmotivada. Em dois meses, aceita oferta de outra empresa que a promoveu a líder de projeto. Você perdeu um talento por falta de confiança." }
+      { text: "Negar o pedido — ela ainda comete erros e responsabilidade demais pode comprometer resultados do projeto.", score: 25, dimension: "pessoas", consequence: "Fernanda comete erros sem perceber a tempo. O projeto atrasa e você precisa intervir na reta final. A experiência abala a confiança dela consigo mesma." },
+      { text: "Aceitar o pedido dando a ela autonomia total — confiar é o principal ato de desenvolvimento de um líder.", score: 75, dimension: "estrategia", consequence: "Fernanda entrega bem o menor e ganha o maior na sequência. Funciona, mas a demora frustrou sua motivação inicial. O resultado é bom, mas mais tardio do que poderia ser." },
+      { text: "Dar o projeto com checkpoints definidos e suporte estruturado ao longo da execução.", score: 100, dimension: "pessoas", consequence: "Fernanda entrega com alguns ajustes nos checkpoints, mas com qualidade final alta. Ela ganha confiança e os erros anteriores diminuem visivelmente. Você desenvolveu uma nova líder." },
+      { text: "Propor um projeto menor primeiro — uma forma respeitosa de construir confiança antes do passo maior.", score: 20, dimension: "resultados", consequence: "Fernanda se sente bloqueada e desmotivada. Em dois meses, aceita oferta de outra empresa que a promoveu a líder de projeto. Você perdeu um talento por falta de confiança." }
     ],
     bestIndex: 2,
     feedbackGood: "Liderança de desenvolvimento é calibrar autonomia com suporte. Fernanda precisa de espaço para crescer, mas com andaimes que previnam falhas críticas.",
@@ -1326,9 +1546,9 @@ var SCENARIOS = [
     title: "Sua empresa quer cortar custos e você precisa decidir o que sacrificar.",
     desc: "A diretoria pediu uma redução de 15% no budget da sua área. Você pode cortar headcount, cancelar o programa de treinamentos do ano, ou reduzir a qualidade das ferramentas usadas pela equipe.",
     choices: [
-      { text: "Cortar o programa de treinamentos — é o que menos impacta a entrega de curto prazo.", score: 40, dimension: "resultados", consequence: "A meta é atingida, mas os melhores colaboradores notam que desenvolvimento foi a primeira coisa sacrificada. Dois deles começam a olhar para empresas que investem em crescimento." },
-      { text: "Dispensar o colaborador de menor performance para preservar o restante do time e dos recursos.", score: 30, dimension: "pessoas", consequence: "O corte é feito, mas a equipe fica abalada. O colaborador processa por falta de processo adequado. O clima deteriora e a produtividade cai por um mês." },
-      { text: "Apresentar à diretoria por que a meta de 15% é inviável e negociar um número menor.", score: 70, dimension: "comunicacao", consequence: "A diretoria mantém a meta em 12%. Você ganha algum espaço, mas ainda precisa de escolhas difíceis. Negociar foi certo — mas sem proposta alternativa concreta, o resultado foi parcial." },
+      { text: "Cortar o programa de treinamentos — desenvolvimento pode ser retomado; entregas em andamento não.", score: 40, dimension: "resultados", consequence: "A meta é atingida, mas os melhores colaboradores notam que desenvolvimento foi a primeira coisa sacrificada. Dois deles começam a olhar para empresas que investem em crescimento." },
+      { text: "Dispensar o colaborador de menor performance — preserva o time mais produtivo e os recursos estratégicos.", score: 30, dimension: "pessoas", consequence: "O corte é feito, mas a equipe fica abalada. O colaborador processa por falta de processo adequado. O clima deteriora e a produtividade cai por um mês." },
+      { text: "Apresentar à diretoria por que a meta de 15% compromete resultados e negociar uma meta mais realista.", score: 70, dimension: "comunicacao", consequence: "A diretoria mantém a meta em 12%. Você ganha algum espaço, mas ainda precisa de escolhas difíceis. Negociar foi certo — mas sem proposta alternativa concreta, o resultado foi parcial." },
       { text: "Analisar o impacto de longo prazo de cada opção e propor uma combinação que preserve o essencial.", score: 100, dimension: "estrategia", consequence: "Você combina renegociação de fornecedores, adiamento de uma ferramenta não crítica e redução de viagens. A diretoria aprova e a equipe percebe que você a protegeu com inteligência." }
     ],
     bestIndex: 3,
@@ -1342,10 +1562,10 @@ var SCENARIOS = [
     title: "Um cliente estratégico está insatisfeito e ameaça cancelar o contrato.",
     desc: "O cliente Bravo Corp representa 25% da sua receita. O gestor de conta diz que o problema é técnico e será resolvido em 2 semanas. O cliente quer falar com você hoje e está visivelmente frustrado.",
     choices: [
-      { text: "Oferecer um desconto imediato para acalmar o cliente enquanto o problema técnico é resolvido.", score: 35, dimension: "resultados", consequence: "O cliente aceita o desconto mas não se sente realmente ouvido. O problema se repete um mês depois — e desta vez o desconto não é suficiente para segurá-lo." },
+      { text: "Pedir ao gestor de conta que gerencie — ele conhece o histórico e intervir pode minar sua autoridade.", score: 35, dimension: "resultados", consequence: "O cliente aceita o desconto mas não se sente realmente ouvido. O problema se repete um mês depois — e desta vez o desconto não é suficiente para segurá-lo." },
       { text: "Atender o cliente hoje, ouvir com atenção, assumir responsabilidade e apresentar um plano.", score: 100, dimension: "comunicacao", consequence: "O cliente se sente ouvido e respeitado. O problema técnico é resolvido no prazo prometido. O contrato não só é mantido como expandido no semestre seguinte." },
-      { text: "Pedir ao gestor de conta que lide com o cliente — interferir pode minar a autoridade dele.", score: 15, dimension: "pessoas", consequence: "O cliente percebe que a liderança não veio pessoalmente. Em 48 horas, aciona o jurídico para iniciar a rescisão do contrato." },
-      { text: "Marcar para amanhã — você precisa se preparar bem antes de entrar nessa conversa difícil.", score: 40, dimension: "estrategia", consequence: "O cliente interpreta a espera como descaso e liga para um concorrente ainda hoje. A reunião de amanhã começa com o cliente já em processo de saída." }
+      { text: "Marcar para amanhã e usar o tempo para preparar uma proposta sólida — improviso em momento crítico é risco.", score: 15, dimension: "pessoas", consequence: "O cliente percebe que a liderança não veio pessoalmente. Em 48 horas, aciona o jurídico para iniciar a rescisão do contrato." },
+      { text: "Oferecer um desconto ou crédito imediato — resolve a tensão enquanto a questão técnica é endereçada.", score: 40, dimension: "estrategia", consequence: "O cliente interpreta a espera como descaso e liga para um concorrente ainda hoje. A reunião de amanhã começa com o cliente já em processo de saída." }
     ],
     bestIndex: 1,
     feedbackGood: "Em crises com clientes estratégicos, a presença do líder é o sinal mais poderoso. Ouvir sem se defender e apresentar um plano transforma clientes insatisfeitos em defensores.",
@@ -1358,10 +1578,10 @@ var SCENARIOS = [
     title: "Você descobre que foi preterido em uma promoção por razões que parecem injustas.",
     desc: "Você soube que a promoção para gerente sênior foi para um colega menos experiente. Nos bastidores, alguém te disse que o CEO prefere promover quem tem mais 'perfil de sócio' — código para relacionamento pessoal com a diretoria.",
     choices: [
-      { text: "Começar a buscar oportunidades em outras empresas sem conversar com ninguém internamente.", score: 40, dimension: "estrategia", consequence: "Você encontra uma oportunidade boa em 3 meses e sai. A mudança traz crescimento, mas você nunca soube se havia uma solução dentro da empresa que não foi tentada." },
-      { text: "Comentar com colegas que a promoção foi injusta para criar pressão sobre quem decidiu.", score: 0, dimension: "comunicacao", consequence: "Os comentários chegam até a diretoria. Você é convocado para uma conversa difícil e sua imagem de profissional maduro é comprometida. Futuras oportunidades ficam ainda mais distantes." },
+      { text: "Aceitar sem questionar e continuar entregando — qualidade consistente sempre se impõe no longo prazo.", score: 40, dimension: "estrategia", consequence: "Você encontra uma oportunidade boa em 3 meses e sai. A mudança traz crescimento, mas você nunca soube se havia uma solução dentro da empresa que não foi tentada." },
+      { text: "Começar a mapear oportunidades externas discretamente — saber o que o mercado oferece dá clareza.", score: 0, dimension: "comunicacao", consequence: "Os comentários chegam até a diretoria. Você é convocado para uma conversa difícil e sua imagem de profissional maduro é comprometida. Futuras oportunidades ficam ainda mais distantes." },
       { text: "Solicitar uma reunião com seu gestor para entender os critérios da decisão de forma direta.", score: 100, dimension: "etica", consequence: "Seu gestor explica os critérios reais. Alguns fazem sentido, outros confirmam que o relacionamento pesou. Você sai com clareza para decidir se quer investir nessa empresa. Sua maturidade impressiona." },
-      { text: "Aceitar sem questionar e trabalhar mais duro — resultados consistentes eventualmente se impõem.", score: 30, dimension: "resultados", consequence: "Você continua entregando, mas sem entender os critérios reais de crescimento. Dois anos depois, outra promoção passa por você pelo mesmo motivo e você ainda não entende por quê." }
+      { text: "Conversar com colegas de confiança para entender a percepção interna sobre seu posicionamento.", score: 30, dimension: "resultados", consequence: "Você continua entregando, mas sem entender os critérios reais de crescimento. Dois anos depois, outra promoção passa por você pelo mesmo motivo e você ainda não entende por quê." }
     ],
     bestIndex: 2,
     feedbackGood: "A resposta madura é buscar clareza — não vingança nem resignação. Uma conversa direta com seu gestor revela os critérios reais e demonstra maturidade executiva.",
@@ -1374,9 +1594,9 @@ var SCENARIOS = [
     title: "Sua equipe está desmotivada após meses de pressão intensa e resultados abaixo do esperado.",
     desc: "O time entregou, mas o custo foi alto — horas extras, cancelamentos pessoais, clima tenso. Os resultados ficaram 10% abaixo da meta. As pessoas estão cansadas e o moral está no pior ponto do ano.",
     choices: [
-      { text: "Focar o time numa vitória rápida para restaurar a confiança e reativar a energia do grupo.", score: 50, dimension: "resultados", consequence: "A vitória rápida acontece, mas sem resolver o cansaço acumulado. O time celebra brevemente e logo recai no mesmo padrão de pressão. A rotatividade aumenta no trimestre seguinte." },
-      { text: "Dar folga coletiva de uma semana para que o time recarregue as energias antes do próximo ciclo.", score: 55, dimension: "pessoas", consequence: "A folga ajuda o físico, mas não o estrutural. A equipe volta descansada para o mesmo ambiente que gerou o esgotamento. Em 60 dias, o ciclo se repete." },
-      { text: "Fazer uma apresentação motivacional com conquistas e planos para reengajar o time.", score: 40, dimension: "comunicacao", consequence: "A apresentação é bem produzida, mas o time sente que suas dificuldades não foram reconhecidas. Os comentários nos bastidores: 'bonito, mas não mudou nada'." },
+      { text: "Focar o time numa vitória rápida — momentum positivo é o melhor antídoto para baixo moral.", score: 50, dimension: "resultados", consequence: "A vitória rápida acontece, mas sem resolver o cansaço acumulado. O time celebra brevemente e logo recai no mesmo padrão de pressão. A rotatividade aumenta no trimestre seguinte." },
+      { text: "Dar folga coletiva de uma semana — descanso restaura capacidade de entrega e sinaliza que o líder se importa.", score: 55, dimension: "pessoas", consequence: "A folga ajuda o físico, mas não o estrutural. A equipe volta descansada para o mesmo ambiente que gerou o esgotamento. Em 60 dias, o ciclo se repete." },
+      { text: "Fazer uma apresentação motivacional com os planos para o próximo ciclo — direção clara reativa o engajamento.", score: 40, dimension: "comunicacao", consequence: "A apresentação é bem produzida, mas o time sente que suas dificuldades não foram reconhecidas. Os comentários nos bastidores: 'bonito, mas não mudou nada'." },
       { text: "Fazer uma retrospectiva com o time para nomear o que foi difícil e co-construir o próximo ciclo.", score: 100, dimension: "pessoas", consequence: "A retrospectiva revela três problemas estruturais nunca verbalizados. Juntos, vocês redesenham dois processos. O moral se recupera e o próximo ciclo começa com clareza e compromisso renovado." }
     ],
     bestIndex: 3,
@@ -1390,10 +1610,10 @@ var SCENARIOS = [
     title: "Você precisa escolher quem vai representar sua equipe numa oportunidade de alto impacto.",
     desc: "Surgiu uma vaga para participar de um projeto cross-funcional com a diretoria — alta visibilidade, alto aprendizado. Você tem dois candidatos: Paulo, sênior e já reconhecido, e Beatriz, júnior mas com potencial enorme.",
     choices: [
-      { text: "Assumir o projeto você mesmo — a visibilidade com a diretoria é estratégica para sua carreira.", score: 20, dimension: "estrategia", consequence: "Você brilha no projeto, mas sua equipe perde exposição e desenvolvimento. A diretoria nota que você não está formando sucessores — o que começa a limitar seu próprio crescimento." },
+      { text: "Escolher Paulo — track record sólido reduz risco num projeto de alta visibilidade com a diretoria.", score: 20, dimension: "estrategia", consequence: "Você brilha no projeto, mas sua equipe perde exposição e desenvolvimento. A diretoria nota que você não está formando sucessores — o que começa a limitar seu próprio crescimento." },
       { text: "Escolher Beatriz e montar um plano de suporte para que ela entregue bem no projeto.", score: 95, dimension: "pessoas", consequence: "Beatriz entrega além do esperado. A diretoria a nota e você ganha reputação de líder que forma pessoas. Beatriz se torna referência da área em 12 meses." },
-      { text: "Escolher Paulo — ele tem track record sólido e o risco para a imagem do time é menor.", score: 45, dimension: "resultados", consequence: "Paulo entrega com qualidade, mas Beatriz percebe o padrão e começa a questionar suas perspectivas. Em 4 meses, aceita uma promoção em outra empresa." },
-      { text: "Perguntar a ambos se têm interesse e deixar que cheguem a um acordo entre si.", score: 30, dimension: "comunicacao", consequence: "Paulo, mais experiente e articulado, naturalmente assume. Beatriz cede. A decisão foi tomada por dinâmica social, não por estratégia de liderança." }
+      { text: "Perguntar aos dois quem quer participar e deixar que a decisão emerja da vontade deles.", score: 45, dimension: "resultados", consequence: "Paulo entrega com qualidade, mas Beatriz percebe o padrão e começa a questionar suas perspectivas. Em 4 meses, aceita uma promoção em outra empresa." },
+      { text: "Participar você mesmo — projetos com a diretoria são oportunidade estratégica que não se delega facilmente.", score: 30, dimension: "comunicacao", consequence: "Paulo, mais experiente e articulado, naturalmente assume. Beatriz cede. A decisão foi tomada por dinâmica social, não por estratégia de liderança." }
     ],
     bestIndex: 1,
     feedbackGood: "Dar visibilidade a quem tem potencial mas pouca exposição é um dos maiores gestos de liderança. Com suporte adequado, Beatriz vai surpreender — e você multiplica sua influência.",
@@ -1406,10 +1626,10 @@ var SCENARIOS = [
     title: "Você descobre que o processo que sua equipe usa há anos é ineficiente — mas mudar vai gerar resistência.",
     desc: "Uma análise interna mostra que o processo de aprovação de projetos gera retrabalho e atrasa entregas em média 3 dias por ciclo. Mudar exige treinamento, adaptação e vai irritar quem domina o processo atual.",
     choices: [
-      { text: "Criar um grupo de trabalho para estudar o problema com profundidade antes de qualquer decisão.", score: 30, dimension: "estrategia", consequence: "O grupo analisa bem, mas a decisão chega tarde. Nesse período, 36 ciclos sofreram o atraso evitável. Análise sem ação é só reunião." },
-      { text: "Manter o processo como está — o custo político da mudança supera o ganho de eficiência.", score: 10, dimension: "resultados", consequence: "O processo continua gerando retrabalho. No final do ano, a área é apontada como gargalo em auditoria. Você é questionado sobre por que não agiu quando tinha dados claros." },
+      { text: "Implementar a mudança de cima para baixo — processos são responsabilidade da liderança, não de votação.", score: 30, dimension: "estrategia", consequence: "O grupo analisa bem, mas a decisão chega tarde. Nesse período, 36 ciclos sofreram o atraso evitável. Análise sem ação é só reunião." },
+      { text: "Criar um grupo de trabalho para estudar o problema antes de agir — mudanças sem análise profunda criam novos problemas.", score: 10, dimension: "resultados", consequence: "O processo continua gerando retrabalho. No final do ano, a área é apontada como gargalo em auditoria. Você é questionado sobre por que não agiu quando tinha dados claros." },
       { text: "Mostrar o impacto da ineficiência com dados e envolver o time no redesenho do novo processo.", score: 100, dimension: "estrategia", consequence: "A equipe, envolvida no redesenho, adota o processo com comprometimento real. Em 6 semanas, o retrabalho cai 40% e os 3 dias de atraso por ciclo são eliminados. A mudança vira case interno." },
-      { text: "Implementar a mudança de cima para baixo — explicações longas só aumentam a resistência.", score: 35, dimension: "resultados", consequence: "O processo é implementado formalmente, mas sem convicção. Surgem gambiarras para contorná-lo e em 3 meses ele está parcialmente abandonado." }
+      { text: "Manter o processo atual e focar na capacitação da equipe para executá-lo com mais qualidade.", score: 35, dimension: "resultados", consequence: "O processo é implementado formalmente, mas sem convicção. Surgem gambiarras para contorná-lo e em 3 meses ele está parcialmente abandonado." }
     ],
     bestIndex: 2,
     feedbackGood: "Mudanças bem-sucedidas têm duas coisas em comum: dados que justificam e pessoas que ajudaram a construir. Quando a equipe participa do redesenho, a resistência vira protagonismo.",
@@ -1422,10 +1642,10 @@ var SCENARIOS = [
     title: "Você precisa apresentar resultados ruins para a diretoria.",
     desc: "O trimestre terminou com performance 20% abaixo da meta. Você tem dados, entende as causas e tem um plano — mas a reunião de resultado é amanhã e o clima na empresa está tenso com cobranças.",
     choices: [
-      { text: "Ancorar a apresentação no cenário otimista do próximo trimestre para desviar o foco do passado.", score: 15, dimension: "resultados", consequence: "A diretoria percebe a tentativa de desviar o foco. Quando o próximo trimestre também decepciona, a promessa anterior é lembrada e sua credibilidade entra em colapso." },
+      { text: "Enfatizar os fatores externos e o contexto de mercado — contextualizar resultados é parte da análise executiva.", score: 15, dimension: "resultados", consequence: "A diretoria percebe a tentativa de desviar o foco. Quando o próximo trimestre também decepciona, a promessa anterior é lembrada e sua credibilidade entra em colapso." },
       { text: "Apresentar os dados, assumir responsabilidade e trazer um plano concreto com métricas e prazos.", score: 100, dimension: "comunicacao", consequence: "A diretoria fica satisfeita com a maturidade da análise. Seu plano é aprovado e você recebe mais autonomia no trimestre seguinte por ter demonstrado que sabe enfrentar adversidade." },
-      { text: "Enfatizar os fatores externos que pesaram no resultado — mercado, contexto macro, outras áreas.", score: 25, dimension: "comunicacao", consequence: "A diretoria ouve os fatores externos, mas percebe ausência de autocrítica. Você perde credibilidade e a próxima reunião começa com escrutínio muito maior sobre sua área." },
-      { text: "Pedir adiamento da reunião para ter uma análise mais completa antes de se apresentar.", score: 20, dimension: "estrategia", consequence: "O adiamento é negado. Você entra despreparado e sem narrativa clara. O resultado é pior do que se tivesse apresentado com honestidade e os dados que já tinha." }
+      { text: "Ancorar a apresentação nos planos do próximo trimestre — foco em solução é mais útil do que análise do passado.", score: 25, dimension: "comunicacao", consequence: "A diretoria ouve os fatores externos, mas percebe ausência de autocrítica. Você perde credibilidade e a próxima reunião começa com escrutínio muito maior sobre sua área." },
+      { text: "Pedir adiamento da reunião para preparar uma análise mais completa e chegar com mais dados.", score: 20, dimension: "estrategia", consequence: "O adiamento é negado. Você entra despreparado e sem narrativa clara. O resultado é pior do que se tivesse apresentado com honestidade e os dados que já tinha." }
     ],
     bestIndex: 1,
     feedbackGood: "Transparência sob pressão é o que mais diferencia líderes confiáveis. Diretores avaliam: você entende o que aconteceu? Tem um plano? Assume ou esquiva?",
@@ -1438,8 +1658,8 @@ var SCENARIOS = [
     title: "Dois departamentos estão em guerra sobre quem é responsável por um problema crítico.",
     desc: "Um cliente importante foi impactado por uma falha que cruzou as áreas de TI e Operações. Cada time culpa o outro. O problema ainda não foi resolvido e o cliente está esperando uma resposta.",
     choices: [
-      { text: "Reunir os dois times para definir de quem é a culpa antes de qualquer ação corretiva.", score: 10, dimension: "comunicacao", consequence: "A reunião dura 2 horas sem conclusão. O cliente não recebe retorno. No dia seguinte, aciona a rescisão contratual. A discussão de culpa custou o cliente." },
-      { text: "Escalar para a diretoria para que ela decida quem é o responsável pelo problema.", score: 20, dimension: "etica", consequence: "A diretoria intervém, mas leva 6 horas. O cliente já contactou um concorrente nesse intervalo. Você é questionado por não ter tomado iniciativa própria." },
+      { text: "Reunir os dois times imediatamente para alinhar responsabilidades — clareza de papéis resolve conflitos de área.", score: 10, dimension: "comunicacao", consequence: "A reunião dura 2 horas sem conclusão. O cliente não recebe retorno. No dia seguinte, aciona a rescisão contratual. A discussão de culpa custou o cliente." },
+      { text: "Escalar para a diretoria — conflitos entre áreas com cliente impactado exigem decisão no nível certo.", score: 20, dimension: "etica", consequence: "A diretoria intervém, mas leva 6 horas. O cliente já contactou um concorrente nesse intervalo. Você é questionado por não ter tomado iniciativa própria." },
       { text: "Assumir a responsabilidade publicamente e coordenar você mesmo a solução entre os dois times.", score: 85, dimension: "pessoas", consequence: "Sua postura de assumir sem culpar ninguém desarma os dois times. A solução é coordenada em 3 horas. O cliente fica satisfeito e você ganha respeito de ambas as áreas." },
       { text: "Resolver o problema do cliente primeiro e só depois investigar causas e responsabilidades.", score: 100, dimension: "resultados", consequence: "O cliente é atendido em 4 horas. A análise posterior revela lacunas no processo entre TI e Operações. Um protocolo conjunto é criado e o cliente renova o contrato elogiando a resposta." }
     ],
@@ -1454,10 +1674,10 @@ var SCENARIOS = [
     title: "Você tem a chance de assumir um cargo maior — mas significa deixar sua equipe num momento difícil.",
     desc: "A empresa oferece uma promoção para diretor em outra divisão. É exatamente o que você queria. O problema: sua equipe está no meio de um projeto crítico com entrega em 6 semanas e a transição seria imediata.",
     choices: [
-      { text: "Aceitar imediatamente sem condições — a empresa tem capacidade de gerenciar a transição.", score: 20, dimension: "resultados", consequence: "Você parte sem plano de transição. O projeto atrasa, o time fica sem direção e seu ex-gestor assume a operação. Sua reputação de quem 'abandona o barco' te persegue na nova posição." },
-      { text: "Pedir que a promoção seja adiada 6 semanas para que você encerre o projeto atual.", score: 80, dimension: "etica", consequence: "A empresa aceita o adiamento. Você encerra o projeto com qualidade e assume a nova posição com reputação intacta. Correto e honrado — embora a transição estruturada fosse ainda mais elegante." },
+      { text: "Recusar a promoção — integridade com compromissos assumidos é o que define a reputação de liderança.", score: 20, dimension: "resultados", consequence: "Você parte sem plano de transição. O projeto atrasa, o time fica sem direção e seu ex-gestor assume a operação. Sua reputação de quem 'abandona o barco' te persegue na nova posição." },
+      { text: "Aceitar imediatamente sem condições — oportunidades de diretoria são raras e a empresa tem como gerenciar.", score: 80, dimension: "etica", consequence: "A empresa aceita o adiamento. Você encerra o projeto com qualidade e assume a nova posição com reputação intacta. Correto e honrado — embora a transição estruturada fosse ainda mais elegante." },
       { text: "Aceitar e negociar com a empresa um plano de transição estruturado com suporte ao sucessor.", score: 100, dimension: "estrategia", consequence: "A empresa aceita a transição estruturada. Você indica e prepara seu sucessor. O projeto entrega no prazo. A nova diretoria observa como você saiu e fica ainda mais confiante na contratação." },
-      { text: "Recusar a promoção — não é o momento certo para deixar o time no meio de um projeto.", score: 55, dimension: "pessoas", consequence: "Você recusa e a equipe termina o projeto. A empresa oferece a promoção para outro candidato. Meses depois, a oportunidade não se repete e você carrega a dúvida do que poderia ter sido." }
+      { text: "Pedir que a promoção seja adiada 6 semanas para encerrar o projeto atual com qualidade.", score: 55, dimension: "pessoas", consequence: "Você recusa e a equipe termina o projeto. A empresa oferece a promoção para outro candidato. Meses depois, a oportunidade não se repete e você carrega a dúvida do que poderia ter sido." }
     ],
     bestIndex: 2,
     feedbackGood: "O líder maduro não escolhe entre ambição e responsabilidade — ele negocia para honrar os dois. Essa postura também sinaliza para a nova diretoria como você vai liderar lá.",
@@ -1474,9 +1694,9 @@ var SCENARIOS = [
     icon: "👥",
     choices: [
       { text: "Buscar formas criativas de reconhecimento dentro do seu poder — visibilidade, autonomia, projetos especiais.", score: 95, dimension: "pessoas", consequence: "Você apresenta um projeto estratégico exclusivo para os três e os indica para apresentar resultados à diretoria. O time se sente valorizado e a iniciativa vira referência interna de gestão." },
-      { text: "Comunicar que entende a situação mas não há nada que possa fazer sem política formal do RH.", score: 15, dimension: "comunicacao", consequence: "Os três colaboradores ficam frustrados. Em 60 dias, dois deles atualizam o LinkedIn. No trimestre seguinte, a performance cai — e um deles aceita oferta de concorrente." },
-      { text: "Propor ao RH a criação de uma política de reconhecimento baseada nos dados de performance do seu time.", score: 80, dimension: "estrategia", consequence: "O RH leva 3 meses para analisar. Enquanto isso, você mantém o time engajado com ações locais. A proposta é aprovada e você passa a ser referência em gestão de pessoas na empresa." },
-      { text: "Dar a todos do time o mesmo reconhecimento verbal para não criar desigualdade entre as pessoas.", score: 10, dimension: "pessoas", consequence: "Os seniores percebem que a alta performance não gera diferenciação real. A motivação cai e a lógica implícita se instala: entregar mais não compensa." }
+      { text: "Comunicar que entende a situação mas sem política formal do RH não há muito que possa fazer agora.", score: 15, dimension: "comunicacao", consequence: "Os três colaboradores ficam frustrados. Em 60 dias, dois deles atualizam o LinkedIn. No trimestre seguinte, a performance cai — e um deles aceita oferta de concorrente." },
+      { text: "Propor ao RH a criação de uma política de reconhecimento baseada nos dados de performance do time.", score: 80, dimension: "estrategia", consequence: "O RH leva 3 meses para analisar. Enquanto isso, você mantém o time engajado com ações locais. A proposta é aprovada e você passa a ser referência em gestão de pessoas na empresa." },
+      { text: "Reconhecer todos igualmente para preservar o senso de equidade e evitar favoritismos percebidos.", score: 10, dimension: "pessoas", consequence: "Os seniores percebem que a alta performance não gera diferenciação real. A motivação cai e a lógica implícita se instala: entregar mais não compensa." }
     ],
     bestIndex: 0,
     feedbackGood: "Reconhecimento não precisa ser financeiro para ser poderoso. Visibilidade estratégica, autonomia e projetos de impacto são moedas de alto valor para profissionais de alto desempenho.",
@@ -1490,8 +1710,8 @@ var SCENARIOS = [
     desc: "A empresa vai terceirizar toda a área de suporte técnico, impactando 8 pessoas. Você foi comunicado hoje. A diretoria pede que você notifique o time na reunião de segunda-feira, daqui a 4 dias.",
     icon: "💬",
     choices: [
-      { text: "Reunir o time na segunda com clareza total: o que vai acontecer, prazos, suporte disponível e próximos passos.", score: 90, dimension: "comunicacao", consequence: "A reunião é difícil, mas o time respeita a transparência. Você oferece cartas de recomendação imediatas e apoia a transição. Dois meses depois, recebe agradecimento de quatro dos oito colaboradores." },
-      { text: "Antecipar a notícia para sexta — eles merecem saber o quanto antes para se preparar.", score: 70, dimension: "etica", consequence: "Alguns ficam gratos pela antecipação. Outros ficam ansiosos no fim de semana sem suporte da empresa. A diretoria fica desconfortável com a antecipação não autorizada, mas reconhece a intenção." },
+      { text: "Reunir o time na segunda com clareza total: o que vai acontecer, prazos, suporte e próximos passos.", score: 90, dimension: "comunicacao", consequence: "A reunião é difícil, mas o time respeita a transparência. Você oferece cartas de recomendação imediatas e apoia a transição. Dois meses depois, recebe agradecimento de quatro dos oito colaboradores." },
+      { text: "Antecipar a notícia para sexta — as pessoas merecem saber o quanto antes para se organizar.", score: 70, dimension: "etica", consequence: "Alguns ficam gratos pela antecipação. Outros ficam ansiosos no fim de semana sem suporte da empresa. A diretoria fica desconfortável com a antecipação não autorizada, mas reconhece a intenção." },
       { text: "Esperar a segunda conforme orientado, mas preparar um plano de suporte robusto para apresentar junto.", score: 95, dimension: "pessoas", consequence: "Na segunda, você entrega a notícia difícil com um plano concreto: suporte de RH, cartas de recomendação prontas, extensão de benefícios. O time fica abalado, mas sente que foi tratado com dignidade." },
       { text: "Pedir à diretoria mais tempo para preparar o time gradualmente antes da comunicação oficial.", score: 35, dimension: "estrategia", consequence: "A diretoria nega. Você entra na reunião de segunda sem preparação adicional. Sem plano de suporte, a comunicação parece fria e o time sente abandono institucional." }
     ],
@@ -1508,9 +1728,9 @@ var SCENARIOS = [
     icon: "🎯",
     choices: [
       { text: "Focar nos clientes de maior valor e diferenciar o produto com funcionalidades que o concorrente não tem.", score: 95, dimension: "estrategia", consequence: "Em 6 meses, os clientes menores migraram quase todos — mas os maiores ficaram e expandiram contratos. Sua margem aumentou 18% e o produto ganhou posicionamento premium claro." },
-      { text: "Reduzir o preço para competir diretamente com o novo concorrente no mesmo segmento.", score: 30, dimension: "resultados", consequence: "Você entra numa guerra de preços que comprime margens. O concorrente, com estrutura mais enxuta, aguenta mais. Sua equipe sofre cortes para compensar e a qualidade cai." },
-      { text: "Lançar uma versão simplificada e barata do produto para competir no segmento de entrada.", score: 65, dimension: "estrategia", consequence: "O produto simplificado captura parte do mercado de entrada, mas canibaliza clientes que migrariam para a versão completa. A marca fica confusa e a equipe divide esforço entre dois produtos." },
-      { text: "Aguardar mais dados de mercado antes de decidir — é cedo para saber se a tendência vai se consolidar.", score: 20, dimension: "resultados", consequence: "Três meses depois, mais 15% dos clientes menores migraram. A janela de diferenciação foi parcialmente perdida. Agir tarde custa mais do que agir com dados incompletos." }
+      { text: "Reduzir o preço para competir diretamente — perder market share para um concorrente mais barato é insustentável.", score: 30, dimension: "resultados", consequence: "Você entra numa guerra de preços que comprime margens. O concorrente, com estrutura mais enxuta, aguenta mais. Sua equipe sofre cortes para compensar e a qualidade cai." },
+      { text: "Lançar uma versão simplificada e acessível do produto para atender o segmento de entrada.", score: 65, dimension: "estrategia", consequence: "O produto simplificado captura parte do mercado de entrada, mas canibaliza clientes que migrariam para a versão completa. A marca fica confusa e a equipe divide esforço entre dois produtos." },
+      { text: "Aguardar mais dados de mercado antes de agir — decisões estratégicas prematuras costumam ser caras.", score: 20, dimension: "resultados", consequence: "Três meses depois, mais 15% dos clientes menores migraram. A janela de diferenciação foi parcialmente perdida. Agir tarde custa mais do que agir com dados incompletos." }
     ],
     bestIndex: 0,
     feedbackGood: "Tentar vencer um concorrente mais barato no mesmo terreno raramente funciona. Focando em quem mais se beneficia do seu produto e diferenciando, você define o campo de batalha onde tem vantagem.",
@@ -1525,9 +1745,9 @@ var SCENARIOS = [
     icon: "⚖️",
     choices: [
       { text: "Recusar a prática e propor ao parceiro alternativas que gerem ganho dentro de limites claros.", score: 100, dimension: "etica", consequence: "O parceiro fica desapontado mas aceita a alternativa. Dois anos depois, dois concorrentes que adotaram a prática original são autuados. Você está limpo — e com a reputação intacta." },
-      { text: "Adotar a prática com ressalvas — monitorar de perto e reverter se houver sinal de risco regulatório.", score: 25, dimension: "estrategia", consequence: "A prática funciona por 8 meses. Uma investigação setorial surge. Você reverte às pressas, mas a documentação dos meses anteriores já existe. A explicação para o conselho é constrangedora." },
-      { text: "Pedir uma segunda opinião jurídica externa antes de decidir qualquer coisa.", score: 70, dimension: "etica", consequence: "O jurídico externo confirma o risco e recomenda não adotar. Você tem agora documentação clara para recusar ao parceiro. A decisão é informada e defensável." },
-      { text: "Aceitar a proposta — se todo o setor faz, o risco regulatório de ser o único a não fazer é maior.", score: 5, dimension: "etica", consequence: "A lógica de 'todo mundo faz' nunca foi defesa jurídica. Quando a investigação vem, ela não distingue quem foi o primeiro. Você está numa lista que preferia não estar." }
+      { text: "Adotar a prática monitorando de perto e reverter se aparecer risco regulatório concreto.", score: 25, dimension: "estrategia", consequence: "A prática funciona por 8 meses. Uma investigação setorial surge. Você reverte às pressas, mas a documentação dos meses anteriores já existe. A explicação para o conselho é constrangedora." },
+      { text: "Pedir uma segunda opinião jurídica externa antes de tomar qualquer decisão.", score: 70, dimension: "etica", consequence: "O jurídico externo confirma o risco e recomenda não adotar. Você tem agora documentação clara para recusar ao parceiro. A decisão é informada e defensável." },
+      { text: "Aceitar a proposta — se todo o setor faz, ficar de fora é criar desvantagem competitiva desnecessária.", score: 5, dimension: "etica", consequence: "A lógica de 'todo mundo faz' nunca foi defesa jurídica. Quando a investigação vem, ela não distingue quem foi o primeiro. Você está numa lista que preferia não estar." }
     ],
     bestIndex: 0,
     feedbackGood: "Zona cinzenta não é zona segura. A prática que 'todo mundo faz' é exatamente o que reguladores investigam quando querem fazer um exemplo. Liderança ética é pagar o preço de curto prazo para não pagar o de longo.",
@@ -1542,9 +1762,9 @@ var SCENARIOS = [
     icon: "🔥",
     choices: [
       { text: "Encerrar a reunião com respeito, agradecer a coragem de Sofia e dizer que vai tratar o tema adequadamente.", score: 100, dimension: "pessoas", consequence: "Você resolve a reunião sem escalada, ouve Sofia e Rafael individualmente e aciona RH. O processo é conduzido com seriedade. Sofia sente que foi ouvida. Rafael recebe orientação formal." },
-      { text: "Pedir que os dois resolvam entre si após a reunião — conflitos interpessoais não são tema de time.", score: 0, dimension: "comunicacao", consequence: "Sofia sente que foi silenciada duas vezes — pela conduta de Rafael e pela sua omissão. Ela registra queixa formal no RH na semana seguinte e cita sua resposta como parte do problema." },
-      { text: "Mediar o conflito ali mesmo — pedir que cada um fale sua perspectiva para o grupo.", score: 15, dimension: "comunicacao", consequence: "Rafael fica na defensiva e o confronto escala na frente de todos. Sofia se arrepende de ter falado. O time fica traumatizado com a dinâmica e o clima piora por semanas." },
-      { text: "Defender Sofia imediatamente e dizer ao time que esse comportamento não será tolerado.", score: 30, dimension: "etica", consequence: "Sua intenção é boa, mas julgamento público sem processo prejudica Rafael antes de qualquer apuração. O RH depois questiona a condução. Sofia é vista como causa de um episódio constrangedor." }
+      { text: "Pedir que os dois conversem em particular após a reunião — conflitos interpessoais precisam de espaço privado.", score: 0, dimension: "comunicacao", consequence: "Sofia sente que foi silenciada duas vezes — pela conduta de Rafael e pela sua omissão. Ela registra queixa formal no RH na semana seguinte e cita sua resposta como parte do problema." },
+      { text: "Mediar ali mesmo, ouvindo as duas perspectivas para entender o que aconteceu antes de agir.", score: 15, dimension: "comunicacao", consequence: "Rafael fica na defensiva e o confronto escala na frente de todos. Sofia se arrepende de ter falado. O time fica traumatizado com a dinâmica e o clima piora por semanas." },
+      { text: "Reforçar os valores de respeito do time e defender Sofia — comportamento inadequado exige posição clara do líder.", score: 30, dimension: "etica", consequence: "Sua intenção é boa, mas julgamento público sem processo prejudica Rafael antes de qualquer apuração. O RH depois questiona a condução. Sofia é vista como causa de um episódio constrangedor." }
     ],
     bestIndex: 0,
     feedbackGood: "Denúncias de assédio moral exigem processo — não resolução pública imediata. Encerrar com respeito, ouvir individualmente e acionar RH é a sequência correta. Protege Sofia, garante devido processo e preserva o ambiente.",
@@ -1558,9 +1778,9 @@ var SCENARIOS = [
     desc: "Uma organização de desenvolvimento de liderança pede que você seja mentor voluntário de 3 jovens profissionais, 2 horas por mês. Você está num momento intenso de trabalho, mas a proposta ressoa com seus valores.",
     icon: "🌱",
     choices: [
-      { text: "Aceitar e integrar o compromisso à sua rotina — 2 horas mensais são viáveis com agenda bem gerida.", score: 90, dimension: "pessoas", consequence: "Os 3 mentorados evoluem visivelmente em 6 meses. Você descobre que o processo te faz refletir sobre sua própria liderança. A rede de contatos se expande e sua reputação como líder que desenvolve pessoas cresce." },
-      { text: "Recusar — o momento de trabalho não permite mais compromissos externos sem comprometer a qualidade.", score: 55, dimension: "resultados", consequence: "Você preserva a agenda. Mas 6 meses depois, percebe que a intensidade de trabalho que justificou a recusa nunca diminuiu — e a oportunidade não voltou." },
-      { text: "Aceitar condicionalmente — começar com 1 mentorado e expandir se o tempo permitir.", score: 80, dimension: "estrategia", consequence: "Você começa com 1 mentorado e a experiência é tão positiva que reorganiza a agenda para incluir os outros 3 em 2 meses. A moderação inicial foi prudente e o comprometimento acabou sendo total." },
+      { text: "Aceitar e integrar o compromisso à rotina — 2 horas mensais são viáveis com boa gestão de agenda.", score: 90, dimension: "pessoas", consequence: "Os 3 mentorados evoluem visivelmente em 6 meses. Você descobre que o processo te faz refletir sobre sua própria liderança. A rede de contatos se expande e sua reputação como líder que desenvolve pessoas cresce." },
+      { text: "Recusar — o momento de trabalho não permite mais compromissos sem comprometer a qualidade das entregas.", score: 55, dimension: "resultados", consequence: "Você preserva a agenda. Mas 6 meses depois, percebe que a intensidade de trabalho que justificou a recusa nunca diminuiu — e a oportunidade não voltou." },
+      { text: "Aceitar condicionalmente começando com um mentorado — expansão só se o tempo permitir.", score: 80, dimension: "estrategia", consequence: "Você começa com 1 mentorado e a experiência é tão positiva que reorganiza a agenda para incluir os outros 3 em 2 meses. A moderação inicial foi prudente e o comprometimento acabou sendo total." },
       { text: "Pedir que a proposta seja encaminhada como programa formal da empresa para ter suporte institucional.", score: 40, dimension: "estrategia", consequence: "A proposta entra em análise corporativa e some na burocracia. Seis meses depois não há resposta. Os 3 jovens foram alocados para outros mentores." }
     ],
     bestIndex: 0,
@@ -1576,9 +1796,9 @@ var SCENARIOS = [
     icon: "👥",
     choices: [
       { text: "Estruturar papéis complementares claros e facilitar uma conversa inicial sobre estilos de trabalho.", score: 95, dimension: "pessoas", consequence: "Com papéis definidos — Clara liderando a fase de ideação, Vitor a de validação — o projeto tem suas melhores entregas. O atrito diminui quando cada um entende onde agrega mais. Viram referência de colaboração." },
-      { text: "Substituir um dos dois por alguém com perfil mais compatível com o outro.", score: 15, dimension: "resultados", consequence: "Você resolve o problema de curto prazo, mas perde a diversidade cognitiva que o projeto precisava. O entregável é bom, mas genérico. E Vitor ou Clara ficam ressentidos pela exclusão." },
-      { text: "Deixar que eles resolvam a dinâmica de trabalho por conta própria — são profissionais.", score: 20, dimension: "pessoas", consequence: "Os atritos anteriores se repetem. Clara acelera sem validar, Vitor bloqueia sem propor alternativas. O projeto atrasa e você precisa intervir na reta final de qualquer jeito — só que mais tarde e com mais custo." },
-      { text: "Acompanhar de perto e intervir sempre que surgir conflito entre os dois durante o projeto.", score: 45, dimension: "comunicacao", consequence: "Você vira árbitro permanente. O projeto entrega, mas você gastou energia desproporcional em mediação reativa. Nenhum dos dois aprendeu a colaborar — o problema volta no próximo projeto." }
+      { text: "Substituir um dos dois por alguém com perfil mais alinhado — tensão crônica prejudica entregas do time.", score: 15, dimension: "resultados", consequence: "Você resolve o problema de curto prazo, mas perde a diversidade cognitiva que o projeto precisava. O entregável é bom, mas genérico. E Vitor ou Clara ficam ressentidos pela exclusão." },
+      { text: "Deixar que eles encontrem o próprio equilíbrio — profissionais seniores devem gerir suas dinâmicas.", score: 20, dimension: "pessoas", consequence: "Os atritos anteriores se repetem. Clara acelera sem validar, Vitor bloqueia sem propor alternativas. O projeto atrasa e você precisa intervir na reta final de qualquer jeito — só que mais tarde e com mais custo." },
+      { text: "Acompanhar de perto e intervir pontualmente quando o conflito impactar o andamento do projeto.", score: 45, dimension: "comunicacao", consequence: "Você vira árbitro permanente. O projeto entrega, mas você gastou energia desproporcional em mediação reativa. Nenhum dos dois aprendeu a colaborar — o problema volta no próximo projeto." }
     ],
     bestIndex: 0,
     feedbackGood: "Diversidade de estilos cognitivos é uma vantagem — desde que bem estruturada. O líder que define papéis complementares transforma potencial de conflito em potencial de inovação.",
@@ -1593,9 +1813,9 @@ var SCENARIOS = [
     icon: "🎯",
     choices: [
       { text: "Documentar o achado com dados e propor ao diretor responsável uma conversa sobre a oportunidade.", score: 100, dimension: "estrategia", consequence: "O diretor fica impressionado com a análise e pede que você lidere o projeto de automação em conjunto. A solução é implementada em 4 semanas e economiza R$180K/ano. Você ganha visibilidade na diretoria." },
-      { text: "Escalar diretamente para a diretoria — é uma oportunidade grande demais para passar pelo filtro errado.", score: 35, dimension: "estrategia", consequence: "A diretoria aprecia a iniciativa, mas o diretor responsável fica constrangido por não ter sido consultado primeiro. A relação esfria e o projeto fica travado por semanas em disputa de protagonismo." },
-      { text: "Não agir — não é sua área e envolvimento não solicitado pode ser mal recebido.", score: 10, dimension: "resultados", consequence: "A ineficiência continua por mais 14 meses até que alguém da área identifica o mesmo problema. Você sabia antes — e ficou em silêncio. Quando isso vem à tona, sua passividade é notada." },
-      { text: "Implementar a solução na sua área como piloto e apresentar os resultados ao diretor como modelo.", score: 75, dimension: "estrategia", consequence: "O piloto funciona bem e os dados convencem o diretor. A solução é replicada, mas o caminho foi mais longo do que o necessário. Sua iniciativa foi reconhecida, mas a abordagem direta teria sido mais eficiente." }
+      { text: "Escalar diretamente para a diretoria — oportunidades de impacto transversal exigem decisão no nível certo.", score: 35, dimension: "estrategia", consequence: "A diretoria aprecia a iniciativa, mas o diretor responsável fica constrangido por não ter sido consultado primeiro. A relação esfria e o projeto fica travado por semanas em disputa de protagonismo." },
+      { text: "Não agir — atuar em processos de outras áreas sem convite pode ser mal interpretado como intrusão.", score: 10, dimension: "resultados", consequence: "A ineficiência continua por mais 14 meses até que alguém da área identifica o mesmo problema. Você sabia antes — e ficou em silêncio. Quando isso vem à tona, sua passividade é notada." },
+      { text: "Implementar a solução na sua área como piloto e apresentar os resultados ao diretor como referência.", score: 75, dimension: "estrategia", consequence: "O piloto funciona bem e os dados convencem o diretor. A solução é replicada, mas o caminho foi mais longo do que o necessário. Sua iniciativa foi reconhecida, mas a abordagem direta teria sido mais eficiente." }
     ],
     bestIndex: 0,
     feedbackGood: "Influência sem autoridade é uma das habilidades mais valiosas em ambientes corporativos. Chegar com dados e proposta, respeitando o dono do processo, é a combinação que gera resultado sem criar conflito.",
@@ -1610,9 +1830,9 @@ var SCENARIOS = [
     icon: "💬",
     choices: [
       { text: "Fazer a pergunta técnica com dados — sem atacar a decisão, mas abrindo espaço para revisão.", score: 95, dimension: "comunicacao", consequence: "O CEO reconhece a pertinência da questão e pede que você colabore com o RH na revisão da calibragem. A metodologia é ajustada. Você ganha reputação de alguém que fala com fundamento e construtivamente." },
-      { text: "Ficar em silêncio na reunião e expressar sua discordância apenas para seu gestor depois.", score: 50, dimension: "etica", consequence: "Sua discordância não gera mudança. O processo segue como anunciado. Você sente que poderia ter feito diferente — e a equipe que esperava que você falasse fica desapontada com o silêncio." },
-      { text: "Questionar diretamente a decisão como equivocada e defender publicamente uma abordagem diferente.", score: 25, dimension: "comunicacao", consequence: "O CEO se fecha defensivamente. A reunião fica tensa. Sua posição é registrada, mas a decisão não muda — e você ganhou uma reputação de confrontador que vai além do mérito da questão." },
-      { text: "Pedir uma reunião bilateral com o CEO depois para discutir suas preocupações com mais contexto.", score: 70, dimension: "estrategia", consequence: "O CEO concorda em conversar. Você apresenta os dados. A metodologia é parcialmente ajustada. O caminho foi mais lento, mas a relação foi preservada e a mudança aconteceu." }
+      { text: "Ficar em silêncio na reunião e expressar a discordância apenas para seu gestor depois.", score: 50, dimension: "etica", consequence: "Sua discordância não gera mudança. O processo segue como anunciado. Você sente que poderia ter feito diferente — e a equipe que esperava que você falasse fica desapontada com o silêncio." },
+      { text: "Questionar diretamente a decisão e defender publicamente uma abordagem alternativa com dados.", score: 25, dimension: "comunicacao", consequence: "O CEO se fecha defensivamente. A reunião fica tensa. Sua posição é registrada, mas a decisão não muda — e você ganhou uma reputação de confrontador que vai além do mérito da questão." },
+      { text: "Pedir uma reunião bilateral com o CEO após a reunião para discutir suas preocupações com contexto.", score: 70, dimension: "estrategia", consequence: "O CEO concorda em conversar. Você apresenta os dados. A metodologia é parcialmente ajustada. O caminho foi mais lento, mas a relação foi preservada e a mudança aconteceu." }
     ],
     bestIndex: 0,
     feedbackGood: "A arte de discordar produtivamente é fazer a pergunta que abre espaço para revisão sem atacar quem decidiu. Dados + respeito ao contexto público é a combinação que gera mudança real.",
@@ -1626,10 +1846,10 @@ var SCENARIOS = [
     desc: "Você tem o cargo que queria, a equipe que construiu e o salário que planejou. Mas acorda sem energia e sente que perdeu o senso de propósito. Não há crise externa — a crise é interna.",
     icon: "🌱",
     choices: [
-      { text: "Reconhecer o sinal e buscar ativamente o que ainda falta — conversas com mentores, reflexão estruturada, novos desafios.", score: 100, dimension: "estrategia", consequence: "Você passa por um processo de redescoberta. Identifica que quer construir algo próprio nos próximos anos. Começa a se preparar estrategicamente — sem largar o que tem, mas com direção renovada. A energia volta." },
-      { text: "Assumir que isso é normal e continuar — toda carreira tem fases de baixa motivação.", score: 30, dimension: "resultados", consequence: "A sensação de estagnação se aprofunda. Seis meses depois, começa a impactar a qualidade das suas decisões e a energia que transmite à equipe. O que era fase vira padrão." },
-      { text: "Pedir uma licença sabática para sair do ambiente e ganhar clareza com distância.", score: 65, dimension: "pessoas", consequence: "A licença traz clareza. Você volta com energia renovada e algumas respostas. Mas o distanciamento também gerou custo: projetos travaram e sua ausência foi sentida de forma negativa por alguns stakeholders." },
-      { text: "Mudar de empresa — um novo ambiente vai restaurar o senso de desafio e propósito.", score: 35, dimension: "estrategia", consequence: "O novo ambiente é estimulante por 6 meses. Depois, a mesma sensação volta. Sem trabalhar a origem interna do problema, a mudança externa não resolve — apenas atrasa o enfrentamento." }
+      { text: "Reconhecer o sinal e buscar ativamente o que ainda falta — mentores, reflexão estruturada, novos desafios.", score: 100, dimension: "estrategia", consequence: "Você passa por um processo de redescoberta. Identifica que quer construir algo próprio nos próximos anos. Começa a se preparar estrategicamente — sem largar o que tem, mas com direção renovada. A energia volta." },
+      { text: "Assumir que isso é normal e continuar — toda carreira tem fases de baixa motivação e elas passam.", score: 30, dimension: "resultados", consequence: "A sensação de estagnação se aprofunda. Seis meses depois, começa a impactar a qualidade das suas decisões e a energia que transmite à equipe. O que era fase vira padrão." },
+      { text: "Pedir uma licença sabática para ganhar clareza com distância do ambiente.", score: 65, dimension: "pessoas", consequence: "A licença traz clareza. Você volta com energia renovada e algumas respostas. Mas o distanciamento também gerou custo: projetos travaram e sua ausência foi sentida de forma negativa por alguns stakeholders." },
+      { text: "Mudar de empresa — um novo ambiente restaura o senso de desafio que a posição atual não oferece mais.", score: 35, dimension: "estrategia", consequence: "O novo ambiente é estimulante por 6 meses. Depois, a mesma sensação volta. Sem trabalhar a origem interna do problema, a mudança externa não resolve — apenas atrasa o enfrentamento." }
     ],
     bestIndex: 0,
     feedbackGood: "Estagnação no auge é um dos sinais mais importantes de liderança: indica que você chegou onde planejou — e precisa planejar de novo. Líderes que ignoram esse sinal declinam; os que o agem sobre ele reinventam.",
@@ -1638,6 +1858,183 @@ var SCENARIOS = [
   }
 
 ];
+
+
+var TOXIC_SCENARIOS = [
+  {
+    id: 'T1',
+    category: 'Microgerenciamento',
+    icon: '🔍',
+    title: 'Seu time entregou um relatório sem te pedir aprovação primeiro.',
+    desc: 'A equipe resolveu o problema, entregou ao cliente e o cliente ficou satisfeito. Mas você não foi consultado.',
+    choices: [
+      { text: 'Ignorar — o resultado foi bom e intervir agora só vai criar atrito desnecessário.', score: 0, damage: { autonomia: 0, moral: 0, confianca: 0, burnout: 0 }, consequence: 'Você surpreende o time ao não reagir. Eles ficam aliviados e a autonomia começa a se consolidar. Resultado: ótima entrega, relacionamento preservado. Isso é liderança — não é o que você esperava jogar.' },
+      { text: 'Parabenizar o time publicamente — uma vitória deles é uma vitória sua.', score: 5, damage: { autonomia: 0, moral: 0, confianca: 0, burnout: 0 }, consequence: 'O time fica motivado e repete o comportamento. Você constrói uma equipe autônoma e de alta performance. Novamente, está errando o jogo.' },
+      { text: 'Convocar uma reunião para dizer que toda comunicação com cliente deve passar por você primeiro.', score: 75, damage: { autonomia: 25, moral: 20, confianca: 30, burnout: 10 }, consequence: 'O time entende a mensagem: iniciativa não é bem-vinda. Nas próximas semanas, pararam de resolver problemas sozinhos. Agora te consultam até para e-mails simples. Você criou dependência — parabéns.' },
+      { text: 'Refazer o relatório do zero e enviar uma versão "correta" ao cliente sem avisar o time.', score: 100, damage: { autonomia: 35, moral: 35, confianca: 40, burnout: 20 }, consequence: 'O cliente fica confuso com dois relatórios. O time descobre e fica humilhado. Um colaborador sênior começa a buscar outras oportunidades essa semana. Dano máximo causado.' }
+    ],
+    bestIndex: 3
+  },
+  {
+    id: 'T2',
+    category: 'Comunicação Destrutiva',
+    icon: '💥',
+    title: 'Alguém apresentou uma ideia mediana numa reunião de equipe.',
+    desc: 'Pedro, analista júnior, propôs uma solução criativa mas com algumas falhas técnicas. O time aguarda sua reação.',
+    choices: [
+      { text: 'Explorar a ideia com perguntas — talvez haja algo aproveitável nela.', score: 0, damage: { autonomia: 0, moral: 0, confianca: 0, burnout: 0 }, consequence: 'Pedro se sente valorizado e refina a ideia. Numa próxima reunião, ela se torna a base de uma solução que economiza 40 horas do time. Errou feio — isso é liderança de verdade.' },
+      { text: 'Apontar as falhas técnicas em detalhes na frente de todos para poupar tempo do time.', score: 80, damage: { autonomia: 20, moral: 35, confianca: 30, burnout: 15 }, consequence: 'Pedro nunca mais levanta a mão numa reunião. Outros três colaboradores percebem o padrão e passam a filtrar suas ideias antes de falar. Você acabou de silenciar sua equipe.' },
+      { text: 'Suspirar alto, olhar para o teto e dizer "vamos seguir em frente".', score: 70, damage: { autonomia: 15, moral: 30, confianca: 25, burnout: 10 }, consequence: 'A mensagem foi recebida alto e claro. Pedro fica vermelho. Dois colegas trocam olhares. A reunião termina mais cedo do que devia e ninguém sabe bem o que foi decidido.' },
+      { text: 'Interromper no meio da apresentação e terminar a frase dele de forma "correta".', score: 100, damage: { autonomia: 30, moral: 40, confianca: 35, burnout: 20 }, consequence: 'Pedro nunca termina uma frase sua em reunião novamente. O time passa a se preparar obsessivamente para não ser interrompido — e a criatividade cai. Execução máxima de dano.' }
+    ],
+    bestIndex: 3
+  },
+  {
+    id: 'T3',
+    category: 'Pressão e Burnout',
+    icon: '🔥',
+    title: 'O prazo está apertado e o time já está trabalhando até mais tarde.',
+    desc: 'São 19h de sexta. O time está há 3 semanas em ritmo intenso. Uma entrega menor pode ser adiada para segunda sem impacto real.',
+    choices: [
+      { text: 'Liberar o time para o fim de semana e negociar o prazo menor com o cliente.', score: 0, damage: { autonomia: 0, moral: 0, confianca: 0, burnout: 0 }, consequence: 'O time descansa. Na segunda, entregam com qualidade. O cliente entende. Você preservou a saúde da equipe e manteve a qualidade. Isso é gestão responsável — errou a proposta do jogo.' },
+      { text: 'Mandar uma mensagem no grupo às 20h: "Pessoal, precisamos terminar isso hoje."', score: 70, damage: { autonomia: 10, moral: 25, confianca: 20, burnout: 35 }, consequence: 'O time trabalha até meia-noite. A entrega tem três erros por cansaço. Na segunda, dois colaboradores chegam visivelmente exaustos. Um deles agenda férias inesperadas. Bom trabalho.' },
+      { text: 'Ligar para cada membro do time individualmente para "ver como estão indo".', score: 85, damage: { autonomia: 15, moral: 20, confianca: 30, burnout: 40 }, consequence: 'O time não consegue desligar. Cada ligação prolonga o estado de alerta. Uma colaboradora cancela jantar de aniversário do filho. O burnout se instala como norma — e você chama isso de "cultura de comprometimento".' },
+      { text: 'Aparecer pessoalmente no escritório às 21h dizendo que você também está trabalhando.', score: 100, damage: { autonomia: 20, moral: 30, confianca: 25, burnout: 50 }, consequence: 'Ninguém vai embora enquanto você estiver lá. O time trabalha até 23h por obrigação social. Você chama isso de "liderar pelo exemplo". Eles chamam de outra coisa. Dano máximo ao bem-estar.' }
+    ],
+    bestIndex: 3
+  },
+  {
+    id: 'T4',
+    category: 'Favoritismo',
+    icon: '⭐',
+    title: 'Há uma promoção disponível e dois candidatos com perfis similares.',
+    desc: 'Ana entrega resultados ligeiramente melhores nos dados. Rafael joga tênis com você toda quinta e está sempre disponível fora do horário.',
+    choices: [
+      { text: 'Promover Ana com base nos critérios objetivos e comunicar os critérios ao time.', score: 0, damage: { autonomia: 0, moral: 0, confianca: 0, burnout: 0 }, consequence: 'O time confia no processo. Rafael fica desapontado mas respeita a decisão. Ana se desenvolve bem no novo cargo. Você criou um ambiente meritocrático — falhou completamente no modo tóxico.' },
+      { text: 'Criar critérios subjetivos de "fit cultural" que favorecem Rafael e apresentar como decisão técnica.', score: 90, damage: { autonomia: 20, moral: 35, confianca: 45, burnout: 15 }, consequence: 'Ana pede demissão 40 dias depois. Quatro colegas percebem o padrão — trabalhar bem não é o que importa aqui, é quem você conhece. A produtividade cai e você perdeu seu melhor talento.' },
+      { text: 'Promover Rafael e não explicar os critérios para ninguém.', score: 80, damage: { autonomia: 15, moral: 30, confianca: 40, burnout: 10 }, consequence: 'O time especula pelos corredores. Ana começa a atualizar o LinkedIn. Dois outros colaboradores concluem que esforço não é o caminho — relação pessoal com o chefe é. Motivação em queda livre.' },
+      { text: 'Promover Rafael e dizer que foi uma "decisão difícil" sem dar nenhum feedback a Ana.', score: 100, damage: { autonomia: 25, moral: 40, confianca: 50, burnout: 20 }, consequence: 'Ana não entende o que fez de errado e fica em modo de ansiedade por semanas. Sem feedback, não sabe se deve tentar novamente ou sair. A incerteza é o pior ambiente psicológico possível. Missão cumprida.' }
+    ],
+    bestIndex: 3
+  },
+  {
+    id: 'T5',
+    category: 'Omissão de Crédito',
+    icon: '🎭',
+    title: 'Sua equipe criou uma solução inovadora que foi elogiada pela diretoria.',
+    desc: 'Na reunião de resultados, o CEO parabeniza sua área. O olhar da sala está em você. Quem realmente desenvolveu a solução foi Mariana, da sua equipe.',
+    choices: [
+      { text: 'Apresentar Mariana ao CEO e reconhecer publicamente sua contribuição.', score: 0, damage: { autonomia: 0, moral: 0, confianca: 0, burnout: 0 }, consequence: 'Mariana fica surpresa e emocionada. O CEO fica bem impressionado com sua postura de liderança. A história se espalha positivamente. Você criou lealdade e reputação — errou o modo tóxico.' },
+      { text: 'Agradecer pelo resultado "da equipe" sem nomear ninguém específico.', score: 60, damage: { autonomia: 10, moral: 20, confianca: 30, burnout: 5 }, consequence: 'Mariana ouve e entende a omissão. Ela não diz nada, mas começa a filtrar o que compartilha com você. A próxima boa ideia ela leva diretamente ao CEO — pulando você.' },
+      { text: 'Aceitar o elogio no singular: "obrigado, foi um trabalho intenso".', score: 85, damage: { autonomia: 15, moral: 30, confianca: 40, burnout: 10 }, consequence: 'Mariana descobre que você aceitou o crédito sozinho. Ela conta para dois colegas. Os três passam a compartilhar menos nas reuniões de time. Você acabou de perder o acesso ao melhor da equipe.' },
+      { text: 'Descrever em detalhes como você "orientou" e "deu a direção" para o desenvolvimento da solução.', score: 100, damage: { autonomia: 20, moral: 40, confianca: 50, burnout: 15 }, consequence: 'Mariana está na sala. Ela ouve cada palavra. Pede demissão na semana seguinte com uma carta que descreve o episódio em detalhes. O CEO recebe uma cópia. Dano máximo — inclusive para você.' }
+    ],
+    bestIndex: 3
+  },
+  {
+    id: 'T6',
+    category: 'Falta de Feedback',
+    icon: '🔇',
+    title: 'Um colaborador pediu feedback sobre seu desempenho e desenvolvimento.',
+    desc: 'Lucas marcou uma reunião de 1:1 especificamente para pedir orientação sobre como crescer na empresa. Você tem opiniões claras sobre o que ele precisa melhorar.',
+    choices: [
+      { text: 'Dar feedback honesto, específico e com exemplos concretos — é o que ele pediu.', score: 0, damage: { autonomia: 0, moral: 0, confianca: 0, burnout: 0 }, consequence: 'Lucas sai da reunião com clareza e um plano. Em 3 meses, melhora visivelmente. Você investiu 30 minutos e ganhou um colaborador melhor. Boa liderança — errou o jogo.' },
+      { text: 'Dizer que ele está "indo bem" e que "vai aparecer oportunidades" sem entrar em detalhes.', score: 75, damage: { autonomia: 10, moral: 25, confianca: 35, burnout: 10 }, consequence: 'Lucas sai sem informação alguma. Continua cometendo os mesmos erros por falta de orientação. Fica confuso quando, na avaliação anual, recebe notas abaixo do esperado. Você sabia e não disse.' },
+      { text: 'Cancelar a reunião no último minuto e remarcar indefinidamente.', score: 85, damage: { autonomia: 5, moral: 30, confianca: 40, burnout: 15 }, consequence: 'Lucas entende a mensagem: você não tem interesse no desenvolvimento dele. Passa a resolver suas dúvidas com colegas. Depois de três cancelamentos, para de tentar. Desengajamento silencioso iniciado.' },
+      { text: 'Ouvir por 5 minutos, olhar o celular e dizer "você está no caminho certo, pode confiar".', score: 100, damage: { autonomia: 15, moral: 35, confianca: 50, burnout: 20 }, consequence: 'Lucas sai da sala com a certeza de que não importa para você. Compartilha a experiência com dois colegas. Os três concluem que 1:1s com você são perda de tempo. Você cortou o canal de comunicação da equipe.' }
+    ],
+    bestIndex: 3
+  },
+  {
+    id: 'T7',
+    category: 'Gestão do Medo',
+    icon: '😨',
+    title: 'Um erro aconteceu num projeto e você precisa endereçar o time.',
+    desc: 'Um bug em produção causou 2 horas de instabilidade para clientes. O time identificou, corrigiu e tem o post-mortem pronto. Ninguém foi negligente — foi uma falha de processo.',
+    choices: [
+      { text: 'Conduzir o post-mortem focando em melhorias de processo, sem culpar ninguém.', score: 0, damage: { autonomia: 0, moral: 0, confianca: 0, burnout: 0 }, consequence: 'O time sai com um processo melhor e sem medo de reportar futuros problemas. Você criou cultura de segurança psicológica. Errou completamente o objetivo do jogo.' },
+      { text: 'Perguntar na frente de todos "quem foi o responsável por esse erro?".', score: 80, damage: { autonomia: 20, moral: 35, confianca: 40, burnout: 15 }, consequence: 'O time aprende que erros têm culpados — não soluções. Da próxima vez que algo der errado, vão esconder por mais tempo antes de escalar. Você acabou de tornar os incidentes mais caros.' },
+      { text: 'Dizer que "isso não pode mais acontecer" sem discutir causas ou soluções.', score: 70, damage: { autonomia: 15, moral: 25, confianca: 30, burnout: 20 }, consequence: 'Ninguém entende o que deve mudar. O ambiente fica tenso sem direção clara. O mesmo tipo de erro ocorre novamente em 6 semanas porque nenhum processo foi alterado.' },
+      { text: 'Enviar um e-mail ao time com cópia para a diretoria detalhando quem cometeu o erro.', score: 100, damage: { autonomia: 25, moral: 50, confianca: 50, burnout: 30 }, consequence: 'O colaborador mencionado fica destruído. O time inteiro fica em pânico. Problemas futuros demoram o dobro para ser escalados por medo de exposição. Você criou um ambiente onde errar é fatal — e onde a inovação morreu.' }
+    ],
+    bestIndex: 3
+  },
+  {
+    id: 'T8',
+    category: 'Invasão de Limite',
+    icon: '📱',
+    title: 'É sábado à tarde e você teve uma ideia sobre o projeto.',
+    desc: 'Uma boa ideia surgiu enquanto você relaxava. O projeto retoma na segunda. Não há urgência real.',
+    choices: [
+      { text: 'Anotar a ideia para discutir na reunião de segunda-feira.', score: 0, damage: { autonomia: 0, moral: 0, confianca: 0, burnout: 0 }, consequence: 'Na segunda, você compartilha a ideia. O time contribui e ela fica ainda melhor. Respeitar o tempo de descanso da equipe resultou numa solução colaborativa. Errou o jogo.' },
+      { text: 'Mandar uma mensagem no WhatsApp do grupo "só para registrar" a ideia.', score: 70, damage: { autonomia: 10, moral: 15, confianca: 20, burnout: 35 }, consequence: 'Três membros do time abrem a mensagem. Nenhum consegue desligar completamente o sábado. Um deles estava em aniversário de casamento. Você não exigiu resposta — mas o dano foi feito.' },
+      { text: 'Ligar para o tech lead para "só passar a ideia rapidinho".', score: 90, damage: { autonomia: 15, moral: 25, confianca: 30, burnout: 45 }, consequence: '"Rapidinho" dura 45 minutos. O tech lead passa o resto do sábado processando mentalmente a conversa. Na segunda, está claramente esgotado. Você violou o único dia de descanso real da semana.' },
+      { text: 'Criar um documento de 3 páginas, compartilhar com todos e pedir "feedback até domingo".', score: 100, damage: { autonomia: 20, moral: 30, confianca: 25, burnout: 60 }, consequence: 'O time passa o domingo respondendo para não parecer descomprometido. Dois deles trabalham mais de 4 horas. Na segunda de manhã, ninguém tem energia. Você destruiu o fim de semana de 6 pessoas com uma ideia que poderia esperar 48 horas.' }
+    ],
+    bestIndex: 3
+  },
+  {
+    id: 'T9',
+    category: 'Resistência à Mudança',
+    icon: '🧱',
+    title: 'O time propôs uma nova ferramenta que vai acelerar o trabalho deles.',
+    desc: 'Após pesquisa de 2 semanas, sua equipe apresentou uma proposta detalhada para adotar uma nova stack que reduziria o tempo de desenvolvimento em 30%. A curva de aprendizado é de 3 semanas.',
+    choices: [
+      { text: 'Analisar a proposta com critérios objetivos e dar uma decisão embasada.', score: 0, damage: { autonomia: 0, moral: 0, confianca: 0, burnout: 0 }, consequence: 'O time sente que seu trabalho foi levado a sério. Independente da decisão final, a cultura de proposta estruturada se fortalece. Você agiu como líder — errou o modo tóxico.' },
+      { text: 'Dizer "sempre fizemos assim e funciona" e encerrar a discussão.', score: 80, damage: { autonomia: 35, moral: 30, confianca: 30, burnout: 10 }, consequence: 'O time entende que inovação não é bem-vinda aqui. As duas pessoas que lideraram a pesquisa ficam desmotivadas. Uma delas aceita oferta de uma empresa que "deixa a equipe escolher as ferramentas" — essa foi a última grande proposta que você recebeu.' },
+      { text: 'Fingir que vai considerar e não mencionar mais o assunto.', score: 70, damage: { autonomia: 30, moral: 25, confianca: 40, burnout: 5 }, consequence: 'O time espera uma resposta que nunca vem. Depois de 3 semanas, entendem a mensagem. A incerteza é mais corrosiva do que um não direto — você criou frustração sem dar ao time a chance de reajustar suas expectativas.' },
+      { text: 'Dizer que vai analisar e depois pedir que refaçam a proposta com outros critérios indefinidamente.', score: 100, damage: { autonomia: 40, moral: 35, confianca: 45, burnout: 20 }, consequence: 'O time entra em loop infinito de retrabalho sem critérios claros. Depois da terceira versão, desistem. A ferramenta antiga permanece — e com ela, 30% de ineficiência que você sabia que existia. Paralisia burocrática máxima.' }
+    ],
+    bestIndex: 3
+  },
+  {
+    id: 'T10',
+    category: 'Instabilidade Emocional',
+    icon: '🌪️',
+    title: 'Você chegou ao escritório de mau humor depois de uma reunião difícil.',
+    desc: 'A reunião com a diretoria foi frustrante. Você não foi ouvido. É segunda de manhã e o time está te esperando para o daily.',
+    choices: [
+      { text: 'Separar sua frustração do daily — o time não tem a ver com o que aconteceu antes.', score: 0, damage: { autonomia: 0, moral: 0, confianca: 0, burnout: 0 }, consequence: 'O daily transcorre normalmente. O time não sofre pelo que não causou. Você demonstra maturidade emocional — uma das habilidades mais raras e valiosas em liderança. Errou o jogo.' },
+      { text: 'Entrar no daily mais sério que o normal e responder com monossilábicos.', score: 65, damage: { autonomia: 10, moral: 20, confianca: 25, burnout: 15 }, consequence: 'O time passa o dia tentando descobrir o que fez de errado. Três pessoas revisam seus entregáveis com ansiedade. Nenhuma delas errou nada — mas todas se sentiram culpadas pela manhã toda.' },
+      { text: 'Cancelar o daily sem aviso e ficar inacessível o dia todo.', score: 75, damage: { autonomia: 5, moral: 25, confianca: 35, burnout: 20 }, consequence: 'O time fica em limbo. Decisões travam por falta de alinhamento. Dois projetos acumulam bloqueios. No final do dia, você volta como se nada tivesse acontecido — e ninguém entende o que foi aquilo.' },
+      { text: 'Começar o daily criticando um entregável qualquer para liberar a tensão.', score: 100, damage: { autonomia: 20, moral: 45, confianca: 35, burnout: 30 }, consequence: 'Quem foi criticado ficou destruído — não sabe por quê. Os outros ficaram em alerta máximo. A segunda-feira foi marcada por medo e confusão. Você transferiu seu estado emocional para o time inteiro. Dano emocional máximo.' }
+    ],
+    bestIndex: 3
+  }
+];
+
+var TOXIC_BOSS_PROFILES = {
+  microgestor: {
+    name: 'O MICROGESTOR\nONIPRESENTE',
+    desc: 'Você precisa controlar tudo e todos. Delegar é fraqueza. Confiar é ingenuidade. Sua equipe aprendeu a te consultar antes de respirar — e você chama isso de alinhamento.',
+    traits: ['Controle total', 'Zero autonomia', 'Reuniões desnecessárias', 'Email aos domingos'],
+    icon: '🔍'
+  },
+  narcisista: {
+    name: 'O NARCISISTA\nINSTITUCIONAL',
+    desc: 'O crédito sobe, a culpa desce. Suas ideias são visão estratégica; as do time são sugestões que você "incorporou". Sua marca pessoal nunca esteve tão forte — às custas de quem trabalha para você.',
+    traits: ['Omissão de crédito', 'Autopreservação', 'Charme seletivo', 'Dois pesos dois lados'],
+    icon: '🪞'
+  },
+  intimidador: {
+    name: 'O INTIMIDADOR\nSISTEMÁTICO',
+    desc: 'Você gerencia pelo medo e chama isso de alta performance. Quem discorda é descomprometido. Quem erra é incompetente. O silêncio nas reuniões não é respeito — é medo.',
+    traits: ['Cultura do medo', 'Crítica pública', 'Padrão duplo', 'Ameaças veladas'],
+    icon: '😤'
+  },
+  ausente: {
+    name: 'O FANTASMA\nCORPORATIVO',
+    desc: 'Você aparece para reuniões estratégicas e some para todo o resto. O time tomou decisões importantes sem você — não porque confia neles, mas porque você nunca está disponível. Isso não é autonomia. É abandono.',
+    traits: ['Inacessibilidade', 'Feedback nunca', 'Reunião cancelada', 'Copy no e-mail'],
+    icon: '👻'
+  },
+  caos: {
+    name: 'O GERADOR\nDE CAOS',
+    desc: 'Suas prioridades mudam semanalmente. Seu humor define o clima da empresa. Sua instabilidade emocional é o maior risco operacional da área. O time aprendeu a trabalhar apesar de você.',
+    traits: ['Imprevisibilidade', 'Mudança constante', 'Volatilidade', 'Zero segurança'],
+    icon: '🌪️'
+  }
+};
 
 var PROFILES = {
   estrategista: {
@@ -1684,17 +2081,198 @@ function showScreen(id) {
   window.scrollTo(0, 0);
 }
 
+
+// ── FEATURE 1: NAME + localStorage ──
+function saveName(val) {
+  try { localStorage.setItem('lider_player_name', val); } catch(e) {}
+}
+function loadName() {
+  try {
+    var name = localStorage.getItem('lider_player_name');
+    if (name) document.getElementById('player-name').value = name;
+  } catch(e) {}
+}
+function getPlayerName() {
+  var el = document.getElementById('player-name');
+  return el ? el.value.trim() : '';
+}
+
+// ── FEATURE 6: RADAR CHART ──
+function drawRadar(dimensions, maxDim) {
+  var svg = document.getElementById('radar-svg');
+  if (!svg) return;
+  svg.innerHTML = '';
+
+  var keys   = ['estrategia', 'pessoas', 'comunicacao', 'etica', 'resultados'];
+  var labels  = ['Estratégia', 'Pessoas', 'Comunicação', 'Ética', 'Resultados'];
+  var n = keys.length;
+  var R = 88; // max radius
+  var cx = 0, cy = 0;
+
+  function polar(angle, r) {
+    return {
+      x: cx + r * Math.sin(angle),
+      y: cy - r * Math.cos(angle)
+    };
+  }
+
+  function ns(tag) {
+    return document.createElementNS('http://www.w3.org/2000/svg', tag);
+  }
+
+  // Grid rings
+  var gridLevels = [0.25, 0.5, 0.75, 1];
+  gridLevels.forEach(function(level) {
+    var pts = [];
+    for (var i = 0; i < n; i++) {
+      var angle = (2 * Math.PI * i) / n;
+      var p = polar(angle, R * level);
+      pts.push(p.x + ',' + p.y);
+    }
+    var polygon = ns('polygon');
+    polygon.setAttribute('points', pts.join(' '));
+    polygon.setAttribute('fill', 'none');
+    polygon.setAttribute('stroke', 'rgba(255,255,255,0.06)');
+    polygon.setAttribute('stroke-width', '1');
+    svg.appendChild(polygon);
+  });
+
+  // Axis lines
+  for (var i = 0; i < n; i++) {
+    var angle = (2 * Math.PI * i) / n;
+    var outer = polar(angle, R);
+    var line = ns('line');
+    line.setAttribute('x1', cx); line.setAttribute('y1', cy);
+    line.setAttribute('x2', outer.x); line.setAttribute('y2', outer.y);
+    line.setAttribute('stroke', 'rgba(255,255,255,0.08)');
+    line.setAttribute('stroke-width', '1');
+    svg.appendChild(line);
+  }
+
+  // Data polygon
+  var dataPts = [];
+  for (var i = 0; i < n; i++) {
+    var angle = (2 * Math.PI * i) / n;
+    var val = dimensions[keys[i]] || 0;
+    var ratio = Math.min(1, val / maxDim);
+    var p = polar(angle, R * ratio);
+    dataPts.push(p.x + ',' + p.y);
+  }
+
+  var bgPoly = ns('polygon');
+  bgPoly.setAttribute('points', dataPts.join(' '));
+  bgPoly.setAttribute('fill', 'rgba(90,207,207,0.12)');
+  bgPoly.setAttribute('stroke', 'none');
+  svg.appendChild(bgPoly);
+
+  var dataPoly = ns('polygon');
+  dataPoly.setAttribute('points', dataPts.join(' '));
+  dataPoly.setAttribute('fill', 'none');
+  dataPoly.setAttribute('stroke', '#5ecfcf');
+  dataPoly.setAttribute('stroke-width', '2');
+  svg.appendChild(dataPoly);
+
+  // Data dots + labels
+  for (var i = 0; i < n; i++) {
+    var angle = (2 * Math.PI * i) / n;
+    var val = dimensions[keys[i]] || 0;
+    var ratio = Math.min(1, val / maxDim);
+    var p = polar(angle, R * ratio);
+
+    var dot = ns('circle');
+    dot.setAttribute('cx', p.x); dot.setAttribute('cy', p.y);
+    dot.setAttribute('r', '4');
+    dot.setAttribute('fill', '#5ecfcf');
+    dot.setAttribute('stroke', '#0f1e26');
+    dot.setAttribute('stroke-width', '2');
+    svg.appendChild(dot);
+
+    // Label
+    var labelP = polar(angle, R + 22);
+    var text = ns('text');
+    text.setAttribute('x', labelP.x);
+    text.setAttribute('y', labelP.y);
+    text.setAttribute('text-anchor', 'middle');
+    text.setAttribute('dominant-baseline', 'middle');
+    text.setAttribute('fill', 'rgba(232,244,248,0.55)');
+    text.setAttribute('font-family', 'DM Mono, monospace');
+    text.setAttribute('font-size', '9');
+    text.textContent = labels[i].toUpperCase();
+    svg.appendChild(text);
+
+    // Pct label on dot
+    var pct = Math.round(ratio * 100);
+    var pctText = ns('text');
+    var pctP = polar(angle, R * ratio - 14);
+    pctText.setAttribute('x', pctP.x);
+    pctText.setAttribute('y', pctP.y);
+    pctText.setAttribute('text-anchor', 'middle');
+    pctText.setAttribute('dominant-baseline', 'middle');
+    pctText.setAttribute('fill', '#f0b429');
+    pctText.setAttribute('font-family', 'DM Mono, monospace');
+    pctText.setAttribute('font-size', '8');
+    pctText.setAttribute('font-weight', '500');
+    pctText.textContent = pct + '%';
+    svg.appendChild(pctText);
+  }
+}
+
+// ── FEATURE 9: INSIGHT PHRASE ──
+var INSIGHT_PHRASES = {
+  estrategista: [
+    'Você decide <em>com dados</em>, não com medo.',
+    'Você enxerga onde os outros <em>ainda não chegaram</em>.',
+    'Você lidera o futuro <em>enquanto o presente espera</em>.',
+    'Você posiciona antes de <em>reagir</em>.'
+  ],
+  humanista: [
+    'Você constrói <em>pessoas</em> antes de construir projetos.',
+    'Você lidera com <em>confiança</em> onde outros usam controle.',
+    'Para você, <em>a equipe é a estratégia</em>.',
+    'Você cria segurança para as pessoas <em>serem melhores</em>.'
+  ],
+  executor: [
+    'Você transforma <em>metas em realidade</em>.',
+    'Você entrega <em>quando outros ainda planejam</em>.',
+    'Você é a diferença entre <em>intenção e resultado</em>.',
+    'Você lidera <em>pelo exemplo da disciplina</em>.'
+  ],
+  etico: [
+    'Você escolhe o certo <em>mesmo quando custa</em>.',
+    'Você é o tipo de líder <em>que as organizações precisam</em>.',
+    'Sua integridade <em>é o seu maior ativo</em>.',
+    'Você não negocia <em>seus princípios por conveniência</em>.'
+  ],
+  equilibrado: [
+    'Você lê o contexto <em>e adapta o estilo</em>.',
+    'Você equilibra <em>pessoas e resultados</em> com naturalidade.',
+    'Sua liderança é <em>versátil e madura</em>.',
+    'Você está pronto <em>para o próximo nível</em>.'
+  ]
+};
+
+function generateInsight(profileKey, dimensions, playerName) {
+  var phrases = INSIGHT_PHRASES[profileKey] || INSIGHT_PHRASES.equilibrado;
+  // Pick phrase based on dominant dimension for variety
+  var keys = ['estrategia','pessoas','comunicacao','etica','resultados'];
+  var maxVal = -1, maxIdx = 0;
+  keys.forEach(function(k, i) { if ((dimensions[k]||0) > maxVal) { maxVal = dimensions[k]; maxIdx = i; } });
+  var phrase = phrases[maxIdx % phrases.length];
+  
+  var prefix = playerName ? playerName + ' ' : '';
+  // Add name before first verb if name provided
+  if (playerName) {
+    phrase = phrase.charAt(0).toUpperCase() + phrase.slice(1);
+    prefix = '<span style="color:var(--accent2)">' + playerName + '</span>, ';
+    return prefix + phrase;
+  }
+  return phrase;
+}
+
 var timerEnabled = true;
 var learningMode = false;
 var questionCount = 20;
 
-// ── FEAT 8: DIFFICULTY ──
-var difficulty = 'normal';
-function setDifficulty(d) {
-  difficulty = d;
-  document.getElementById('btn-diff-normal').classList.toggle('active', d === 'normal');
-  document.getElementById('btn-diff-hard').classList.toggle('active', d === 'hard');
-}
 
 // ── FEAT 7: BALANCED 30-question set includes new scenarios ──
 
@@ -1737,7 +2315,8 @@ function showTransition(num, total, category, callback) {
   var catEl = document.getElementById('trans-category');
   numEl.textContent = String(num).padStart(2, '0');
   labelEl.textContent = 'Cenário ' + num + ' de ' + total;
-  catEl.textContent = (CATEGORY_ICONS[category] || '') + '  ' + category;
+  catEl.textContent = (toxicMode ? (TOXIC_SCENARIOS.find(function(s){return s.category===category;}) || {icon:'😈'}).icon : (CATEGORY_ICONS[category] || '')) + '  ' + category;
+  catEl.style.color = toxicMode ? '#ff8c42' : '';
   el.classList.add('show');
   // Reset animation
   numEl.style.animation = 'none';
@@ -1774,18 +2353,6 @@ function buildHistory() {
   }).join('');
 }
 
-// ── FEAT 8: HARD MODE — modify choices display ──
-function applyDifficulty(choices, bestIdx) {
-  if (difficulty !== 'hard') return choices;
-  // In hard mode: trim choice texts to ~60 chars to make them more similar-looking
-  // and slightly shuffle scores of non-best options to compress the gap
-  return choices.map(function(c, i) {
-    if (i === bestIdx) return c;
-    // Compress non-best scores slightly upward (max 75 in hard mode)
-    var newScore = Math.min(75, c.score + Math.floor(Math.random() * 20));
-    return Object.assign({}, c, { score: newScore });
-  });
-}
 
 
 
@@ -1802,6 +2369,12 @@ function buildInstagramCard(profileKey, score, maxPts) {
   document.getElementById('ig-desc').textContent = p.desc;
   document.getElementById('ig-score').textContent = score;
   document.getElementById('ig-score-max').textContent = 'de ' + maxPts;
+  // Add insight to ig-card
+  var igInsightEl = document.getElementById('ig-insight');
+  if (igInsightEl) {
+    var rawInsight = generateInsight(profileKey, state.dimensions, '');
+    igInsightEl.innerHTML = rawInsight;
+  }
   document.getElementById('ig-traits').innerHTML = p.traits.map(function(t) {
     return '<span class="ig-card-trait">' + t + '</span>';
   }).join('');
@@ -1928,8 +2501,9 @@ function toggleLearning() {
 
 function startGame() {
   var scenarioPool;
-  if (learningMode) {
-    // Fixed order — no shuffle
+  if (toxicMode) {
+    scenarioPool = shuffle(TOXIC_SCENARIOS.slice());
+  } else if (learningMode) {
     if (questionCount === 10) scenarioPool = SCENARIOS.filter(function(s) { return BALANCED_10_IDS.indexOf(s.id) !== -1; });
     else scenarioPool = SCENARIOS.slice();
   } else if (questionCount === 10) {
@@ -1955,7 +2529,9 @@ function startGame() {
     choices: [],
     categoryScores: {},
     categoryMax: {},
-    historyItems: []
+    historyItems: [],
+    toxicScore: 0,
+    toxicDimensions: { autonomia: 0, moral: 0, confianca: 0, burnout: 0 }
   };
   showScreen('screen-game');
   if (!learningMode) {
@@ -1987,13 +2563,10 @@ function loadScenario(skipTransition) {
   var pct = (state.currentIndex / total) * 100;
   document.getElementById('progress-fill').style.width = pct + '%';
   document.getElementById('progress-text').textContent = 'Cenário ' + (state.currentIndex + 1) + ' de ' + total;
-  document.getElementById('score-display').textContent = state.score;
+  document.getElementById('score-display').textContent = toxicMode ? (state.toxicScore + ' dmg') : state.score;
   var catIcon = CATEGORY_ICONS[s.category] || '';
   document.getElementById('scenario-num').textContent = String(state.currentIndex + 1).padStart(2, '0');
   document.getElementById('scenario-category-icon').textContent = catIcon;
-  var diffBadge = document.getElementById('diff-badge');
-  if (difficulty === 'hard') { diffBadge.style.display='flex'; diffBadge.className='diff-badge diff-hard'; diffBadge.textContent='⚡ Difícil'; }
-  else { diffBadge.style.display='none'; }
   document.getElementById('scenario-title').textContent = s.title;
   document.getElementById('scenario-desc').textContent = s.desc;
 
@@ -2031,6 +2604,7 @@ function loadScenario(skipTransition) {
   }
 
   clearInterval(state.timer);
+  document.getElementById('timer-fill').style.background = toxicMode ? '#ff4444' : '';
   var timerWrap = document.getElementById('timer-wrap');
   if (timerEnabled) {
     timerWrap.style.display = 'flex';
@@ -2109,15 +2683,15 @@ function selectChoice(index) {
     // Replace the last recorded score for this question
     var last = state.choices[state.choices.length - 1];
     state.score -= last.score;
-    state.dimensions[last.dimension] = (state.dimensions[last.dimension] || 0) - last.rawScore;
+    if (!toxicMode) state.dimensions[last.dimension] = (state.dimensions[last.dimension] || 0) - last.rawScore;
     state.categoryScores[s.category] -= last.score;
 
     state.score += pts;
-    state.dimensions[chosen.dimension] = (state.dimensions[chosen.dimension] || 0) + chosen.score;
+    if (!toxicMode) state.dimensions[chosen.dimension] = (state.dimensions[chosen.dimension] || 0) + chosen.score;
     state.categoryScores[s.category] += pts;
 
-    state.choices[state.choices.length - 1] = { category: s.category, score: pts, rawScore: chosen.score, dimension: chosen.dimension };
-    document.getElementById('score-display').textContent = state.score;
+    state.choices[state.choices.length - 1] = { category: s.category, score: pts, rawScore: chosen.score, dimension: chosen.dimension || '' };
+    document.getElementById('score-display').textContent = toxicMode ? (state.toxicScore + ' dmg') : state.score;
     flashScore();
     var lvl2 = chosen.score >= 85 ? 4 : chosen.score >= 60 ? 3 : chosen.score >= 30 ? 2 : 1;
     sfxResult(lvl2);
@@ -2140,8 +2714,9 @@ function selectChoice(index) {
     : chosen.score;
 
   state.score += pts;
-  state.dimensions[chosen.dimension] = (state.dimensions[chosen.dimension] || 0) + chosen.score;
-
+  if (!toxicMode) {
+    state.dimensions[chosen.dimension] = (state.dimensions[chosen.dimension] || 0) + chosen.score;
+  }
   if (!state.categoryScores[s.category]) { state.categoryScores[s.category] = 0; state.categoryMax[s.category] = 0; }
   state.categoryScores[s.category] += pts;
   state.categoryMax[s.category] += 100;
@@ -2149,6 +2724,13 @@ function selectChoice(index) {
   var level = chosen.score >= 85 ? 4 : chosen.score >= 60 ? 3 : chosen.score >= 30 ? 2 : 1;
   state.choices.push({ category: s.category, score: pts, rawScore: chosen.score, dimension: chosen.dimension });
   state.historyItems.push({ title: s.title, category: s.category, choiceText: chosen.text, score: pts, level: level });
+  // Toxic damage accumulation
+  if (toxicMode && chosen.damage) {
+    state.toxicScore += chosen.score;
+    Object.keys(chosen.damage).forEach(function(k) {
+      state.toxicDimensions[k] = (state.toxicDimensions[k] || 0) + chosen.damage[k];
+    });
+  }
 
   var btns = document.querySelectorAll('.choice-btn');
   btns[index].classList.add('selected');
@@ -2161,7 +2743,7 @@ function selectChoice(index) {
   }
 
   showFeedback(index, s, chosen, false);
-  document.getElementById('score-display').textContent = state.score;
+  document.getElementById('score-display').textContent = toxicMode ? (state.toxicScore + ' dmg') : state.score;
   flashScore();
 
   // Sound based on result level
@@ -2187,14 +2769,28 @@ function showFeedback(choiceIndex, scenario, chosen, switched) {
 
   var score = chosen.score;
   var level, levelClass, levelIcon, levelLabel;
-  if (score >= 85) {
-    level = 4; levelClass = 'consequence-best'; levelIcon = '&#9650;&#9650;'; levelLabel = 'Resultado excelente';
-  } else if (score >= 60) {
-    level = 3; levelClass = 'consequence-good'; levelIcon = '&#9650;'; levelLabel = 'Resultado positivo';
-  } else if (score >= 30) {
-    level = 2; levelClass = 'consequence-ok'; levelIcon = '&#9644;'; levelLabel = 'Resultado neutro';
+
+  if (toxicMode) {
+    // Inverted + ironic labels — higher score = more damage = better in toxic mode
+    if (score >= 85) {
+      level = 4; levelClass = 'consequence-bad'; levelIcon = '&#128520;&#128520;'; levelLabel = 'Nível máximo de toxicidade!';
+    } else if (score >= 60) {
+      level = 3; levelClass = 'consequence-ok'; levelIcon = '&#128520;'; levelLabel = 'Muito tóxico, parabéns!';
+    } else if (score >= 30) {
+      level = 2; levelClass = 'consequence-good'; levelIcon = '&#128528;'; levelLabel = 'Poderia ser pior...';
+    } else {
+      level = 1; levelClass = 'consequence-best'; levelIcon = '&#128532;'; levelLabel = 'Que decepção de chefe tóxico';
+    }
   } else {
-    level = 1; levelClass = 'consequence-bad'; levelIcon = '&#9660;'; levelLabel = 'Resultado negativo';
+    if (score >= 85) {
+      level = 4; levelClass = 'consequence-best'; levelIcon = '&#9650;&#9650;'; levelLabel = 'Resultado excelente';
+    } else if (score >= 60) {
+      level = 3; levelClass = 'consequence-good'; levelIcon = '&#9650;'; levelLabel = 'Resultado positivo';
+    } else if (score >= 30) {
+      level = 2; levelClass = 'consequence-ok'; levelIcon = '&#9644;'; levelLabel = 'Resultado neutro';
+    } else {
+      level = 1; levelClass = 'consequence-bad'; levelIcon = '&#9660;'; levelLabel = 'Resultado negativo';
+    }
   }
 
   var bars = '';
@@ -2206,14 +2802,21 @@ function showFeedback(choiceIndex, scenario, chosen, switched) {
     ? '<div style="font-family:\'DM Mono\',monospace;font-size:11px;color:var(--accent);margin-bottom:10px;">&#8635; Resposta alterada — pontuação base com desconto de 20%</div>'
     : '';
 
+  var consequence = chosen.consequence || '';
+  var reasoning = toxicMode ? '' :
+    (score >= 85 ? (scenario.feedbackGood || '') :
+     score >= 60 ? (scenario.feedbackOk || scenario.feedbackGood || '') :
+     score >= 30 ? (scenario.feedbackOk || scenario.feedbackBad || '') :
+                   (scenario.feedbackBad || ''));
+
   panel.innerHTML =
     '<div class="fb-header">' +
       '<div class="impact-meter">' + bars + '</div>' +
       '<span class="consequence-tag ' + levelClass + '">' + levelIcon + ' ' + levelLabel + '</span>' +
     '</div>' +
     switchedNote +
-    '<div class="consequence-text">' + chosen.consequence + '</div>' +
-    '<div class="feedback-reasoning">' + (score >= 85 ? scenario.feedbackGood : score >= 60 ? scenario.feedbackOk : score >= 30 ? scenario.feedbackOk : scenario.feedbackBad) + '</div>';
+    '<div class="consequence-text">' + consequence + '</div>' +
+    (reasoning ? '<div class="feedback-reasoning">' + reasoning + '</div>' : '');
 }
 
 function cancelGame() {
@@ -2233,6 +2836,7 @@ function nextScenario() {
   sfxNext();
   state.currentIndex++;
   if (state.currentIndex >= state.shuffledScenarios.length) {
+    if (toxicMode) { showToxicResult(); return; }
     showResult();
   } else {
     document.documentElement.scrollTop = 0;
@@ -2251,18 +2855,24 @@ function showResult() {
   showScreen('screen-result');
 
   var maxPts = questionCount === 10 ? 1000 : questionCount === 20 ? 2000 : 3000;
+  var maxDim = questionCount === 10 ? 300 : questionCount === 20 ? 600 : 900;
   var profile = determineProfile();
+  var p = PROFILES[profile];
 
+  // Sound + confetti
   sfxFanfare(state.score / maxPts);
-  if (state.score / maxPts >= 0.75) {
-    setTimeout(launchConfetti, 400);
-  }
-  buildHistory();
-  buildInstagramCard(profile, state.score, maxPts);
+  if (state.score / maxPts >= 0.75) setTimeout(launchConfetti, 400);
 
+  // Score
   document.getElementById('final-score').textContent = state.score;
   document.getElementById('score-max').textContent = 'de ' + maxPts + ' pontos' + (timerEnabled ? '' : ' (sem tempo)');
-  var p = PROFILES[profile];
+
+  // Insight phrase (feat 9)
+  var playerName = getPlayerName();
+  var insightEl = document.getElementById('insight-phrase');
+  if (insightEl) insightEl.innerHTML = generateInsight(profile, state.dimensions, playerName);
+
+  // Profile card
   var parts = p.name.split('\n');
   document.getElementById('profile-name').innerHTML = parts[0] + '<br><em>' + parts[1] + '</em>';
   document.getElementById('profile-desc').textContent = p.desc;
@@ -2270,39 +2880,23 @@ function showResult() {
     return '<span class="trait-pill">' + t + '</span>';
   }).join('');
 
-  var dimLabels = { estrategia: 'Estratégia', pessoas: 'Pessoas', comunicacao: 'Comunicação', etica: 'Ética', resultados: 'Resultados' };
-  var maxDim = questionCount === 10 ? 300 : questionCount === 20 ? 600 : 900;
-  document.getElementById('profile-dims').innerHTML = Object.keys(state.dimensions).map(function(key) {
-    var val = state.dimensions[key];
-    var pct = Math.min(100, Math.round((val / maxDim) * 100));
-    return '<div class="dim-row">' +
-      '<span class="dim-label">' + dimLabels[key] + '</span>' +
-      '<div class="dim-bar"><div class="dim-fill" style="width:' + pct + '%"></div></div>' +
-      '<span class="dim-val">' + pct + '%</span>' +
-    '</div>';
-  }).join('');
+  // Radar chart (feat 6)
+  drawRadar(state.dimensions, maxDim);
 
-  // All profiles explorer — always visible
-  var profileKeys = ['estrategista', 'humanista', 'executor', 'etico', 'equilibrado'];
-  var profileLabels = { estrategista: 'Estrategista', humanista: 'Humanista', executor: 'Executor', etico: 'Guardião Ético', equilibrado: 'Equilibrado' };
-  document.getElementById('profile-tabs').innerHTML = profileKeys.map(function(key) {
-    return '<button class="profile-tab" id="ptab-' + key + '" onclick="showProfileTab(\'' + key + '\')">' + profileLabels[key] + '</button>';
-  }).join('');
-  showProfileTab(profile);
+  // History
+  buildHistory();
+
   // Category breakdown
   var catRows = Object.keys(state.categoryScores).map(function(cat) {
     return '<div class="breakdown-row"><span class="cat">' + cat + '</span><span class="pts-val">' + state.categoryScores[cat] + ' pts</span></div>';
   }).join('');
 
-  // Weakest areas
   var catPcts = Object.keys(state.categoryScores).map(function(cat) {
     var maxPossible = state.categoryMax[cat] || 100;
     return { cat: cat, pct: Math.round((state.categoryScores[cat] / maxPossible) * 100) };
   });
   catPcts.sort(function(a, b) { return a.pct - b.pct; });
-  var weakTwo = catPcts.slice(0, 2);
-
-  var devRows = weakTwo.map(function(w) {
+  var devRows = catPcts.slice(0, 2).map(function(w) {
     var msg = DEV_MESSAGES[w.cat] || 'Área com oportunidade de desenvolvimento.';
     return '<div class="dev-row">' +
       '<div class="dev-pct">' + w.pct + '%</div>' +
@@ -2311,10 +2905,21 @@ function showResult() {
   }).join('');
 
   document.getElementById('result-breakdown').innerHTML =
-    '<div class="breakdown-title">Pontuação por categoria</div>' +
-    catRows +
-    '<div style="margin-top:20px;"><div class="breakdown-title">Onde investir em capacitação</div>' +
-    devRows + '</div>';
+    '<div class="breakdown-title">Pontuação por categoria</div>' + catRows +
+    '<div style="margin-top:20px;"><div class="breakdown-title">Onde investir em capacitação</div>' + devRows + '</div>';
+
+  // All profiles explorer
+  var profileKeys = ['estrategista', 'humanista', 'executor', 'etico', 'equilibrado'];
+  var profileLabels = { estrategista: 'Estrategista', humanista: 'Humanista', executor: 'Executor', etico: 'Guardião Ético', equilibrado: 'Equilibrado' };
+  document.getElementById('profile-tabs').innerHTML = profileKeys.map(function(key) {
+    return '<button class="profile-tab" id="ptab-' + key + '" onclick="showProfileTab(\'' + key + '\')">' + profileLabels[key] + '</button>';
+  }).join('');
+  showProfileTab(profile);
+
+  // Instagram card (feat 1 + 9)
+  buildInstagramCard(profile, state.score, maxPts);
+  var igLabel = document.getElementById('ig-player-label');
+  if (igLabel && playerName) igLabel.textContent = playerName + ' · Simulador de Decisões de Liderança';
 }
 
 function determineProfile() {
@@ -2348,6 +2953,94 @@ function showProfileTab(key) {
       p.traits.map(function(t) { return '<span class="trait-pill">' + t + '</span>'; }).join('') +
     '</div>';
 }
+
+// ── TOXIC MODE LOGIC ──
+var toxicMode = false;
+
+function toggleToxicMode() {
+  toxicMode = !toxicMode;
+  if (toxicMode && learningMode) {
+    learningMode = false;
+    timerEnabled = true;
+    document.getElementById('toggle-learning').classList.remove('on');
+    document.getElementById('learning-toggle-sub').textContent = 'Desativado — cada questão permite apenas uma resposta';
+    document.getElementById('stat-timer-val').textContent = '60s';
+    document.getElementById('stat-timer-card').style.opacity = '1';
+  }
+  document.body.classList.toggle('toxic-mode', toxicMode);
+  var sw = document.getElementById('toggle-toxic');
+  var sub = document.getElementById('toxic-toggle-sub');
+  if (toxicMode) {
+    sw.classList.add('on');
+    sub.textContent = 'Ativado — cause o máximo de dano possível';
+    document.querySelector('.intro-title').innerHTML = 'CHEFE<em>.</em>';
+    document.getElementById('intro-subtitle').textContent = 'Você é o chefe agora. 10 situações reais. Cada escolha tem consequências — para sua equipe.';
+    document.getElementById('stat-q-num').textContent = '10';
+  } else {
+    sw.classList.remove('on');
+    sub.textContent = 'Desativado — você lidera com boas práticas';
+    document.querySelector('.intro-title').innerHTML = 'LÍDER<em>.</em>';
+    document.getElementById('intro-subtitle').textContent = 'Você está no comando. ' + questionCount + ' situações reais. Cada escolha revela seu estilo de liderança — e suas consequências.';
+    document.getElementById('stat-q-num').textContent = questionCount;
+  }
+}
+
+function exitToxicMode() {
+  toxicMode = true;
+  toggleToxicMode();
+  showScreen('screen-intro');
+}
+
+function showToxicResult() {
+  showScreen('screen-toxic-result');
+  var maxDamage = 1000;
+  var totalDamage = state.toxicScore || 0;
+  document.getElementById('toxic-damage-score').textContent = totalDamage;
+  document.getElementById('toxic-damage-label').textContent = 'de ' + maxDamage + ' pontos de dano causados';
+  var dims = state.toxicDimensions || { autonomia: 0, moral: 0, confianca: 0, burnout: 0 };
+  var maxDim = -1, maxKey = 'burnout';
+  Object.keys(dims).forEach(function(k) { if (dims[k] > maxDim) { maxDim = dims[k]; maxKey = k; } });
+  var profileMap = { autonomia: 'microgestor', moral: 'narcisista', confianca: 'intimidador', burnout: 'ausente' };
+  var bossKey = totalDamage > 700 ? 'caos' : (profileMap[maxKey] || 'microgestor');
+  var boss = TOXIC_BOSS_PROFILES[bossKey] || TOXIC_BOSS_PROFILES.microgestor;
+  var bparts = boss.name.split('\n');
+  var bname0 = bparts[0] || boss.name;
+  var bname1 = bparts[1] || '';
+  document.getElementById('toxic-boss-name').innerHTML = bname1 ? bname0 + '<br><em>' + bname1 + '</em>' : bname0;
+  document.getElementById('toxic-boss-desc').textContent = boss.desc || '';
+  document.getElementById('toxic-boss-traits').innerHTML = (boss.traits || []).map(function(t) {
+    return '<span class="trait-pill" style="background:color-mix(in srgb,#ff4444 12%,transparent);border-color:color-mix(in srgb,#ff4444 25%,transparent);color:#ff8c42;">' + t + '</span>';
+  }).join('');
+  var maxDimVal = 500;
+  var dimLabels = { autonomia: 'Autonomia', moral: 'Moral do Time', confianca: 'Confiança', burnout: 'Burnout' };
+  document.getElementById('damage-meter').innerHTML = Object.keys(dims).map(function(key) {
+    var pct = Math.min(100, Math.round((dims[key] / maxDimVal) * 100));
+    return '<div class="damage-row">' +
+      '<span class="damage-label">' + (dimLabels[key] || key) + '</span>' +
+      '<div class="damage-bar"><div class="damage-fill" style="width:' + pct + '%"></div></div>' +
+      '<span class="damage-val">' + pct + '%</span>' +
+    '</div>';
+  }).join('');
+  var playerName = getPlayerName();
+  document.getElementById('toxic-ig-icon').textContent = boss.icon || '😈';
+  document.getElementById('toxic-ig-profile').innerHTML = bname1 ? bname0 + '<em>' + bname1 + '</em>' : bname0;
+  document.getElementById('toxic-ig-desc').textContent = (boss.desc || '').substring(0, 90) + '...';
+  document.getElementById('toxic-ig-score').textContent = totalDamage;
+  document.getElementById('toxic-ig-max').textContent = 'de ' + maxDamage;
+  document.getElementById('toxic-ig-traits').innerHTML = boss.traits.map(function(t) {
+    return '<span class="ig-card-trait" style="background:rgba(255,68,68,0.12);border-color:rgba(255,68,68,0.25);color:#ff8c42;">' + t + '</span>';
+  }).join('');
+  if (playerName) document.getElementById('toxic-ig-label').textContent = playerName + ' · Modo Chefe Tóxico';
+  var ratio = totalDamage / maxDamage;
+  if (ratio >= 0.8) {
+    [220, 196, 165, 147].forEach(function(f, i) { playTone(f, 'sawtooth', 0.12, 0.02, 0.3, i * 0.12); });
+  } else {
+    playTone(330, 'triangle', 0.1, 0.01, 0.4);
+  }
+}
+
+// Load saved name on startup
+loadName();
 </script>
 </body>
 </html>
