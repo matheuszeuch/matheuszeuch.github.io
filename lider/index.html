@@ -104,6 +104,196 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
+
+  /* ── TRANSITION OVERLAY (feat 1) ── */
+  #scenario-transition {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  #scenario-transition.show {
+    opacity: 1;
+    pointer-events: all;
+  }
+  .trans-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 120px;
+    line-height: 1;
+    color: var(--accent);
+    animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+  .trans-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-top: 8px;
+    animation: fadeIn 0.3s ease 0.1s both;
+  }
+  .trans-category {
+    font-size: 14px;
+    color: var(--accent2);
+    font-weight: 600;
+    margin-top: 6px;
+    animation: fadeIn 0.3s ease 0.2s both;
+  }
+
+  /* ── DIFFICULTY BADGE (feat 8) ── */
+  .diff-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 3px 10px;
+    border-radius: 100px;
+    position: absolute;
+    top: 12px;
+    left: 16px;
+  }
+  .diff-normal { background: color-mix(in srgb, var(--accent2) 15%, transparent); color: var(--accent2); border: 1px solid color-mix(in srgb, var(--accent2) 30%, transparent); }
+  .diff-hard { background: color-mix(in srgb, var(--accent3) 15%, transparent); color: var(--accent3); border: 1px solid color-mix(in srgb, var(--accent3) 30%, transparent); }
+
+  /* ── CATEGORY ICONS (feat 17) ── */
+  .category-icon {
+    font-size: 18px;
+    margin-bottom: 6px;
+    display: block;
+    opacity: 0.85;
+  }
+
+  /* ── CONFETTI (feat 19) ── */
+  .confetti-container {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 998;
+    overflow: hidden;
+  }
+  @keyframes confettiFall {
+    0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  }
+  .confetti-piece {
+    position: absolute;
+    top: -20px;
+    width: 8px;
+    height: 12px;
+    border-radius: 2px;
+    animation: confettiFall linear forwards;
+  }
+
+  /* ── PRESENTATION MODE (feat 13) ── */
+  body.presentation-mode #screen-game {
+    padding: 48px 40px 80px;
+  }
+  body.presentation-mode .scenario-title {
+    font-size: 26px;
+  }
+  body.presentation-mode .scenario-desc {
+    font-size: 17px;
+  }
+  body.presentation-mode .choice-text {
+    font-size: 16px;
+  }
+  body.presentation-mode .game-header {
+    margin-bottom: 36px;
+  }
+  body.presentation-mode #progress-text {
+    font-size: 14px;
+  }
+  body.presentation-mode .progress-bar {
+    height: 7px;
+  }
+  .pres-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 8px 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    cursor: pointer;
+    z-index: 100;
+    transition: all 0.2s;
+    display: none;
+  }
+  .pres-toggle:hover { border-color: var(--accent2); color: var(--accent2); }
+  #screen-game.active ~ .pres-toggle,
+  body.presentation-mode .pres-toggle { display: flex; align-items: center; gap: 6px; }
+
+  /* ── HISTORY TABLE (feat 3) ── */
+  .history-section {
+    margin-bottom: 24px;
+    animation: resultCascade 0.5s cubic-bezier(0.22,1,0.36,1) 0.55s both;
+  }
+  .history-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    cursor: pointer;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    transition: border-color 0.2s;
+    width: 100%;
+    text-align: left;
+  }
+  .history-toggle:hover { border-color: var(--muted); }
+  .history-list {
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .history-list.open { display: flex; }
+  .history-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .history-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: var(--muted);
+    line-height: 1;
+    min-width: 24px;
+  }
+  .history-content { flex: 1; }
+  .history-title { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 3px; line-height: 1.4; }
+  .history-choice { font-size: 11px; color: var(--muted); line-height: 1.5; }
+  .history-pts {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    min-width: 40px;
+    text-align: right;
+  }
+
   /* ── ENHANCED COMPONENTS ── */
 
   /* Progress */
@@ -627,15 +817,34 @@
       <div class="stat-card"><div class="num">5</div><div class="label">Perfis</div></div>
     </div>
     <div style="margin-bottom:16px;">
-      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;">Número de questões</div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;">Dificuldade</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-        <button class="q-count-btn active" id="btn-q20" onclick="setQuestionCount(20)">
-          <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;line-height:1;">20</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:2px;">Completo</div>
+        <button class="q-count-btn active" id="btn-diff-normal" onclick="setDifficulty('normal')">
+          <div style="font-size:18px;margin-bottom:4px;">&#128312;</div>
+          <div style="font-weight:700;font-size:13px;">Normal</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;">Opções distintas</div>
         </button>
+        <button class="q-count-btn" id="btn-diff-hard" onclick="setDifficulty('hard')">
+          <div style="font-size:18px;margin-bottom:4px;">&#128313;</div>
+          <div style="font-weight:700;font-size:13px;">Difícil</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;">Opções mais parecidas</div>
+        </button>
+      </div>
+    </div>
+    <div style="margin-bottom:16px;">
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;">Número de questões</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
         <button class="q-count-btn" id="btn-q10" onclick="setQuestionCount(10)">
           <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;line-height:1;">10</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:2px;">Versão rápida</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;">Rápido</div>
+        </button>
+        <button class="q-count-btn active" id="btn-q20" onclick="setQuestionCount(20)">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;line-height:1;">20</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;">Padrão</div>
+        </button>
+        <button class="q-count-btn" id="btn-q30" onclick="setQuestionCount(30)">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;line-height:1;">30</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;">Completo</div>
         </button>
       </div>
     </div>
@@ -728,7 +937,9 @@
     </div>
 
     <div class="scenario-card">
+      <span id="diff-badge" class="diff-badge diff-normal" style="display:none;"></span>
       <div class="scenario-num" id="scenario-num">01</div>
+      <div class="category-icon" id="scenario-category-icon"></div>
       <div class="scenario-title" id="scenario-title"></div>
       <div class="scenario-desc" id="scenario-desc"></div>
     </div>
@@ -757,6 +968,13 @@
         <div class="profile-traits" id="profile-traits"></div>
         <div class="profile-dimensions" id="profile-dims"></div>
       </div>
+      <div class="history-section" id="history-section">
+        <button class="history-toggle" onclick="toggleHistory(this)">
+          <span>&#128196; Histórico de respostas</span>
+          <span id="history-chevron">&#9660;</span>
+        </button>
+        <div class="history-list" id="history-list"></div>
+      </div>
       <div class="result-breakdown" id="result-breakdown"></div>
       <div id="all-profiles-section" style="display:none;margin-bottom:24px;">
         <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;">Explorar todos os perfis</div>
@@ -769,6 +987,20 @@
   </section>
 
 </div>
+
+<!-- TRANSITION OVERLAY -->
+<div id="scenario-transition">
+  <div class="trans-num" id="trans-num">01</div>
+  <div class="trans-label" id="trans-label">Cenário</div>
+  <div class="trans-category" id="trans-category"></div>
+</div>
+
+<!-- CONFETTI -->
+<div class="confetti-container" id="confetti-container"></div>
+
+<!-- PRESENTATION MODE TOGGLE -->
+<button class="pres-toggle" id="pres-toggle" onclick="togglePresentationMode()" style="display:none;">&#9654; Apresentação</button>
+
 <script>
 var SCENARIOS = [
   {
@@ -1091,6 +1323,179 @@ var SCENARIOS = [
     feedbackBad: "Aceitar sem preocupação com a transição abandona a equipe e compromete o projeto. Sua reputação é construída nas transições — não só nos sucessos.",
     feedbackOk: "Recusar pode parecer nobre, mas oportunidades como essa raramente voltam. A empresa tem meios de fazer a transição funcionar — se você ajudar a estruturá-la."
   }
+,
+
+  {
+    id: 21,
+    category: "Gestão de Equipe",
+    title: "Seu time mais produtivo está pedindo reconhecimento formal que a empresa não prevê.",
+    desc: "Três colaboradores seniores entregam consistentemente acima da meta há dois trimestres. Eles te pedem algum reconhecimento além do elogio verbal — mas o RH diz que não há política formal para isso.",
+    icon: "👥",
+    choices: [
+      { text: "Buscar formas criativas de reconhecimento dentro do seu poder — visibilidade, autonomia, projetos especiais.", score: 95, dimension: "pessoas", consequence: "Você apresenta um projeto estratégico exclusivo para os três e os indica para apresentar resultados à diretoria. O time se sente valorizado e a iniciativa vira referência interna de gestão." },
+      { text: "Comunicar que entende a situação mas não há nada que possa fazer sem política formal do RH.", score: 15, dimension: "comunicacao", consequence: "Os três colaboradores ficam frustrados. Em 60 dias, dois deles atualizam o LinkedIn. No trimestre seguinte, a performance cai — e um deles aceita oferta de concorrente." },
+      { text: "Propor ao RH a criação de uma política de reconhecimento baseada nos dados de performance do seu time.", score: 80, dimension: "estrategia", consequence: "O RH leva 3 meses para analisar. Enquanto isso, você mantém o time engajado com ações locais. A proposta é aprovada e você passa a ser referência em gestão de pessoas na empresa." },
+      { text: "Dar a todos do time o mesmo reconhecimento verbal para não criar desigualdade entre as pessoas.", score: 10, dimension: "pessoas", consequence: "Os seniores percebem que a alta performance não gera diferenciação real. A motivação cai e a lógica implícita se instala: entregar mais não compensa." }
+    ],
+    bestIndex: 0,
+    feedbackGood: "Reconhecimento não precisa ser financeiro para ser poderoso. Visibilidade estratégica, autonomia e projetos de impacto são moedas de alto valor para profissionais de alto desempenho.",
+    feedbackBad: "Dizer 'não há nada que possa fazer' é abdicação de liderança. Sempre há algo dentro do seu âmbito de influência — o que falta é criatividade e iniciativa.",
+    feedbackOk: "Criar uma política estrutural é a solução mais duradoura — mas líderes eficazes não esperam sistemas para agir. Faça as duas coisas em paralelo."
+  },
+  {
+    id: 22,
+    category: "Comunicação",
+    title: "Você precisa comunicar uma reestruturação que vai eliminar uma área inteira.",
+    desc: "A empresa vai terceirizar toda a área de suporte técnico, impactando 8 pessoas. Você foi comunicado hoje. A diretoria pede que você notifique o time na reunião de segunda-feira, daqui a 4 dias.",
+    icon: "💬",
+    choices: [
+      { text: "Reunir o time na segunda com clareza total: o que vai acontecer, prazos, suporte disponível e próximos passos.", score: 90, dimension: "comunicacao", consequence: "A reunião é difícil, mas o time respeita a transparência. Você oferece cartas de recomendação imediatas e apoia a transição. Dois meses depois, recebe agradecimento de quatro dos oito colaboradores." },
+      { text: "Antecipar a notícia para sexta — eles merecem saber o quanto antes para se preparar.", score: 70, dimension: "etica", consequence: "Alguns ficam gratos pela antecipação. Outros ficam ansiosos no fim de semana sem suporte da empresa. A diretoria fica desconfortável com a antecipação não autorizada, mas reconhece a intenção." },
+      { text: "Esperar a segunda conforme orientado, mas preparar um plano de suporte robusto para apresentar junto.", score: 95, dimension: "pessoas", consequence: "Na segunda, você entrega a notícia difícil com um plano concreto: suporte de RH, cartas de recomendação prontas, extensão de benefícios. O time fica abalado, mas sente que foi tratado com dignidade." },
+      { text: "Pedir à diretoria mais tempo para preparar o time gradualmente antes da comunicação oficial.", score: 35, dimension: "estrategia", consequence: "A diretoria nega. Você entra na reunião de segunda sem preparação adicional. Sem plano de suporte, a comunicação parece fria e o time sente abandono institucional." }
+    ],
+    bestIndex: 2,
+    feedbackGood: "A notícia difícil é inevitável — o que você controla é como entrega. Combinação de clareza + plano de suporte concreto é o máximo que a liderança pode oferecer numa reestruturação.",
+    feedbackBad: "Pedir mais tempo sem ter autorização coloca você em risco e não muda o resultado. Use o tempo disponível para preparar o melhor suporte possível.",
+    feedbackOk: "Antecipar a notícia tem valor ético — mas sem estrutura de suporte, só gera ansiedade antecipada. O timing não substitui o preparo."
+  },
+  {
+    id: 23,
+    category: "Decisão Estratégica",
+    title: "Seu produto principal está perdendo mercado para uma solução mais simples e barata.",
+    desc: "Um concorrente lançou uma versão simplificada do que você oferece por 40% menos. Seus clientes menores estão migrando. Você pode investir em reduzir custo, diferenciar o produto ou focar nos clientes maiores.",
+    icon: "🎯",
+    choices: [
+      { text: "Focar nos clientes de maior valor e diferenciar o produto com funcionalidades que o concorrente não tem.", score: 95, dimension: "estrategia", consequence: "Em 6 meses, os clientes menores migraram quase todos — mas os maiores ficaram e expandiram contratos. Sua margem aumentou 18% e o produto ganhou posicionamento premium claro." },
+      { text: "Reduzir o preço para competir diretamente com o novo concorrente no mesmo segmento.", score: 30, dimension: "resultados", consequence: "Você entra numa guerra de preços que comprime margens. O concorrente, com estrutura mais enxuta, aguenta mais. Sua equipe sofre cortes para compensar e a qualidade cai." },
+      { text: "Lançar uma versão simplificada e barata do produto para competir no segmento de entrada.", score: 65, dimension: "estrategia", consequence: "O produto simplificado captura parte do mercado de entrada, mas canibaliza clientes que migrariam para a versão completa. A marca fica confusa e a equipe divide esforço entre dois produtos." },
+      { text: "Aguardar mais dados de mercado antes de decidir — é cedo para saber se a tendência vai se consolidar.", score: 20, dimension: "resultados", consequence: "Três meses depois, mais 15% dos clientes menores migraram. A janela de diferenciação foi parcialmente perdida. Agir tarde custa mais do que agir com dados incompletos." }
+    ],
+    bestIndex: 0,
+    feedbackGood: "Tentar vencer um concorrente mais barato no mesmo terreno raramente funciona. Focando em quem mais se beneficia do seu produto e diferenciando, você define o campo de batalha onde tem vantagem.",
+    feedbackBad: "Guerra de preços é a estratégia mais cara e menos sustentável. Compress margens até o ponto de inviabilidade antes de vencer.",
+    feedbackOk: "Criar uma versão simplificada parece lógico, mas frequentemente resulta em canibalização e posicionamento confuso. A decisão de atacar dois segmentos exige capacidade que a maioria das empresas não tem."
+  },
+  {
+    id: 24,
+    category: "Ética",
+    title: "Um parceiro estratégico sugere práticas comerciais que estão numa zona cinzenta legal.",
+    desc: "Seu parceiro propõe uma estrutura de precificação que, segundo ele, 'todo mundo no setor faz' e que aumentaria a margem em 25%. O jurídico interno diz que é 'arriscado mas não claramente ilegal'.",
+    icon: "⚖️",
+    choices: [
+      { text: "Recusar a prática e propor ao parceiro alternativas que gerem ganho dentro de limites claros.", score: 100, dimension: "etica", consequence: "O parceiro fica desapontado mas aceita a alternativa. Dois anos depois, dois concorrentes que adotaram a prática original são autuados. Você está limpo — e com a reputação intacta." },
+      { text: "Adotar a prática com ressalvas — monitorar de perto e reverter se houver sinal de risco regulatório.", score: 25, dimension: "estrategia", consequence: "A prática funciona por 8 meses. Uma investigação setorial surge. Você reverte às pressas, mas a documentação dos meses anteriores já existe. A explicação para o conselho é constrangedora." },
+      { text: "Pedir uma segunda opinião jurídica externa antes de decidir qualquer coisa.", score: 70, dimension: "etica", consequence: "O jurídico externo confirma o risco e recomenda não adotar. Você tem agora documentação clara para recusar ao parceiro. A decisão é informada e defensável." },
+      { text: "Aceitar a proposta — se todo o setor faz, o risco regulatório de ser o único a não fazer é maior.", score: 5, dimension: "etica", consequence: "A lógica de 'todo mundo faz' nunca foi defesa jurídica. Quando a investigação vem, ela não distingue quem foi o primeiro. Você está numa lista que preferia não estar." }
+    ],
+    bestIndex: 0,
+    feedbackGood: "Zona cinzenta não é zona segura. A prática que 'todo mundo faz' é exatamente o que reguladores investigam quando querem fazer um exemplo. Liderança ética é pagar o preço de curto prazo para não pagar o de longo.",
+    feedbackBad: "'Monitorar e reverter' é ilusão de controle. Documentação de adoção já é evidência — e reversão tarde demais não apaga o histórico.",
+    feedbackOk: "Segunda opinião jurídica é uma boa prática — mas já havendo risco identificado internamente, a resposta mais sólida é não adotar e propor alternativas."
+  },
+  {
+    id: 25,
+    category: "Gestão de Conflito",
+    title: "Um colaborador acusa outro de assédio moral em reunião de equipe.",
+    desc: "Durante uma retrospectiva, Sofia diz publicamente que Rafael 'sempre a interrompe, diminui suas ideias e ri das suas contribuições'. Rafael nega e fica visivelmente irritado. O time está em silêncio.",
+    icon: "🔥",
+    choices: [
+      { text: "Encerrar a reunião com respeito, agradecer a coragem de Sofia e dizer que vai tratar o tema adequadamente.", score: 100, dimension: "pessoas", consequence: "Você resolve a reunião sem escalada, ouve Sofia e Rafael individualmente e aciona RH. O processo é conduzido com seriedade. Sofia sente que foi ouvida. Rafael recebe orientação formal." },
+      { text: "Pedir que os dois resolvam entre si após a reunião — conflitos interpessoais não são tema de time.", score: 0, dimension: "comunicacao", consequence: "Sofia sente que foi silenciada duas vezes — pela conduta de Rafael e pela sua omissão. Ela registra queixa formal no RH na semana seguinte e cita sua resposta como parte do problema." },
+      { text: "Mediar o conflito ali mesmo — pedir que cada um fale sua perspectiva para o grupo.", score: 15, dimension: "comunicacao", consequence: "Rafael fica na defensiva e o confronto escala na frente de todos. Sofia se arrepende de ter falado. O time fica traumatizado com a dinâmica e o clima piora por semanas." },
+      { text: "Defender Sofia imediatamente e dizer ao time que esse comportamento não será tolerado.", score: 30, dimension: "etica", consequence: "Sua intenção é boa, mas julgamento público sem processo prejudica Rafael antes de qualquer apuração. O RH depois questiona a condução. Sofia é vista como causa de um episódio constrangedor." }
+    ],
+    bestIndex: 0,
+    feedbackGood: "Denúncias de assédio moral exigem processo — não resolução pública imediata. Encerrar com respeito, ouvir individualmente e acionar RH é a sequência correta. Protege Sofia, garante devido processo e preserva o ambiente.",
+    feedbackBad: "Pedir que 'resolvam entre si' numa situação de assédio é omissão grave. O líder tem responsabilidade legal e moral de agir — e a inação é sua parte no problema.",
+    feedbackOk: "Mediar publicamente parece inclusivo, mas coloca Sofia e Rafael em posições assimétricas diante do grupo. Assédio moral não se resolve em debate coletivo."
+  },
+  {
+    id: 26,
+    category: "Visão e Propósito",
+    title: "Você recebe uma oferta para ser mentor de jovens líderes fora do seu horário de trabalho.",
+    desc: "Uma organização de desenvolvimento de liderança pede que você seja mentor voluntário de 3 jovens profissionais, 2 horas por mês. Você está num momento intenso de trabalho, mas a proposta ressoa com seus valores.",
+    icon: "🌱",
+    choices: [
+      { text: "Aceitar e integrar o compromisso à sua rotina — 2 horas mensais são viáveis com agenda bem gerida.", score: 90, dimension: "pessoas", consequence: "Os 3 mentorados evoluem visivelmente em 6 meses. Você descobre que o processo te faz refletir sobre sua própria liderança. A rede de contatos se expande e sua reputação como líder que desenvolve pessoas cresce." },
+      { text: "Recusar — o momento de trabalho não permite mais compromissos externos sem comprometer a qualidade.", score: 55, dimension: "resultados", consequence: "Você preserva a agenda. Mas 6 meses depois, percebe que a intensidade de trabalho que justificou a recusa nunca diminuiu — e a oportunidade não voltou." },
+      { text: "Aceitar condicionalmente — começar com 1 mentorado e expandir se o tempo permitir.", score: 80, dimension: "estrategia", consequence: "Você começa com 1 mentorado e a experiência é tão positiva que reorganiza a agenda para incluir os outros 3 em 2 meses. A moderação inicial foi prudente e o comprometimento acabou sendo total." },
+      { text: "Pedir que a proposta seja encaminhada como programa formal da empresa para ter suporte institucional.", score: 40, dimension: "estrategia", consequence: "A proposta entra em análise corporativa e some na burocracia. Seis meses depois não há resposta. Os 3 jovens foram alocados para outros mentores." }
+    ],
+    bestIndex: 0,
+    feedbackGood: "Desenvolvimento de pessoas é um multiplicador de impacto. Mentoria não compete com trabalho — ela o enriquece. Líderes que investem em outros constroem legado além do cargo.",
+    feedbackBad: "Recusar por sobrecarga faz sentido em princípio, mas se a agenda nunca abre espaço para o que você valoriza, o problema é de prioridade — não de tempo.",
+    feedbackOk: "Começar com um mentorado é uma solução equilibrada — garante comprometimento real sem sobrecarga imediata."
+  },
+  {
+    id: 27,
+    category: "Gestão de Equipe",
+    title: "Dois colaboradores com estilos opostos precisam trabalhar juntos num projeto crítico.",
+    desc: "Vitor é analítico, detalhista e avesso a risco. Clara é criativa, rápida e impaciente com processos. O projeto exige tanto inovação quanto rigor. Eles já tiveram atritos em projetos anteriores.",
+    icon: "👥",
+    choices: [
+      { text: "Estruturar papéis complementares claros e facilitar uma conversa inicial sobre estilos de trabalho.", score: 95, dimension: "pessoas", consequence: "Com papéis definidos — Clara liderando a fase de ideação, Vitor a de validação — o projeto tem suas melhores entregas. O atrito diminui quando cada um entende onde agrega mais. Viram referência de colaboração." },
+      { text: "Substituir um dos dois por alguém com perfil mais compatível com o outro.", score: 15, dimension: "resultados", consequence: "Você resolve o problema de curto prazo, mas perde a diversidade cognitiva que o projeto precisava. O entregável é bom, mas genérico. E Vitor ou Clara ficam ressentidos pela exclusão." },
+      { text: "Deixar que eles resolvam a dinâmica de trabalho por conta própria — são profissionais.", score: 20, dimension: "pessoas", consequence: "Os atritos anteriores se repetem. Clara acelera sem validar, Vitor bloqueia sem propor alternativas. O projeto atrasa e você precisa intervir na reta final de qualquer jeito — só que mais tarde e com mais custo." },
+      { text: "Acompanhar de perto e intervir sempre que surgir conflito entre os dois durante o projeto.", score: 45, dimension: "comunicacao", consequence: "Você vira árbitro permanente. O projeto entrega, mas você gastou energia desproporcional em mediação reativa. Nenhum dos dois aprendeu a colaborar — o problema volta no próximo projeto." }
+    ],
+    bestIndex: 0,
+    feedbackGood: "Diversidade de estilos cognitivos é uma vantagem — desde que bem estruturada. O líder que define papéis complementares transforma potencial de conflito em potencial de inovação.",
+    feedbackBad: "Remover quem 'não se encaixa' é a solução mais cara e menos desenvolvimentista. O problema de colaboração vai aparecer com outros pares no futuro.",
+    feedbackOk: "Intervenção reativa resolve sintomas. A solução proativa — papéis claros e conversa inicial — evita os sintomas antes que apareçam."
+  },
+  {
+    id: 28,
+    category: "Decisão Estratégica",
+    title: "Você identifica uma ineficiência que ninguém mais na empresa parece notar.",
+    desc: "Analisando dados de operação, você descobre que um processo manual consome 200 horas/mês da empresa e poderia ser automatizado em 3 semanas. Mas não é sua área e o dono do processo é um diretor sênior.",
+    icon: "🎯",
+    choices: [
+      { text: "Documentar o achado com dados e propor ao diretor responsável uma conversa sobre a oportunidade.", score: 100, dimension: "estrategia", consequence: "O diretor fica impressionado com a análise e pede que você lidere o projeto de automação em conjunto. A solução é implementada em 4 semanas e economiza R$180K/ano. Você ganha visibilidade na diretoria." },
+      { text: "Escalar diretamente para a diretoria — é uma oportunidade grande demais para passar pelo filtro errado.", score: 35, dimension: "estrategia", consequence: "A diretoria aprecia a iniciativa, mas o diretor responsável fica constrangido por não ter sido consultado primeiro. A relação esfria e o projeto fica travado por semanas em disputa de protagonismo." },
+      { text: "Não agir — não é sua área e envolvimento não solicitado pode ser mal recebido.", score: 10, dimension: "resultados", consequence: "A ineficiência continua por mais 14 meses até que alguém da área identifica o mesmo problema. Você sabia antes — e ficou em silêncio. Quando isso vem à tona, sua passividade é notada." },
+      { text: "Implementar a solução na sua área como piloto e apresentar os resultados ao diretor como modelo.", score: 75, dimension: "estrategia", consequence: "O piloto funciona bem e os dados convencem o diretor. A solução é replicada, mas o caminho foi mais longo do que o necessário. Sua iniciativa foi reconhecida, mas a abordagem direta teria sido mais eficiente." }
+    ],
+    bestIndex: 0,
+    feedbackGood: "Influência sem autoridade é uma das habilidades mais valiosas em ambientes corporativos. Chegar com dados e proposta, respeitando o dono do processo, é a combinação que gera resultado sem criar conflito.",
+    feedbackBad: "Escalar por cima do responsável gera resultado de curto prazo ao custo de uma relação. Em ambientes organizacionais, relacionamentos são ativos — não custos descartáveis.",
+    feedbackOk: "Piloto na própria área é uma estratégia válida, mas evitável. Uma conversa direta com dados teria chegado ao mesmo resultado mais rápido."
+  },
+  {
+    id: 29,
+    category: "Comunicação",
+    title: "Você discorda publicamente de uma decisão da diretoria numa reunião ampla.",
+    desc: "Numa reunião com 40 pessoas, a diretoria anuncia uma mudança na metodologia de avaliação de performance que você considera injusta e mal-calibrada. O CEO pergunta se há dúvidas.",
+    icon: "💬",
+    choices: [
+      { text: "Fazer a pergunta técnica com dados — sem atacar a decisão, mas abrindo espaço para revisão.", score: 95, dimension: "comunicacao", consequence: "O CEO reconhece a pertinência da questão e pede que você colabore com o RH na revisão da calibragem. A metodologia é ajustada. Você ganha reputação de alguém que fala com fundamento e construtivamente." },
+      { text: "Ficar em silêncio na reunião e expressar sua discordância apenas para seu gestor depois.", score: 50, dimension: "etica", consequence: "Sua discordância não gera mudança. O processo segue como anunciado. Você sente que poderia ter feito diferente — e a equipe que esperava que você falasse fica desapontada com o silêncio." },
+      { text: "Questionar diretamente a decisão como equivocada e defender publicamente uma abordagem diferente.", score: 25, dimension: "comunicacao", consequence: "O CEO se fecha defensivamente. A reunião fica tensa. Sua posição é registrada, mas a decisão não muda — e você ganhou uma reputação de confrontador que vai além do mérito da questão." },
+      { text: "Pedir uma reunião bilateral com o CEO depois para discutir suas preocupações com mais contexto.", score: 70, dimension: "estrategia", consequence: "O CEO concorda em conversar. Você apresenta os dados. A metodologia é parcialmente ajustada. O caminho foi mais lento, mas a relação foi preservada e a mudança aconteceu." }
+    ],
+    bestIndex: 0,
+    feedbackGood: "A arte de discordar produtivamente é fazer a pergunta que abre espaço para revisão sem atacar quem decidiu. Dados + respeito ao contexto público é a combinação que gera mudança real.",
+    feedbackBad: "Confronto público direto raramente muda decisões — mas sempre muda relações. O mérito da sua posição se perde quando o foco vira o episódio em si.",
+    feedbackOk: "Conversa bilateral é mais segura, mas perde o momento e a audiência. Quando a oportunidade de falar existe, é mais poderoso usá-la com habilidade do que deixá-la passar."
+  },
+  {
+    id: 30,
+    category: "Visão e Propósito",
+    title: "Você está no auge da carreira — e se sente completamente estagnado.",
+    desc: "Você tem o cargo que queria, a equipe que construiu e o salário que planejou. Mas acorda sem energia e sente que perdeu o senso de propósito. Não há crise externa — a crise é interna.",
+    icon: "🌱",
+    choices: [
+      { text: "Reconhecer o sinal e buscar ativamente o que ainda falta — conversas com mentores, reflexão estruturada, novos desafios.", score: 100, dimension: "estrategia", consequence: "Você passa por um processo de redescoberta. Identifica que quer construir algo próprio nos próximos anos. Começa a se preparar estrategicamente — sem largar o que tem, mas com direção renovada. A energia volta." },
+      { text: "Assumir que isso é normal e continuar — toda carreira tem fases de baixa motivação.", score: 30, dimension: "resultados", consequence: "A sensação de estagnação se aprofunda. Seis meses depois, começa a impactar a qualidade das suas decisões e a energia que transmite à equipe. O que era fase vira padrão." },
+      { text: "Pedir uma licença sabática para sair do ambiente e ganhar clareza com distância.", score: 65, dimension: "pessoas", consequence: "A licença traz clareza. Você volta com energia renovada e algumas respostas. Mas o distanciamento também gerou custo: projetos travaram e sua ausência foi sentida de forma negativa por alguns stakeholders." },
+      { text: "Mudar de empresa — um novo ambiente vai restaurar o senso de desafio e propósito.", score: 35, dimension: "estrategia", consequence: "O novo ambiente é estimulante por 6 meses. Depois, a mesma sensação volta. Sem trabalhar a origem interna do problema, a mudança externa não resolve — apenas atrasa o enfrentamento." }
+    ],
+    bestIndex: 0,
+    feedbackGood: "Estagnação no auge é um dos sinais mais importantes de liderança: indica que você chegou onde planejou — e precisa planejar de novo. Líderes que ignoram esse sinal declinam; os que o agem sobre ele reinventam.",
+    feedbackBad: "Normalizar a falta de propósito é aceitar um declínio lento. O problema interno não desaparece — se manifesta em decisões de menor qualidade, irritabilidade e ausência de visão.",
+    feedbackOk: "Licença sabática resolve o sintoma temporariamente. Sem trabalho interno de redefinição de propósito, o retorno ao ambiente antigo tende a restaurar os mesmos padrões."
+  }
+
 ];
 
 var PROFILES = {
@@ -1141,6 +1546,116 @@ function showScreen(id) {
 var timerEnabled = true;
 var learningMode = false;
 var questionCount = 20;
+
+// ── FEAT 8: DIFFICULTY ──
+var difficulty = 'normal';
+function setDifficulty(d) {
+  difficulty = d;
+  document.getElementById('btn-diff-normal').classList.toggle('active', d === 'normal');
+  document.getElementById('btn-diff-hard').classList.toggle('active', d === 'hard');
+}
+
+// ── FEAT 7: BALANCED 30-question set includes new scenarios ──
+
+// ── FEAT 17: CATEGORY ICONS ──
+var CATEGORY_ICONS = {
+  'Gestão de Equipe': '👥',
+  'Decisão Estratégica': '🎯',
+  'Ética': '⚖️',
+  'Gestão de Conflito': '🔥',
+  'Comunicação': '💬',
+  'Visão e Propósito': '🌱'
+};
+
+// ── FEAT 13: PRESENTATION MODE ──
+var presentationMode = false;
+function togglePresentationMode() {
+  presentationMode = !presentationMode;
+  document.body.classList.toggle('presentation-mode', presentationMode);
+  var btn = document.getElementById('pres-toggle');
+  btn.innerHTML = presentationMode ? '&#8854; Apresentação' : '&#9654; Apresentação';
+  btn.style.color = presentationMode ? 'var(--accent2)' : '';
+  btn.style.borderColor = presentationMode ? 'var(--accent2)' : '';
+}
+
+// ── FEAT 19: CONFETTI ──
+function launchConfetti() {
+  var container = document.getElementById('confetti-container');
+  container.innerHTML = '';
+  var colors = ['var(--accent)', 'var(--accent2)', 'var(--accent3)', '#fff', '#a0e8ff'];
+  for (var i = 0; i < 80; i++) {
+    var piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = Math.random() * 100 + 'vw';
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.width = (6 + Math.random() * 6) + 'px';
+    piece.style.height = (10 + Math.random() * 8) + 'px';
+    piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    piece.style.animationDuration = (1.5 + Math.random() * 2) + 's';
+    piece.style.animationDelay = (Math.random() * 0.8) + 's';
+    container.appendChild(piece);
+  }
+  setTimeout(function() { container.innerHTML = ''; }, 4000);
+}
+
+// ── FEAT 1: SCENARIO TRANSITION ──
+function showTransition(num, total, category, callback) {
+  var el = document.getElementById('scenario-transition');
+  var numEl = document.getElementById('trans-num');
+  var labelEl = document.getElementById('trans-label');
+  var catEl = document.getElementById('trans-category');
+  numEl.textContent = String(num).padStart(2, '0');
+  labelEl.textContent = 'Cenário ' + num + ' de ' + total;
+  catEl.textContent = (CATEGORY_ICONS[category] || '') + '  ' + category;
+  el.classList.add('show');
+  // Reset animation
+  numEl.style.animation = 'none';
+  void numEl.offsetWidth;
+  numEl.style.animation = '';
+  setTimeout(function() {
+    el.classList.remove('show');
+    setTimeout(callback, 300);
+  }, 1400);
+}
+
+// ── FEAT 3: HISTORY ──
+function toggleHistory(btn) {
+  var list = document.getElementById('history-list');
+  var chevron = document.getElementById('history-chevron');
+  list.classList.toggle('open');
+  chevron.textContent = list.classList.contains('open') ? '▲' : '▼';
+}
+
+function buildHistory() {
+  var list = document.getElementById('history-list');
+  if (!list) return;
+  list.innerHTML = state.historyItems.map(function(item, i) {
+    var levelColors = { 4: 'var(--accent2)', 3: 'var(--accent2)', 2: 'var(--accent)', 1: 'var(--accent3)' };
+    var color = levelColors[item.level] || 'var(--muted)';
+    return '<div class="history-item">' +
+      '<div class="history-num" style="color:' + color + '">' + String(i+1).padStart(2,'0') + '</div>' +
+      '<div class="history-content">' +
+        '<div class="history-title">' + item.title + '</div>' +
+        '<div class="history-choice">' + (CATEGORY_ICONS[item.category] || '') + ' ' + item.choiceText + '</div>' +
+      '</div>' +
+      '<div class="history-pts" style="color:' + color + '">' + item.score + 'pts</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ── FEAT 8: HARD MODE — modify choices display ──
+function applyDifficulty(choices, bestIdx) {
+  if (difficulty !== 'hard') return choices;
+  // In hard mode: trim choice texts to ~60 chars to make them more similar-looking
+  // and slightly shuffle scores of non-best options to compress the gap
+  return choices.map(function(c, i) {
+    if (i === bestIdx) return c;
+    // Compress non-best scores slightly upward (max 75 in hard mode)
+    var newScore = Math.min(75, c.score + Math.floor(Math.random() * 20));
+    return Object.assign({}, c, { score: newScore });
+  });
+}
+
 
 // ── SOUND ENGINE (Web Audio API — no external files) ──
 var _ac = null;
@@ -1229,6 +1744,7 @@ function flashScore() {
 
 // Balanced 10-question set: covers all 6 categories and all 5 dimensions
 var BALANCED_10_IDS = [1, 2, 3, 6, 7, 10, 12, 13, 14, 19];
+var BALANCED_30_IDS = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30];
 
 
 
@@ -1236,6 +1752,7 @@ function setQuestionCount(n) {
   questionCount = n;
   document.getElementById('btn-q10').classList.toggle('active', n === 10);
   document.getElementById('btn-q20').classList.toggle('active', n === 20);
+  document.getElementById('btn-q30').classList.toggle('active', n === 30);
   document.getElementById('stat-q-num').textContent = n;
   document.getElementById('intro-subtitle').textContent = 'Você está no comando. ' + n + ' situações reais. Cada escolha revela seu estilo de liderança — e suas consequências.';
 }
@@ -1263,12 +1780,12 @@ function startGame() {
   var scenarioPool;
   if (learningMode) {
     // Fixed order — no shuffle
-    scenarioPool = questionCount === 10
-      ? SCENARIOS.filter(function(s) { return BALANCED_10_IDS.indexOf(s.id) !== -1; })
-      : SCENARIOS.slice();
+    if (questionCount === 10) scenarioPool = SCENARIOS.filter(function(s) { return BALANCED_10_IDS.indexOf(s.id) !== -1; });
+    else scenarioPool = SCENARIOS.slice();
   } else if (questionCount === 10) {
-    var balanced = SCENARIOS.filter(function(s) { return BALANCED_10_IDS.indexOf(s.id) !== -1; });
-    scenarioPool = shuffle(balanced);
+    scenarioPool = shuffle(SCENARIOS.filter(function(s) { return BALANCED_10_IDS.indexOf(s.id) !== -1; }));
+  } else if (questionCount === 20) {
+    scenarioPool = shuffle(SCENARIOS.filter(function(s) { return s.id <= 20; }));
   } else {
     scenarioPool = shuffle(SCENARIOS.slice());
   }
@@ -1287,10 +1804,17 @@ function startGame() {
     dimensions: { estrategia: 0, pessoas: 0, comunicacao: 0, etica: 0, resultados: 0 },
     choices: [],
     categoryScores: {},
-    categoryMax: {}
+    categoryMax: {},
+    historyItems: []
   };
   showScreen('screen-game');
-  loadScenario();
+  document.getElementById('pres-toggle').style.display = 'flex';
+  if (!learningMode) {
+    var s = state.shuffledScenarios[0];
+    showTransition(1, state.shuffledScenarios.length, s.category, function() { loadScenario(true); });
+  } else {
+    loadScenario(true);
+  }
 }
 
 function shuffle(arr) {
@@ -1302,7 +1826,7 @@ function shuffle(arr) {
   return a;
 }
 
-function loadScenario() {
+function loadScenario(skipTransition) {
   var s = state.shuffledScenarios[state.currentIndex];
   state.answered = false;
   state.timedOut = false;
@@ -1315,7 +1839,12 @@ function loadScenario() {
   document.getElementById('progress-fill').style.width = pct + '%';
   document.getElementById('progress-text').textContent = 'Cenário ' + (state.currentIndex + 1) + ' de ' + total;
   document.getElementById('score-display').textContent = state.score;
+  var catIcon = CATEGORY_ICONS[s.category] || '';
   document.getElementById('scenario-num').textContent = String(state.currentIndex + 1).padStart(2, '0');
+  document.getElementById('scenario-category-icon').textContent = catIcon;
+  var diffBadge = document.getElementById('diff-badge');
+  if (difficulty === 'hard') { diffBadge.style.display='flex'; diffBadge.className='diff-badge diff-hard'; diffBadge.textContent='⚡ Difícil'; }
+  else { diffBadge.style.display='none'; }
   document.getElementById('scenario-title').textContent = s.title;
   document.getElementById('scenario-desc').textContent = s.desc;
 
@@ -1468,7 +1997,9 @@ function selectChoice(index) {
   state.categoryScores[s.category] += pts;
   state.categoryMax[s.category] += 100;
 
+  var level = chosen.score >= 85 ? 4 : chosen.score >= 60 ? 3 : chosen.score >= 30 ? 2 : 1;
   state.choices.push({ category: s.category, score: pts, rawScore: chosen.score, dimension: chosen.dimension });
+  state.historyItems.push({ title: s.title, category: s.category, choiceText: chosen.text, score: pts, level: level });
 
   var btns = document.querySelectorAll('.choice-btn');
   btns[index].classList.add('selected');
@@ -1485,8 +2016,7 @@ function selectChoice(index) {
   flashScore();
 
   // Sound based on result level
-  var lvl = chosen.score >= 85 ? 4 : chosen.score >= 60 ? 3 : chosen.score >= 30 ? 2 : 1;
-  sfxResult(lvl);
+  sfxResult(level);
 
   if (!learningMode) {
     document.getElementById('btn-next').style.display = 'flex';
@@ -1539,6 +2069,9 @@ function showFeedback(choiceIndex, scenario, chosen, switched) {
 
 function cancelGame() {
   clearInterval(state.timer);
+  document.getElementById('pres-toggle').style.display = 'none';
+  document.body.classList.remove('presentation-mode');
+  presentationMode = false;
   showScreen('screen-intro');
 }
 
@@ -1553,19 +2086,31 @@ function prevScenario() {
 function nextScenario() {
   sfxNext();
   state.currentIndex++;
-  if (state.currentIndex >= state.shuffledScenarios.length) showResult();
-  else {
-    loadScenario();
+  if (state.currentIndex >= state.shuffledScenarios.length) {
+    showResult();
+  } else {
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
+    var s = state.shuffledScenarios[state.currentIndex];
+    var total = state.shuffledScenarios.length;
+    if (!learningMode) {
+      showTransition(state.currentIndex + 1, total, s.category, function() { loadScenario(); });
+    } else {
+      loadScenario();
+    }
   }
 }
 
 function showResult() {
   showScreen('screen-result');
+  document.getElementById('pres-toggle').style.display = 'none';
 
-  var maxPts = questionCount === 10 ? 1000 : 2000;
+  var maxPts = questionCount === 10 ? 1000 : questionCount === 20 ? 2000 : 3000;
   sfxFanfare(state.score / maxPts);
+  if (state.score / maxPts >= 0.75) {
+    setTimeout(launchConfetti, 400);
+  }
+  buildHistory();
 
   document.getElementById('final-score').textContent = state.score;
   document.getElementById('score-max').textContent = 'de ' + maxPts + ' pontos' + (timerEnabled ? '' : ' (sem tempo)');
@@ -1580,7 +2125,7 @@ function showResult() {
   }).join('');
 
   var dimLabels = { estrategia: 'Estratégia', pessoas: 'Pessoas', comunicacao: 'Comunicação', etica: 'Ética', resultados: 'Resultados' };
-  var maxDim = questionCount === 10 ? 300 : 600;
+  var maxDim = questionCount === 10 ? 300 : questionCount === 20 ? 600 : 900;
   document.getElementById('profile-dims').innerHTML = Object.keys(state.dimensions).map(function(key) {
     var val = state.dimensions[key];
     var pct = Math.min(100, Math.round((val / maxDim) * 100));
