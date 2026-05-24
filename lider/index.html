@@ -1,1 +1,1664 @@
 
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>LÍDER — Simulador de Decisões JCI</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1e26;
+    --surface: #162633;
+    --surface2: #1e3345;
+    --border: #254560;
+    --accent: #f0b429;
+    --accent2: #5ecfcf;
+    --accent3: #ff7eb3;
+    --text: #e8f4f8;
+    --muted: #6a9ab0;
+    --radius: 12px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(ellipse at 30% 20%, color-mix(in srgb, var(--accent) 4%, transparent) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 80%, rgba(78,205,196,0.04) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  #app {
+    width: 100%;
+    max-width: 540px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 1;
+  }
+  .screen {
+    display: none;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 32px 24px;
+    animation: fadeIn 0.45s cubic-bezier(0.22,1,0.36,1);
+  }
+  .screen.active { display: flex; }
+  #screen-game { padding-bottom: 80px; }
+  /* ── ENHANCED ANIMATIONS ── */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes popIn {
+    0% { opacity: 0; transform: scale(0.85); }
+    70% { transform: scale(1.04); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  @keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 0 0 transparent; }
+    50% { box-shadow: 0 0 18px 4px color-mix(in srgb, var(--accent) 18%, transparent); }
+  }
+  @keyframes shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+  @keyframes scoreFlash {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.22); color: #fff; }
+    100% { transform: scale(1); }
+  }
+  @keyframes timerPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  @keyframes resultCascade {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes ripple {
+    0% { transform: scale(0); opacity: 0.5; }
+    100% { transform: scale(4); opacity: 0; }
+  }
+  @keyframes feedbackSlide {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── ENHANCED COMPONENTS ── */
+
+  /* Progress */
+  .progress-bar { height: 5px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    border-radius: 3px;
+    transition: width 0.6s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  /* Score flash */
+  .score-badge .pts.flash { animation: scoreFlash 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+
+  /* Scenario card shimmer top border */
+  .scenario-card { animation: slideUp 0.4s cubic-bezier(0.22,1,0.36,1); }
+  .scenario-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent));
+    background-size: 200% auto;
+    animation: shimmer 3s linear infinite;
+  }
+
+  /* Choice buttons staggered entrance + press + ripple */
+  .choice-btn {
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.18s, background 0.18s, transform 0.1s, box-shadow 0.18s;
+    animation: slideUp 0.35s cubic-bezier(0.22,1,0.36,1) both;
+  }
+  .choice-btn:nth-child(1) { animation-delay: 0.04s; }
+  .choice-btn:nth-child(2) { animation-delay: 0.09s; }
+  .choice-btn:nth-child(3) { animation-delay: 0.14s; }
+  .choice-btn:nth-child(4) { animation-delay: 0.19s; }
+  .choice-btn:active:not(:disabled) { transform: scale(0.975); }
+  .choice-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 6%, transparent);
+    box-shadow: 0 2px 14px color-mix(in srgb, var(--accent) 12%, transparent);
+  }
+  .choice-btn.selected {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    box-shadow: 0 0 0 1px var(--accent), 0 4px 18px color-mix(in srgb, var(--accent) 18%, transparent);
+  }
+  .ripple-el {
+    position: absolute;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--accent) 28%, transparent);
+    width: 20px; height: 20px;
+    margin-top: -10px; margin-left: -10px;
+    pointer-events: none;
+    animation: ripple 0.55s ease-out forwards;
+    transform-origin: center;
+  }
+
+  /* Feedback entrance */
+  .feedback-panel { animation: feedbackSlide 0.35s cubic-bezier(0.22,1,0.36,1); }
+
+  /* Timer urgency pulse */
+  .timer-fill.urgent { animation: timerPulse 0.65s ease-in-out infinite; }
+
+  /* Result cascade */
+  .result-big { animation: popIn 0.55s cubic-bezier(0.34,1.56,0.64,1) 0.1s both; }
+  .profile-card { animation: resultCascade 0.5s cubic-bezier(0.22,1,0.36,1) 0.28s both; }
+  .result-breakdown { animation: resultCascade 0.5s cubic-bezier(0.22,1,0.36,1) 0.42s both; }
+  #screen-result .btn-primary { animation: pulseGlow 2.2s ease-in-out 0.8s infinite; }
+
+  /* All profiles explorer */
+  .profile-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  .profile-tab {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 6px 14px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.18s;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .profile-tab:hover { border-color: var(--accent2); color: var(--accent2); }
+  .profile-tab.active {
+    background: var(--surface2);
+    border-color: var(--accent2);
+    color: var(--accent2);
+    box-shadow: 0 0 0 1px var(--accent2);
+  }
+  .profile-explorer {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    animation: feedbackSlide 0.3s cubic-bezier(0.22,1,0.36,1);
+  }
+  .profile-explorer .pe-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    line-height: 1.1;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+  .profile-explorer .pe-name em { color: var(--accent2); font-style: normal; }
+  .profile-explorer .pe-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 14px;
+    font-weight: 300;
+  }
+  .profile-explorer .pe-traits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+  .intro-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 6px 14px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 40px;
+    width: fit-content;
+  }
+  .intro-badge span { color: var(--accent); }
+  .intro-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(72px, 18vw, 96px);
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .intro-title em { color: var(--accent); font-style: normal; }
+  .intro-subtitle {
+    font-size: 15px;
+    color: var(--muted);
+    font-weight: 300;
+    line-height: 1.6;
+    margin-top: 20px;
+    margin-bottom: 48px;
+    max-width: 340px;
+  }
+  .intro-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 48px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 12px;
+    text-align: center;
+  }
+  .stat-card .num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .stat-card .label {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .btn-primary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: var(--accent);
+    color: #0a0a0f;
+    border: none;
+    border-radius: var(--radius);
+    padding: 18px 28px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    width: 100%;
+    transition: transform 0.15s, box-shadow 0.15s;
+    letter-spacing: 0.02em;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px color-mix(in srgb, var(--accent) 25%, transparent); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.15s;
+    margin-top: 12px;
+  }
+  .btn-ghost:hover { border-color: var(--muted); color: var(--text); }
+  .game-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+  }
+  .progress-wrap { flex: 1; margin-right: 16px; }
+  .progress-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .progress-bar { height: 4px; background: var(--surface2); border-radius: 2px; overflow: hidden; }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 2px;
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+  .score-badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    text-align: center;
+    min-width: 72px;
+  }
+  .score-badge .pts {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .score-badge .pts-label { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+  .scenario-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .scenario-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+  .scenario-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    color: var(--surface2);
+    position: absolute;
+    top: 12px; right: 20px;
+    line-height: 1;
+    user-select: none;
+  }
+  .scenario-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.4;
+    margin-bottom: 10px;
+    padding-right: 48px;
+  }
+  .scenario-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+  .choices-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 14px;
+  }
+  .choices { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+  .choice-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    width: 100%;
+  }
+  .choice-btn:hover:not(:disabled) { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 5%, transparent); }
+  .choice-btn:disabled { cursor: default; }
+  .choice-letter {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    color: var(--muted);
+    line-height: 1.1;
+    min-width: 20px;
+    transition: color 0.2s;
+  }
+  .choice-text { font-size: 14px; line-height: 1.55; font-weight: 400; }
+  .choice-btn.selected { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
+  .choice-btn.selected .choice-letter { color: var(--accent); }
+  .choice-btn.correct { border-color: var(--accent2); background: rgba(78,205,196,0.08); }
+  .choice-btn.correct .choice-letter { color: var(--accent2); }
+  .choice-btn.wrong { border-color: var(--accent3); background: rgba(255,107,107,0.08); opacity: 0.7; }
+  .feedback-panel {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-bottom: 20px;
+    animation: fadeIn 0.3s ease;
+  }
+  .feedback-panel .fb-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+  .impact-meter { display: flex; gap: 4px; align-items: flex-end; }
+  .impact-bar {
+    width: 8px; border-radius: 3px; background: var(--border);
+  }
+  .impact-bar:nth-child(1) { height: 10px; }
+  .impact-bar:nth-child(2) { height: 16px; }
+  .impact-bar:nth-child(3) { height: 22px; }
+  .impact-bar:nth-child(4) { height: 28px; }
+  .impact-bar.filled.level-1 { background: var(--accent3); }
+  .impact-bar.filled.level-2 { background: #f0a500; }
+  .impact-bar.filled.level-3 { background: var(--accent2); }
+  .impact-bar.filled.level-4 { background: #5eff9e; }
+  .consequence-tag {
+    display: inline-flex; align-items: center; gap: 5px;
+    border-radius: 100px; padding: 4px 12px;
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .consequence-best { background: rgba(94,255,158,0.12); color: #5eff9e; border: 1px solid rgba(94,255,158,0.25); }
+  .consequence-good { background: rgba(78,205,196,0.12); color: var(--accent2); border: 1px solid rgba(78,205,196,0.25); }
+  .consequence-ok { background: rgba(240,165,0,0.12); color: #f0a500; border: 1px solid rgba(240,165,0,0.25); }
+  .consequence-bad { background: rgba(255,107,107,0.12); color: var(--accent3); border: 1px solid rgba(255,107,107,0.25); }
+  .consequence-text {
+    font-size: 14px; color: var(--text); line-height: 1.65;
+    font-weight: 500; margin-bottom: 10px;
+    padding: 12px; background: var(--surface); border-radius: 8px;
+    border-left: 3px solid var(--border);
+  }
+  .feedback-reasoning { font-size: 13px; color: var(--muted); line-height: 1.65; font-weight: 300; }
+  .timer-wrap { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
+  .timer-bar { flex: 1; height: 3px; background: var(--surface2); border-radius: 2px; overflow: hidden; }
+  .timer-fill { height: 100%; background: var(--accent2); border-radius: 2px; transition: width 1s linear; }
+  .timer-num { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); min-width: 24px; text-align: right; }
+  .result-screen { text-align: center; }
+  .result-big {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 100px;
+    line-height: 1;
+    color: var(--accent);
+    margin: 8px 0;
+    animation: countUp 0.6s cubic-bezier(0.34,1.56,0.64,1) 0.2s both;
+  }
+  @keyframes countUp {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .result-label { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.15em; font-family: 'DM Mono', monospace; }
+  .profile-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 24px;
+    margin: 28px 0;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+  }
+  .profile-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+  }
+  .profile-archetype { font-family: 'Bebas Neue', sans-serif; font-size: 42px; color: var(--text); line-height: 1.1; margin-bottom: 6px; }
+  .profile-archetype em { color: var(--accent); font-style: normal; }
+  .profile-desc { font-size: 14px; color: var(--muted); line-height: 1.7; font-weight: 300; margin-bottom: 20px; }
+  .profile-traits { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+  .trait-pill {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 5px 12px;
+    font-size: 12px;
+    color: var(--accent2);
+    font-family: 'DM Mono', monospace;
+  }
+  .profile-dimensions { display: flex; flex-direction: column; gap: 12px; }
+  .dim-row { display: flex; align-items: center; gap: 12px; }
+  .dim-label { font-size: 12px; color: var(--muted); width: 100px; flex-shrink: 0; text-transform: uppercase; letter-spacing: 0.06em; }
+  .dim-bar { flex: 1; height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+  .dim-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--accent2), var(--accent)); transition: width 1s cubic-bezier(0.4,0,0.2,1); }
+  .dim-val { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); width: 28px; text-align: right; }
+  .result-breakdown {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-bottom: 24px;
+    text-align: left;
+  }
+  .breakdown-title { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px; }
+  .breakdown-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--surface2); font-size: 13px; }
+  .breakdown-row:last-child { border-bottom: none; }
+  .breakdown-row .cat { color: var(--muted); }
+  .breakdown-row .pts-val { color: var(--accent); font-family: 'DM Mono', monospace; }
+  .dev-row { display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid var(--surface2); }
+  .dev-row:last-child { border-bottom: none; }
+  .dev-pct { min-width: 36px; font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--accent3); line-height: 1; }
+  .dev-cat { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .dev-msg { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+  .q-count-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 12px;
+    text-align: center;
+    cursor: pointer;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+    width: 100%;
+  }
+  .q-count-btn:hover { border-color: var(--muted); background: var(--surface2); }
+  .q-count-btn.active {
+    border-color: var(--accent);
+    background: var(--surface2);
+    color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent), 0 4px 14px rgba(0,0,0,0.3);
+  }
+  .q-count-btn.active div:first-child { color: var(--accent); }
+  .timer-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 32px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .timer-toggle:hover { border-color: var(--muted); }
+  .timer-toggle-left { display: flex; align-items: center; gap: 12px; }
+  .timer-toggle-icon { font-size: 20px; }
+  .timer-toggle-label { font-size: 14px; font-weight: 600; color: var(--text); }
+  .timer-toggle-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .toggle-switch {
+    width: 44px; height: 24px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    position: relative;
+    transition: background 0.25s, border-color 0.25s;
+    flex-shrink: 0;
+  }
+  .toggle-switch.on { background: var(--accent); border-color: var(--accent); }
+  .toggle-knob {
+    width: 18px; height: 18px;
+    background: var(--muted);
+    border-radius: 50%;
+    position: absolute;
+    top: 2px; left: 2px;
+    transition: transform 0.25s, background 0.25s;
+  }
+  .toggle-switch.on .toggle-knob { transform: translateX(20px); background: #0a0a0f; }
+  @media (max-width: 400px) { .screen { padding: 24px 18px; } .intro-title { font-size: 72px; } }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- INTRO -->
+  <section class="screen active" id="screen-intro">
+    <div class="intro-badge"><span>JCI</span> Capacitação de Liderança</div>
+    <h1 class="intro-title">LÍDER<em>.</em></h1>
+    <p style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--muted);letter-spacing:0.15em;">SIMULADOR DE DECISÕES</p>
+    <p class="intro-subtitle" id="intro-subtitle">Você está no comando. 20 situações reais. Cada escolha revela seu estilo de liderança — e suas consequências.</p>
+    <div class="intro-stats">
+      <div class="stat-card" id="stat-questions"><div class="num" id="stat-q-num">20</div><div class="label">Cenários</div></div>
+      <div class="stat-card" id="stat-timer-card"><div class="num" id="stat-timer-val">60s</div><div class="label">Por decisão</div></div>
+      <div class="stat-card"><div class="num">5</div><div class="label">Perfis</div></div>
+    </div>
+    <div style="margin-bottom:16px;">
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;">Número de questões</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <button class="q-count-btn active" id="btn-q20" onclick="setQuestionCount(20)">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;line-height:1;">20</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;">Completo</div>
+        </button>
+        <button class="q-count-btn" id="btn-q10" onclick="setQuestionCount(10)">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;line-height:1;">10</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;">Versão rápida</div>
+        </button>
+      </div>
+    </div>
+    <div class="timer-toggle" onclick="toggleLearning()" id="learning-toggle-btn">
+      <div class="timer-toggle-left">
+        <span class="timer-toggle-icon">&#128214;</span>
+        <div>
+          <div class="timer-toggle-label">Modo aprendizado</div>
+          <div class="timer-toggle-sub" id="learning-toggle-sub">Desativado — cada questão permite apenas uma resposta</div>
+        </div>
+      </div>
+      <div class="toggle-switch" id="toggle-learning"><div class="toggle-knob"></div></div>
+    </div>
+
+    <button class="btn-primary" onclick="startGame()">&#9654; Iniciar Simulação</button>
+    <button class="btn-ghost" onclick="showScreen('screen-instructions')">Como funciona</button>
+  </section>
+
+  <!-- INSTRUCTIONS -->
+  <section class="screen" id="screen-instructions">
+    <div style="margin-bottom:32px;">
+      <div class="intro-badge"><span>Como</span> Funciona</div>
+      <h2 style="font-family:'Bebas Neue',sans-serif;font-size:42px;margin-bottom:20px;">REGRAS<br>DO JOGO</h2>
+
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--accent2);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;">&#9654; Modo Jogo</div>
+      <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:28px;">
+        <div style="display:flex;gap:16px;align-items:flex-start;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--accent);min-width:28px;line-height:1.1;">1</div>
+          <div><div style="font-weight:700;margin-bottom:3px;">Escolha o número de cenários</div><div style="font-size:13px;color:var(--muted);line-height:1.6;">10 questões (versão rápida, ~15 min) ou 20 questões (completo, ~25 min). O conjunto de 10 é balanceado para cobrir todas as dimensões de liderança.</div></div>
+        </div>
+        <div style="display:flex;gap:16px;align-items:flex-start;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--accent);min-width:28px;line-height:1.1;">2</div>
+          <div><div style="font-weight:700;margin-bottom:3px;">60 segundos por decisão</div><div style="font-size:13px;color:var(--muted);line-height:1.6;">O timer corre. Responder mais rápido vale mais pontos. Se o tempo acabar, você ainda pode responder — mas com 20% de desconto na pontuação.</div></div>
+        </div>
+        <div style="display:flex;gap:16px;align-items:flex-start;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--accent);min-width:28px;line-height:1.1;">3</div>
+          <div><div style="font-weight:700;margin-bottom:3px;">Uma resposta por cenário</div><div style="font-size:13px;color:var(--muted);line-height:1.6;">Depois de escolher, a consequência da sua decisão é revelada. Não é possível voltar ou trocar a resposta.</div></div>
+        </div>
+        <div style="display:flex;gap:16px;align-items:flex-start;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--accent);min-width:28px;line-height:1.1;">4</div>
+          <div><div style="font-weight:700;margin-bottom:3px;">Perfil de liderança ao final</div><div style="font-size:13px;color:var(--muted);line-height:1.6;">Suas escolhas revelam um dos 5 arquétipos — Estrategista Visionário, Líder Humanista, Executor de Elite, Guardião Ético ou Líder Equilibrado — e indicam onde investir em desenvolvimento.</div></div>
+        </div>
+      </div>
+
+      <div style="height:1px;background:var(--border);margin-bottom:20px;"></div>
+
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--accent2);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;">&#128214; Modo Aprendizado</div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="display:flex;gap:16px;align-items:flex-start;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--accent);min-width:28px;line-height:1.1;">1</div>
+          <div><div style="font-weight:700;margin-bottom:3px;">Sem tempo, sem pressão</div><div style="font-size:13px;color:var(--muted);line-height:1.6;">O timer é desativado automaticamente. Cenários e respostas aparecem em ordem fixa — ideal para grupos discutirem juntos projetando na tela.</div></div>
+        </div>
+        <div style="display:flex;gap:16px;align-items:flex-start;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--accent);min-width:28px;line-height:1.1;">2</div>
+          <div><div style="font-weight:700;margin-bottom:3px;">Navegação livre</div><div style="font-size:13px;color:var(--muted);line-height:1.6;">Botões Anterior e Próxima permitem avançar ou voltar entre os cenários a qualquer momento, mesmo sem responder. O facilitador controla o ritmo da discussão.</div></div>
+        </div>
+        <div style="display:flex;gap:16px;align-items:flex-start;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--accent);min-width:28px;line-height:1.1;">3</div>
+          <div><div style="font-weight:700;margin-bottom:3px;">Troca de resposta permitida</div><div style="font-size:13px;color:var(--muted);line-height:1.6;">Após selecionar uma opção, é possível trocar para ver a consequência das outras. A pontuação da troca aplica 20% de desconto sobre o valor base da nova resposta.</div></div>
+        </div>
+        <div style="display:flex;gap:16px;align-items:flex-start;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--accent);min-width:28px;line-height:1.1;">4</div>
+          <div><div style="font-weight:700;margin-bottom:3px;">Todos os perfis visíveis ao final</div><div style="font-size:13px;color:var(--muted);line-height:1.6;">Na tela de resultado, é possível explorar todos os 5 arquétipos de liderança — útil para o grupo comparar e discutir os diferentes estilos.</div></div>
+        </div>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="startGame()">&#9654; Começar agora</button>
+    <button class="btn-ghost" onclick="showScreen('screen-intro')">&#8592; Voltar</button>
+  </section>
+
+  <!-- GAME -->
+  <section class="screen" id="screen-game">
+    <div class="game-header">
+      <div class="progress-wrap">
+        <div class="progress-label">
+          <span id="progress-text">Cenário 1 de 10</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+      </div>
+      <div class="score-badge">
+        <div class="pts" id="score-display">0</div>
+        <div class="pts-label">pontos</div>
+      </div>
+    </div>
+
+    <div class="timer-wrap" id="timer-wrap">
+      <div class="timer-bar"><div class="timer-fill" id="timer-fill" style="width:100%"></div></div>
+      <div class="timer-num" id="timer-num">30</div>
+    </div>
+
+    <div class="scenario-card">
+      <div class="scenario-num" id="scenario-num">01</div>
+      <div class="scenario-title" id="scenario-title"></div>
+      <div class="scenario-desc" id="scenario-desc"></div>
+    </div>
+
+    <div class="choices-label">Como você reage?</div>
+    <div class="choices" id="choices-container"></div>
+
+    <div class="feedback-panel" id="feedback-panel" style="display:none;"></div>
+    <div id="nav-learning" style="display:none;gap:10px;margin-bottom:0;">
+      <button class="btn-ghost" id="btn-prev" onclick="prevScenario()" style="margin-top:0;">&#8592; Anterior</button>
+      <button class="btn-primary" id="btn-next-learn" onclick="nextScenario()">Próxima &#8594;</button>
+    </div>
+    <button class="btn-primary" id="btn-next" style="display:none;" onclick="nextScenario()">Próxima situação &#8594;</button>
+  </section>
+
+  <!-- RESULT -->
+  <section class="screen" id="screen-result">
+    <div class="result-screen">
+      <div class="result-label">Sua Pontuação Final</div>
+      <div class="result-big" id="final-score">0</div>
+      <div class="result-label" id="score-max">de 2000 pontos</div>
+      <div class="profile-card">
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;">Seu Perfil de Liderança</div>
+        <div class="profile-archetype" id="profile-name"></div>
+        <div class="profile-desc" id="profile-desc"></div>
+        <div class="profile-traits" id="profile-traits"></div>
+        <div class="profile-dimensions" id="profile-dims"></div>
+      </div>
+      <div class="result-breakdown" id="result-breakdown"></div>
+      <div id="all-profiles-section" style="display:none;margin-bottom:24px;">
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px;">Explorar todos os perfis</div>
+        <div class="profile-tabs" id="profile-tabs"></div>
+        <div class="profile-explorer" id="profile-explorer"></div>
+      </div>
+      <button class="btn-primary" onclick="startGame()">&#8634; Jogar novamente</button>
+      <button class="btn-ghost" onclick="showScreen('screen-intro')">&#8592; Início</button>
+    </div>
+  </section>
+
+</div>
+<script>
+var SCENARIOS = [
+  {
+    id: 1,
+    category: "Gestão de Equipe",
+    title: "Um membro da equipe está entregando abaixo do esperado há 3 semanas.",
+    desc: "Diego, seu analista mais experiente, começou a falhar prazos e sua qualidade caiu visivelmente. A equipe está percebendo. Você ainda não conversou diretamente com ele sobre isso.",
+    choices: [
+      { text: "Chamar Diego para uma conversa privada e entender o que está acontecendo antes de agir.", score: 100, dimension: "pessoas", consequence: "Diego revela um problema familiar. Com suporte e plano de retomada, recupera a performance em duas semanas. A equipe percebe sua liderança humana e a confiança no time aumenta." },
+      { text: "Redistribuir as tarefas de Diego entre o time para proteger o projeto sem confrontá-lo.", score: 20, dimension: "resultados", consequence: "O projeto segue, mas Diego percebe o que aconteceu e se sente humilhado. Sua desmotivação piora. O time nota que problemas de performance são varridos para debaixo do tapete." },
+      { text: "Enviar um e-mail ao time reforçando os padrões de qualidade e prazos esperados de todos.", score: 40, dimension: "comunicacao", consequence: "O e-mail gera desconforto. Diego sabe que é sobre ele, mas o problema real não é endereçado. A situação se arrasta por mais duas semanas até forçar uma conversa inevitável." },
+      { text: "Escalar para o RH e iniciar um processo formal de advertência por baixa performance.", score: 15, dimension: "etica", consequence: "O processo formal chega como um choque. Sem conversa prévia, Diego fica na defensiva, o clima deteriora e você perde credibilidade por pular etapas básicas de gestão." }
+    ],
+    bestIndex: 0,
+    feedbackGood: "Confrontar com empatia antes de punir é o que separa gestores de líderes. Diego pode estar passando por algo pessoal. A conversa direta preserva a relação e abre espaço para solução.",
+    feedbackBad: "Evitar o problema não o resolve. Redistribuir tarefas sem conversar sinaliza que baixa performance não tem consequências — e corrói a credibilidade do líder.",
+    feedbackOk: "Um movimento razoável, mas genérico. Não endereça o problema real com Diego nem gera aprendizado individual."
+  },
+  {
+    id: 2,
+    category: "Decisão Estratégica",
+    title: "Seu diretor pede uma decisão rápida com dados incompletos.",
+    desc: "Faltam 2 horas para a reunião de diretoria. Seu chefe quer que você apresente uma recomendação sobre expandir para um novo mercado — mas você tem apenas 40% dos dados necessários para uma análise robusta.",
+    choices: [
+      { text: "Apresentar o que tem, nomear as incertezas com clareza e propor prazo para completar a análise.", score: 100, dimension: "estrategia", consequence: "A diretoria valoriza a honestidade intelectual. Você ganha tempo para completar a análise e sua reputação como executivo confiável sai fortalecida da reunião." },
+      { text: "Pedir adiamento da apresentação e só recomendar quando os dados forem suficientes.", score: 50, dimension: "etica", consequence: "O adiamento é aceito, mas cria percepção de que você não opera bem sob pressão. A oportunidade de mostrar maturidade executiva é perdida." },
+      { text: "Montar uma recomendação confiante com premissas otimistas para não decepcionar o diretor.", score: 10, dimension: "comunicacao", consequence: "A recomendação é aprovada, mas os dados reais contradizem as premissas. Sua credibilidade é comprometida e a decisão precisa ser revertida com custo alto." },
+      { text: "Delegar a apresentação para alguém da equipe e deixar que ela apresente no seu lugar.", score: 5, dimension: "pessoas", consequence: "A equipe fica exposta sem preparo adequado, o resultado é fraco e você perde pontos de liderança por ausência num momento crítico." }
+    ],
+    bestIndex: 0,
+    feedbackGood: "Apresentar com transparência sobre as limitações vale muito mais do que uma recomendação falsa de confiança. Executivos confiam em quem nomeia incertezas — não em quem as esconde.",
+    feedbackBad: "Decisões baseadas em premissas otimistas são uma das maiores fontes de fracasso estratégico. A pressão do momento não justifica comprometer a integridade analítica.",
+    feedbackOk: "Pedir mais tempo tem valor, mas num ambiente executivo pode ser lido como falta de capacidade de operar sob pressão."
+  },
+  {
+    id: 3,
+    category: "Ética",
+    title: "Você descobre uma irregularidade nos números do relatório trimestral.",
+    desc: "Revisando os dados antes da publicação, você nota que os números de performance foram ajustados para parecerem melhores. Seu gestor diz: 'não é grande coisa, todo mundo faz isso'. O relatório vai para acionistas.",
+    choices: [
+      { text: "Recusar assinar o relatório e escalar para o compliance ou para acima na hierarquia.", score: 100, dimension: "etica", consequence: "O compliance intervém e os dados são corrigidos. A tensão com o gestor é real, mas sua reputação de integridade se solidifica. Você passa a ser visto como alguém em quem a empresa pode confiar." },
+      { text: "Propor corrigir os dados agora, mas ceder caso o gestor insista em manter como está.", score: 40, dimension: "etica", consequence: "O gestor insiste e você cede. O relatório sai impreciso. Meses depois, a auditoria identifica a inconsistência — e você estava na lista de signatários." },
+      { text: "Assinar o relatório para não criar atrito com o gestor por algo considerado menor.", score: 0, dimension: "etica", consequence: "Um acionista questiona os números em assembleia. A investigação revela a manipulação e você é identificado como cúmplice. Sua carreira na empresa chega ao fim." },
+      { text: "Pedir transferência de área para não aparecer como responsável pelo relatório.", score: 15, dimension: "pessoas", consequence: "A transferência é aprovada, mas o relatório sai com irregularidades. Quando o problema vem à tona, sua fuga da situação é lembrada e sua imagem sofre consequências." }
+    ],
+    bestIndex: 0,
+    feedbackGood: "Ética não é negociável quando envolve terceiros — especialmente acionistas. Líderes que constroem reputações duradouras escolhem o certo mesmo quando é caro.",
+    feedbackBad: "Assinar um relatório que você sabe ser impreciso é cumplicidade. Além do risco legal, você sinaliza que seus valores têm preço.",
+    feedbackOk: "Propor correção é melhor do que aceitar passivamente, mas ceder à insistência do gestor compromete sua integridade."
+  },
+  {
+    id: 4,
+    category: "Gestão de Conflito",
+    title: "Dois membros da sua equipe estão em conflito aberto e isso está afetando o time.",
+    desc: "Ana e Rodrigo, dois líderes técnicos, estão em desentendimento crescente sobre a arquitetura do projeto. As discussões estão ficando pessoais e outros membros da equipe estão escolhendo lados.",
+    choices: [
+      { text: "Conversar individualmente com cada um e depois facilitar uma reunião entre os dois.", score: 100, dimension: "pessoas", consequence: "As conversas individuais revelam um mal-entendido de escopo. A reunião conjunta resolve o impasse técnico e restaura a relação. O time volta a funcionar com coesão." },
+      { text: "Convocar uma reunião coletiva para discutir o conflito abertamente com toda a equipe.", score: 30, dimension: "comunicacao", consequence: "A reunião coletiva amplifica o conflito. Ana e Rodrigo ficam na defensiva, os lados ficam mais marcados e o clima piora nas semanas seguintes." },
+      { text: "Tomar a decisão técnica você mesmo e comunicar ao time, encerrando o debate.", score: 55, dimension: "estrategia", consequence: "O debate técnico cessa, mas a tensão entre Ana e Rodrigo continua. Sem resolução relacional, o próximo desacordo explode com mais intensidade." },
+      { text: "Não intervir por ora e aguardar que o próprio time resolva o desentendimento.", score: 0, dimension: "pessoas", consequence: "O conflito escala. Um dos dois pede transferência. A equipe perde um talento e você é questionado pela liderança por não ter agido a tempo." }
+    ],
+    bestIndex: 0,
+    feedbackGood: "Conversas individuais permitem que cada um se expresse sem defesa, revelam a raiz real do conflito e criam condições para mediação eficaz.",
+    feedbackBad: "Ignorar conflitos interpessoais é uma das omissões mais caras de liderança. O custo silencioso — produtividade, moral, retenção — é enorme.",
+    feedbackOk: "Tomar a decisão técnica resolve o sintoma, mas não o conflito relacional. Ana e Rodrigo continuarão em tensão no próximo desentendimento."
+  },
+  {
+    id: 5,
+    category: "Decisão Estratégica",
+    title: "Uma oportunidade inesperada aparece — mas exige desviar recursos do projeto principal.",
+    desc: "Um potencial cliente grande quer uma proposta em 5 dias para um contrato que pode representar 30% da receita anual. O problema: sua equipe está 100% alocada num projeto crítico com entrega em 3 semanas.",
+    choices: [
+      { text: "Avaliar o que pode ser realocado sem comprometer o projeto e propor uma solução criativa.", score: 95, dimension: "estrategia", consequence: "Você identifica que 20% da equipe pode ser realocada sem risco. Apresenta proposta ao cliente, que impressiona pela agilidade. O contrato é fechado e o projeto atual entrega no prazo." },
+      { text: "Aceitar a oportunidade e lidar com os impactos no projeto principal conforme surgirem.", score: 25, dimension: "resultados", consequence: "O projeto atual atrasa 10 dias. O cliente existente fica insatisfeito. O novo contrato entra, mas você paga o preço em reputação de entrega e relacionamento." },
+      { text: "Declinar a proposta — o time está no limite e foco é uma vantagem competitiva real.", score: 70, dimension: "estrategia", consequence: "O projeto atual é entregue com qualidade. O cliente potencial encontra outro fornecedor. A decisão de foco foi correta, mas a falta de exploração de alternativas deixa a dúvida." },
+      { text: "Pedir ao time horas extras para tentar entregar os dois projetos ao mesmo tempo.", score: 15, dimension: "pessoas", consequence: "A equipe sobre-trabalha por duas semanas. Um sênior adoece por estresse. A qualidade de ambas as entregas cai e dois membros pedem demissão no mês seguinte." }
+    ],
+    bestIndex: 0,
+    feedbackGood: "Liderança estratégica é criar opções onde parece não existir nenhuma. Antes de dizer sim ou não, explore: o que é negociável? Prazo do cliente? Escopo atual? Subcontratação?",
+    feedbackBad: "Aceitar sem avaliar impacto é reativo, não estratégico. Times cronicamente sobrecarregados entregam menos e perdem pessoas.",
+    feedbackOk: "Declinar pode ser certo — mas sem explorar alternativas, você pode estar perdendo uma oportunidade real por rigidez."
+  },
+  {
+    id: 6,
+    category: "Comunicação",
+    title: "Você precisa dar feedback negativo para alguém que se acha acima de críticas.",
+    desc: "Carla é muito competente tecnicamente e sabe disso. Ela tende a ignorar feedback e reagiu mal na última vez que você tentou abordar um ponto de melhoria. Mas o comportamento dela está impactando a equipe.",
+    choices: [
+      { text: "Preparar uma conversa com exemplos concretos, focando no impacto — não no julgamento.", score: 100, dimension: "comunicacao", consequence: "Carla ouve com resistência inicial, mas os exemplos concretos a desarmam. Ela reconhece o impacto e propõe mudanças ela mesma. A relação com a equipe melhora nas semanas seguintes." },
+      { text: "Aguardar a próxima avaliação formal de desempenho para abordar os pontos de melhoria.", score: 20, dimension: "pessoas", consequence: "O comportamento de Carla continua por mais 3 meses até a avaliação. Dois membros reclamam formalmente do clima. Você é questionado por não ter agido antes." },
+      { text: "Acionar o RH para conduzir o feedback em seu lugar, dado o histórico de reações dela.", score: 15, dimension: "etica", consequence: "Carla fica ofendida com a intermediação sem conversa prévia. A relação se deteriora e ela começa a questionar sua liderança abertamente com a equipe." },
+      { text: "Dar o retorno na frente do time para que ela veja o impacto que causa nos colegas.", score: 0, dimension: "comunicacao", consequence: "Carla contra-ataca publicamente. O episódio vira um conflito aberto. Você perde a confiança de toda a equipe por violar uma regra básica de respeito no trabalho." }
+    ],
+    bestIndex: 0,
+    feedbackGood: "Feedback eficaz é específico, baseado em fatos e centrado em impacto. Com pessoas de alta autoestima técnica, o enquadramento é tudo: fale sobre o que aconteceu, não sobre quem a pessoa é.",
+    feedbackBad: "Feedback público é constrangimento, não liderança. Expor alguém para a equipe cria ressentimento e destrói confiança.",
+    feedbackOk: "Adiar para a avaliação formal é procrastinação disfarçada de processo. O comportamento continua causando dano enquanto você espera."
+  },
+  {
+    id: 7,
+    category: "Gestão de Equipe",
+    title: "Seu melhor colaborador recebe uma oferta de outra empresa e está pensando em sair.",
+    desc: "Lucas, seu analista sênior mais produtivo, te procura e diz que recebeu uma proposta 20% acima do salário atual. Ele gosta da empresa mas diz que se sente estagnado. O RH diz que não há budget para contra-oferta.",
+    choices: [
+      { text: "Conversar com Lucas para entender o que ele quer além do salário e criar um plano de crescimento.", score: 95, dimension: "pessoas", consequence: "Lucas revela que o salário é secundário — ele quer liderar um projeto estratégico. Você viabiliza em 30 dias. Ele recusa a oferta e se torna um dos maiores promotores da empresa." },
+      { text: "Ir ao RH argumentando que perder Lucas custará muito mais do que 20% e pressionar a exceção.", score: 80, dimension: "estrategia", consequence: "O RH aprova um ajuste salarial. Lucas fica, mas a estagnação não é endereçada. Em 6 meses, recebe outra oferta e desta vez aceita." },
+      { text: "Desejar boa sorte e iniciar a substituição sem tentar uma conversa mais aprofundada.", score: 20, dimension: "resultados", consequence: "Lucas sai. A substituição leva 4 meses e o novo analista precisa de outros 3 para atingir o mesmo nível. A equipe ressente a perda." },
+      { text: "Pedir que Lucas aguarde 6 meses sem apresentar nada concreto além da promessa de resolver.", score: 10, dimension: "comunicacao", consequence: "Lucas aceita a oferta. Antes de sair, conta ao time que recebeu promessas vazias. O moral cai e dois colaboradores começam a olhar para fora." }
+    ],
+    bestIndex: 0,
+    feedbackGood: "A maioria das saídas não é por salário — é por falta de crescimento e perspectiva. Entender o que Lucas realmente quer pode revelar soluções que não dependem de dinheiro.",
+    feedbackBad: "Deixar ir sem tentar entender sinaliza que a empresa não investe em quem performa. Substituir um sênior custa em média 1,5x seu salário anual.",
+    feedbackOk: "Pressionar RH tem valor estratégico — mas isolado, é só barganha. O que vai reter Lucas é uma perspectiva real de crescimento, não só dinheiro."
+  },
+  {
+    id: 8,
+    category: "Ética",
+    title: "Você descobre que um colega próximo está inflando suas horas no sistema.",
+    desc: "Marcelo é seu amigo de longa data na empresa e um colega querido pela equipe. Revisando um relatório por acaso, você percebe inconsistências claras nas horas que ele está lançando. Ninguém mais percebeu ainda.",
+    choices: [
+      { text: "Conversar em privado com Marcelo antes de qualquer ação — pode ser um erro de sistema.", score: 90, dimension: "etica", consequence: "Marcelo confirma que foi erro de lançamento, não intencional. Corrige imediatamente e agradece a discrição. A amizade é preservada e a integridade do processo também." },
+      { text: "Reportar diretamente ao gestor ou compliance sem ter uma conversa prévia com Marcelo.", score: 60, dimension: "etica", consequence: "O compliance investiga e confirma irregularidades. Marcelo é advertido formalmente. A amizade termina quando ele descobre que você reportou sem conversar primeiro." },
+      { text: "Ignorar a situação — Marcelo é amigo e certamente tem uma explicação legítima.", score: 0, dimension: "etica", consequence: "Três meses depois, a auditoria encontra o padrão e identifica que você tinha acesso ao relatório na época. Você é questionado por omissão junto com Marcelo." },
+      { text: "Monitorar por mais um mês para acumular mais evidências antes de tomar qualquer decisão.", score: 15, dimension: "estrategia", consequence: "Durante o monitoramento o padrão se repete. Quando você age, a situação é mais grave — e sua demora em reportar também é questionada pela investigação." }
+    ],
+    bestIndex: 0,
+    feedbackGood: "A sequência correta: dar ao amigo a chance de explicar antes de escalar. Se for intencional, a conversa direta o coloca diante da situação com dignidade.",
+    feedbackBad: "Ignorar por lealdade compromete sua própria integridade. Se a auditoria descobrir que você sabia, você também é responsável.",
+    feedbackOk: "Reportar sem conversar com Marcelo pode ser correto dependendo da gravidade — mas pula uma etapa humana importante."
+  },
+  {
+    id: 9,
+    category: "Comunicação",
+    title: "Você precisa implementar uma mudança impopular que vem da diretoria.",
+    desc: "A diretoria decidiu eliminar o modelo de home office total e exige presença mínima de 3 dias por semana. Você discorda parcialmente, mas a decisão é final. Sua equipe está furiosa e olha para você como aliado.",
+    choices: [
+      { text: "Explicar o racional da decisão para o time e assumir sua parte como líder na implementação.", score: 100, dimension: "comunicacao", consequence: "A equipe ainda não gosta da mudança, mas respeita a transparência. Você negocia algumas flexibilidades de horário dentro da política e o clima se estabiliza em três semanas." },
+      { text: "Dizer ao time que tentou mudar mas não conseguiu — e que você também discorda da decisão.", score: 30, dimension: "comunicacao", consequence: "O time se sente aliado inicialmente, mas logo percebe que nenhuma solução prática está sendo defendida. Sua liderança perde força e a resistência aumenta." },
+      { text: "Implementar a política diretamente sem abrir espaço para discussão ou perguntas do time.", score: 35, dimension: "resultados", consequence: "A política é implementada, mas sem contexto, o ressentimento cresce silenciosamente. Em 60 dias, dois colaboradores pedem demissão citando cultura como motivo." },
+      { text: "Negociar com a diretoria uma exceção para a sua equipe antes de comunicar qualquer mudança.", score: 70, dimension: "estrategia", consequence: "A diretoria concede flexibilidade menor. A transição é mais suave, mas a demora na comunicação gerou rumores que criaram ansiedade desnecessária no time." }
+    ],
+    bestIndex: 0,
+    feedbackGood: "Um líder que se distancia de decisões que vêm de cima perde credibilidade. Assuma a decisão como sua também e ajude o time a se adaptar com clareza.",
+    feedbackBad: "Dizer 'não fui eu' pode parecer solidariedade, mas destrói sua autoridade. Distanciar-se da decisão é fraqueza, não empatia.",
+    feedbackOk: "Tentar negociar antes de comunicar tem valor — mas se falhar, você ainda precisa implementar com clareza e sem ambiguidade."
+  },
+  {
+    id: 10,
+    category: "Visão e Propósito",
+    title: "Você tem a oportunidade de redesenhar como sua equipe trabalha — mas exige esforço agora.",
+    desc: "Uma janela rara se abre: três semanas de demanda mais leve. Você pode usar o tempo para entregar mais projetos menores, ou para redesenhar processos, desenvolver a equipe e construir algo mais sustentável.",
+    choices: [
+      { text: "Usar as semanas para redesenhar processos e desenvolver o time — menos entrega, mais fundação.", score: 100, dimension: "estrategia", consequence: "As três semanas produzem um novo processo e dois colaboradores com novas habilidades. No trimestre seguinte, a equipe entrega 30% mais rápido e com menos retrabalho." },
+      { text: "Dividir o período entre projetos menores e algum desenvolvimento — metade para cada frente.", score: 70, dimension: "resultados", consequence: "Você avança nas duas frentes, mas sem profundidade. Os projetos entregam pouco e o desenvolvimento fica incompleto — sem impacto real na capacidade do time." },
+      { text: "Dar um respiro ao time — eles precisam recarregar antes do próximo ciclo intenso.", score: 60, dimension: "pessoas", consequence: "A equipe recupera energia e o moral melhora. Mas a janela de construção se fecha sem nada estrutural criado. O próximo ciclo intenso chega com as mesmas ineficiências." },
+      { text: "Preencher com projetos menores para demonstrar produtividade constante à diretoria.", score: 25, dimension: "resultados", consequence: "Os projetos menores entram, mas a equipe sente que desperdiçou uma janela rara. A diretoria vê entregáveis, mas não percebe nenhum ganho estrutural." }
+    ],
+    bestIndex: 0,
+    feedbackGood: "O investimento mais raro em liderança é o tempo de construção deliberada. Equipes com processos sólidos e pessoas desenvolvidas entregam muito mais no longo prazo.",
+    feedbackBad: "Otimizar para visibilidade de curto prazo é uma armadilha clássica. A diretoria vai preferir, daqui a 6 meses, uma equipe que dobrou sua capacidade.",
+    feedbackOk: "Equilibrar é razoável — mas em janelas raras como essa, investir em desenvolvimento gera retorno muito maior do que a divisão segura."
+  },
+  {
+    id: 11,
+    category: "Gestão de Equipe",
+    title: "Um colaborador pede mais autonomia, mas ainda comete erros frequentes.",
+    desc: "Fernanda, analista há 8 meses, pede para liderar sozinha o próximo projeto. Ela é proativa e tem atitude, mas seus últimos entregáveis tiveram falhas relevantes que você precisou corrigir.",
+    choices: [
+      { text: "Dar o projeto a ela com checkpoints definidos e suporte estruturado durante a execução.", score: 100, dimension: "pessoas", consequence: "Fernanda entrega com alguns ajustes nos checkpoints, mas com qualidade final alta. Ela ganha confiança e os erros anteriores diminuem visivelmente. Você desenvolveu uma nova líder." },
+      { text: "Negar o pedido — ela ainda comete erros e o risco para este projeto é alto demais agora.", score: 20, dimension: "resultados", consequence: "Fernanda se sente bloqueada e desmotivada. Em dois meses, aceita oferta de outra empresa que a promoveu a líder de projeto. Você perdeu um talento por falta de confiança." },
+      { text: "Aceitar o pedido dando a ela autonomia total, sem adicionar nenhuma estrutura de suporte.", score: 25, dimension: "pessoas", consequence: "Fernanda comete erros sem perceber a tempo. O projeto atrasa e você precisa intervir na reta final. A experiência abala a confiança dela consigo mesma." },
+      { text: "Propor um projeto menor primeiro para que ela prove capacidade antes do maior.", score: 75, dimension: "estrategia", consequence: "Fernanda entrega bem o menor e ganha o maior na sequência. Funciona, mas a demora frustrou sua motivação inicial. O resultado é bom, mas mais tardio do que poderia ser." }
+    ],
+    bestIndex: 0,
+    feedbackGood: "Liderança de desenvolvimento é calibrar autonomia com suporte. Fernanda precisa de espaço para crescer, mas com andaimes que previnam falhas críticas.",
+    feedbackBad: "Negar autonomia a quem pede crescimento é o caminho mais curto para perder talentos. Pessoas proativas que se sentem represadas migram para ambientes que as desafiam.",
+    feedbackOk: "Um projeto menor é razoável, mas pode frustrar quem pediu o desafio maior. Projeto real com suporte estruturado é mais motivante e mais eficaz."
+  },
+  {
+    id: 12,
+    category: "Decisão Estratégica",
+    title: "Sua empresa quer cortar custos e você precisa decidir o que sacrificar.",
+    desc: "A diretoria pediu uma redução de 15% no budget da sua área. Você pode cortar headcount, cancelar o programa de treinamentos do ano, ou reduzir a qualidade das ferramentas usadas pela equipe.",
+    choices: [
+      { text: "Analisar o impacto de longo prazo de cada opção e propor uma combinação que preserve o essencial.", score: 100, dimension: "estrategia", consequence: "Você combina renegociação de fornecedores, adiamento de uma ferramenta não crítica e redução de viagens. A diretoria aprova e a equipe percebe que você a protegeu com inteligência." },
+      { text: "Cortar o programa de treinamentos — é o que menos impacta a entrega de curto prazo.", score: 40, dimension: "resultados", consequence: "A meta é atingida, mas os melhores colaboradores notam que desenvolvimento foi a primeira coisa sacrificada. Dois deles começam a olhar para empresas que investem em crescimento." },
+      { text: "Dispensar o colaborador de menor performance para preservar o restante do time e dos recursos.", score: 30, dimension: "pessoas", consequence: "O corte é feito, mas a equipe fica abalada. O colaborador processa por falta de processo adequado. O clima deteriora e a produtividade cai por um mês." },
+      { text: "Apresentar à diretoria por que a meta de 15% é inviável e negociar um número menor.", score: 70, dimension: "comunicacao", consequence: "A diretoria mantém a meta em 12%. Você ganha algum espaço, mas ainda precisa de escolhas difíceis. Negociar foi certo — mas sem proposta alternativa concreta, o resultado foi parcial." }
+    ],
+    bestIndex: 0,
+    feedbackGood: "A pergunta certa não é 'o que corto primeiro?' mas 'o que preserva nossa capacidade de entregar nos próximos 12 meses?'. Soluções criativas frequentemente evitam os custos colaterais óbvios.",
+    feedbackBad: "Cortar treinamentos parece seguro no curto prazo, mas é um dos investimentos com maior retorno composto. Equipes que param de se desenvolver perdem competitividade rápido.",
+    feedbackOk: "Negociar a meta tem valor — mas chegar com dados e propostas alternativas é muito mais eficaz do que simplesmente dizer que é inviável."
+  },
+  {
+    id: 13,
+    category: "Gestão de Conflito",
+    title: "Um cliente estratégico está insatisfeito e ameaça cancelar o contrato.",
+    desc: "O cliente Bravo Corp representa 25% da sua receita. O gestor de conta diz que o problema é técnico e será resolvido em 2 semanas. O cliente quer falar com você hoje e está visivelmente frustrado.",
+    choices: [
+      { text: "Atender o cliente hoje, ouvir com atenção, assumir responsabilidade e apresentar um plano.", score: 100, dimension: "comunicacao", consequence: "O cliente se sente ouvido e respeitado. O problema técnico é resolvido no prazo prometido. O contrato não só é mantido como expandido no semestre seguinte." },
+      { text: "Pedir ao gestor de conta que lide com o cliente — interferir pode minar a autoridade dele.", score: 15, dimension: "pessoas", consequence: "O cliente percebe que a liderança não veio pessoalmente. Em 48 horas, aciona o jurídico para iniciar a rescisão do contrato." },
+      { text: "Marcar para amanhã — você precisa se preparar bem antes de entrar nessa conversa difícil.", score: 40, dimension: "estrategia", consequence: "O cliente interpreta a espera como descaso e liga para um concorrente ainda hoje. A reunião de amanhã começa com o cliente já em processo de saída." },
+      { text: "Oferecer um desconto imediato para acalmar o cliente enquanto o problema técnico é resolvido.", score: 35, dimension: "resultados", consequence: "O cliente aceita o desconto mas não se sente realmente ouvido. O problema se repete um mês depois — e desta vez o desconto não é suficiente para segurá-lo." }
+    ],
+    bestIndex: 0,
+    feedbackGood: "Em crises com clientes estratégicos, a presença do líder é o sinal mais poderoso. Ouvir sem se defender e apresentar um plano transforma clientes insatisfeitos em defensores.",
+    feedbackBad: "Delegar quando o cliente já pediu escalação é lido como descaso. Ele não quer o meio-campo — quer saber que a liderança está no controle.",
+    feedbackOk: "Descontos sem resolver o problema de fundo criam expectativa de que toda insatisfação gera concessão financeira. Resolve o sintoma, não a causa."
+  },
+  {
+    id: 14,
+    category: "Ética",
+    title: "Você descobre que foi preterido em uma promoção por razões que parecem injustas.",
+    desc: "Você soube que a promoção para gerente sênior foi para um colega menos experiente. Nos bastidores, alguém te disse que o CEO prefere promover quem tem mais 'perfil de sócio' — código para relacionamento pessoal com a diretoria.",
+    choices: [
+      { text: "Solicitar uma reunião com seu gestor para entender os critérios da decisão de forma direta.", score: 100, dimension: "etica", consequence: "Seu gestor explica os critérios reais. Alguns fazem sentido, outros confirmam que o relacionamento pesou. Você sai com clareza para decidir se quer investir nessa empresa. Sua maturidade impressiona." },
+      { text: "Aceitar sem questionar e trabalhar mais duro — resultados consistentes eventualmente se impõem.", score: 30, dimension: "resultados", consequence: "Você continua entregando, mas sem entender os critérios reais de crescimento. Dois anos depois, outra promoção passa por você pelo mesmo motivo e você ainda não entende por quê." },
+      { text: "Começar a buscar oportunidades em outras empresas sem conversar com ninguém internamente.", score: 40, dimension: "estrategia", consequence: "Você encontra uma oportunidade boa em 3 meses e sai. A mudança traz crescimento, mas você nunca soube se havia uma solução dentro da empresa que não foi tentada." },
+      { text: "Comentar com colegas que a promoção foi injusta para criar pressão sobre quem decidiu.", score: 0, dimension: "comunicacao", consequence: "Os comentários chegam até a diretoria. Você é convocado para uma conversa difícil e sua imagem de profissional maduro é comprometida. Futuras oportunidades ficam ainda mais distantes." }
+    ],
+    bestIndex: 0,
+    feedbackGood: "A resposta madura é buscar clareza — não vingança nem resignação. Uma conversa direta com seu gestor revela os critérios reais e demonstra maturidade executiva.",
+    feedbackBad: "Usar a insatisfação como combustível de fofoca destrói sua reputação e não muda nada. Você ganha aliados momentâneos e inimigos permanentes.",
+    feedbackOk: "Buscar outras oportunidades pode ser certo — mas sem entender o que aconteceu, você pode levar um padrão não resolvido para o próximo emprego."
+  },
+  {
+    id: 15,
+    category: "Visão e Propósito",
+    title: "Sua equipe está desmotivada após meses de pressão intensa e resultados abaixo do esperado.",
+    desc: "O time entregou, mas o custo foi alto — horas extras, cancelamentos pessoais, clima tenso. Os resultados ficaram 10% abaixo da meta. As pessoas estão cansadas e o moral está no pior ponto do ano.",
+    choices: [
+      { text: "Fazer uma retrospectiva com o time para nomear o que foi difícil e co-construir o próximo ciclo.", score: 100, dimension: "pessoas", consequence: "A retrospectiva revela três problemas estruturais nunca verbalizados. Juntos, vocês redesenham dois processos. O moral se recupera e o próximo ciclo começa com clareza e compromisso renovado." },
+      { text: "Focar o time numa vitória rápida para restaurar a confiança e reativar a energia do grupo.", score: 50, dimension: "resultados", consequence: "A vitória rápida acontece, mas sem resolver o cansaço acumulado. O time celebra brevemente e logo recai no mesmo padrão de pressão. A rotatividade aumenta no trimestre seguinte." },
+      { text: "Dar folga coletiva de uma semana para que o time recarregue as energias antes do próximo ciclo.", score: 55, dimension: "pessoas", consequence: "A folga ajuda o físico, mas não o estrutural. A equipe volta descansada para o mesmo ambiente que gerou o esgotamento. Em 60 dias, o ciclo se repete." },
+      { text: "Fazer uma apresentação motivacional com conquistas e planos para reengajar o time.", score: 40, dimension: "comunicacao", consequence: "A apresentação é bem produzida, mas o time sente que suas dificuldades não foram reconhecidas. Os comentários nos bastidores: 'bonito, mas não mudou nada'." }
+    ],
+    bestIndex: 0,
+    feedbackGood: "Times esgotados não precisam de discurso — precisam de ser vistos. A retrospectiva honesta valida o que as pessoas viveram e co-cria condições para trabalhar melhor.",
+    feedbackBad: "Apresentações motivacionais sem reconhecimento real do que foi vivido soam vazias para equipes exaustas. As pessoas distinguem inspiração de performance de liderança.",
+    feedbackOk: "Descanso e vitórias rápidas têm valor tático — mas sem reflexão coletiva, o padrão que gerou o esgotamento se repete no próximo ciclo."
+  },
+  {
+    id: 16,
+    category: "Gestão de Equipe",
+    title: "Você precisa escolher quem vai representar sua equipe numa oportunidade de alto impacto.",
+    desc: "Surgiu uma vaga para participar de um projeto cross-funcional com a diretoria — alta visibilidade, alto aprendizado. Você tem dois candidatos: Paulo, sênior e já reconhecido, e Beatriz, júnior mas com potencial enorme.",
+    choices: [
+      { text: "Escolher Beatriz e montar um plano de suporte para que ela entregue bem no projeto.", score: 95, dimension: "pessoas", consequence: "Beatriz entrega além do esperado. A diretoria a nota e você ganha reputação de líder que forma pessoas. Beatriz se torna referência da área em 12 meses." },
+      { text: "Escolher Paulo — ele tem track record sólido e o risco para a imagem do time é menor.", score: 45, dimension: "resultados", consequence: "Paulo entrega com qualidade, mas Beatriz percebe o padrão e começa a questionar suas perspectivas. Em 4 meses, aceita uma promoção em outra empresa." },
+      { text: "Perguntar a ambos se têm interesse e deixar que cheguem a um acordo entre si.", score: 30, dimension: "comunicacao", consequence: "Paulo, mais experiente e articulado, naturalmente assume. Beatriz cede. A decisão foi tomada por dinâmica social, não por estratégia de liderança." },
+      { text: "Assumir o projeto você mesmo — a visibilidade com a diretoria é estratégica para sua carreira.", score: 20, dimension: "estrategia", consequence: "Você brilha no projeto, mas sua equipe perde exposição e desenvolvimento. A diretoria nota que você não está formando sucessores — o que começa a limitar seu próprio crescimento." }
+    ],
+    bestIndex: 0,
+    feedbackGood: "Dar visibilidade a quem tem potencial mas pouca exposição é um dos maiores gestos de liderança. Com suporte adequado, Beatriz vai surpreender — e você multiplica sua influência.",
+    feedbackBad: "Sempre escolher o mais seguro cria equipes onde só os já reconhecidos avançam. Talentos em desenvolvimento percebem o padrão e saem.",
+    feedbackOk: "Deixar que decidam entre si parece democrático, mas abdica da responsabilidade de desenvolvimento. Escolher quem cresce é uma das decisões mais estratégicas que você tem."
+  },
+  {
+    id: 17,
+    category: "Decisão Estratégica",
+    title: "Você descobre que o processo que sua equipe usa há anos é ineficiente — mas mudar vai gerar resistência.",
+    desc: "Uma análise interna mostra que o processo de aprovação de projetos gera retrabalho e atrasa entregas em média 3 dias por ciclo. Mudar exige treinamento, adaptação e vai irritar quem domina o processo atual.",
+    choices: [
+      { text: "Mostrar o impacto da ineficiência com dados e envolver o time no redesenho do novo processo.", score: 100, dimension: "estrategia", consequence: "A equipe, envolvida no redesenho, adota o processo com comprometimento real. Em 6 semanas, o retrabalho cai 40% e os 3 dias de atraso por ciclo são eliminados. A mudança vira case interno." },
+      { text: "Implementar a mudança de cima para baixo — explicações longas só aumentam a resistência.", score: 35, dimension: "resultados", consequence: "O processo é implementado formalmente, mas sem convicção. Surgem gambiarras para contorná-lo e em 3 meses ele está parcialmente abandonado." },
+      { text: "Criar um grupo de trabalho para estudar o problema com profundidade antes de qualquer decisão.", score: 30, dimension: "estrategia", consequence: "O grupo analisa bem, mas a decisão chega tarde. Nesse período, 36 ciclos sofreram o atraso evitável. Análise sem ação é só reunião." },
+      { text: "Manter o processo como está — o custo político da mudança supera o ganho de eficiência.", score: 10, dimension: "resultados", consequence: "O processo continua gerando retrabalho. No final do ano, a área é apontada como gargalo em auditoria. Você é questionado sobre por que não agiu quando tinha dados claros." }
+    ],
+    bestIndex: 0,
+    feedbackGood: "Mudanças bem-sucedidas têm duas coisas em comum: dados que justificam e pessoas que ajudaram a construir. Quando a equipe participa do redesenho, a resistência vira protagonismo.",
+    feedbackBad: "Não mudar processos ineficientes por medo do custo político é administrar o declínio. Todo processo ruim tem defensores — isso não é razão para mantê-lo.",
+    feedbackOk: "Implementar de cima para baixo pode funcionar, mas costuma gerar compliance sem compromisso. As pessoas seguem a forma e subvertem o espírito do novo processo."
+  },
+  {
+    id: 18,
+    category: "Comunicação",
+    title: "Você precisa apresentar resultados ruins para a diretoria.",
+    desc: "O trimestre terminou com performance 20% abaixo da meta. Você tem dados, entende as causas e tem um plano — mas a reunião de resultado é amanhã e o clima na empresa está tenso com cobranças.",
+    choices: [
+      { text: "Apresentar os dados, assumir responsabilidade e trazer um plano concreto com métricas e prazos.", score: 100, dimension: "comunicacao", consequence: "A diretoria fica satisfeita com a maturidade da análise. Seu plano é aprovado e você recebe mais autonomia no trimestre seguinte por ter demonstrado que sabe enfrentar adversidade." },
+      { text: "Enfatizar os fatores externos que pesaram no resultado — mercado, contexto macro, outras áreas.", score: 25, dimension: "comunicacao", consequence: "A diretoria ouve os fatores externos, mas percebe ausência de autocrítica. Você perde credibilidade e a próxima reunião começa com escrutínio muito maior sobre sua área." },
+      { text: "Pedir adiamento da reunião para ter uma análise mais completa antes de se apresentar.", score: 20, dimension: "estrategia", consequence: "O adiamento é negado. Você entra despreparado e sem narrativa clara. O resultado é pior do que se tivesse apresentado com honestidade e os dados que já tinha." },
+      { text: "Ancorar a apresentação no cenário otimista do próximo trimestre para desviar o foco do passado.", score: 15, dimension: "resultados", consequence: "A diretoria percebe a tentativa de desviar o foco. Quando o próximo trimestre também decepciona, a promessa anterior é lembrada e sua credibilidade entra em colapso." }
+    ],
+    bestIndex: 0,
+    feedbackGood: "Transparência sob pressão é o que mais diferencia líderes confiáveis. Diretores avaliam: você entende o que aconteceu? Tem um plano? Assume ou esquiva?",
+    feedbackBad: "Enfatizar fatores externos sem assumir nenhuma responsabilidade é o padrão clássico de quem não cresce. Todo resultado tem causas internas — líderes nomeiam ambas.",
+    feedbackOk: "Adiar não muda os números e sinaliza falta de preparo. A reunião de resultado é uma oportunidade de liderança — não uma ameaça a evitar."
+  },
+  {
+    id: 19,
+    category: "Gestão de Conflito",
+    title: "Dois departamentos estão em guerra sobre quem é responsável por um problema crítico.",
+    desc: "Um cliente importante foi impactado por uma falha que cruzou as áreas de TI e Operações. Cada time culpa o outro. O problema ainda não foi resolvido e o cliente está esperando uma resposta.",
+    choices: [
+      { text: "Resolver o problema do cliente primeiro e só depois investigar causas e responsabilidades.", score: 100, dimension: "resultados", consequence: "O cliente é atendido em 4 horas. A análise posterior revela lacunas no processo entre TI e Operações. Um protocolo conjunto é criado e o cliente renova o contrato elogiando a resposta." },
+      { text: "Reunir os dois times para definir de quem é a culpa antes de qualquer ação corretiva.", score: 10, dimension: "comunicacao", consequence: "A reunião dura 2 horas sem conclusão. O cliente não recebe retorno. No dia seguinte, aciona a rescisão contratual. A discussão de culpa custou o cliente." },
+      { text: "Escalar para a diretoria para que ela decida quem é o responsável pelo problema.", score: 20, dimension: "etica", consequence: "A diretoria intervém, mas leva 6 horas. O cliente já contactou um concorrente nesse intervalo. Você é questionado por não ter tomado iniciativa própria." },
+      { text: "Assumir a responsabilidade publicamente e coordenar você mesmo a solução entre os dois times.", score: 85, dimension: "pessoas", consequence: "Sua postura de assumir sem culpar ninguém desarma os dois times. A solução é coordenada em 3 horas. O cliente fica satisfeito e você ganha respeito de ambas as áreas." }
+    ],
+    bestIndex: 0,
+    feedbackGood: "Em crises que impactam clientes, a sequência é sempre: resolver primeiro, atribuir depois. Clientes não se importam com política interna — eles querem solução.",
+    feedbackBad: "Discutir culpa enquanto o cliente espera é uma das falhas de liderança mais visíveis. A reunião de alinhamento pode acontecer — depois que o cliente estiver resolvido.",
+    feedbackOk: "Assumir responsabilidade publicamente é poderoso, mas isolado não resolve o problema. A combinação de assumir e coordenar a solução é ainda mais eficaz."
+  },
+  {
+    id: 20,
+    category: "Visão e Propósito",
+    title: "Você tem a chance de assumir um cargo maior — mas significa deixar sua equipe num momento difícil.",
+    desc: "A empresa oferece uma promoção para diretor em outra divisão. É exatamente o que você queria. O problema: sua equipe está no meio de um projeto crítico com entrega em 6 semanas e a transição seria imediata.",
+    choices: [
+      { text: "Aceitar e negociar com a empresa um plano de transição estruturado com suporte ao sucessor.", score: 100, dimension: "estrategia", consequence: "A empresa aceita a transição estruturada. Você indica e prepara seu sucessor. O projeto entrega no prazo. A nova diretoria observa como você saiu e fica ainda mais confiante na contratação." },
+      { text: "Recusar a promoção — não é o momento certo para deixar o time no meio de um projeto.", score: 55, dimension: "pessoas", consequence: "Você recusa e a equipe termina o projeto. A empresa oferece a promoção para outro candidato. Meses depois, a oportunidade não se repete e você carrega a dúvida do que poderia ter sido." },
+      { text: "Aceitar imediatamente sem condições — a empresa tem capacidade de gerenciar a transição.", score: 20, dimension: "resultados", consequence: "Você parte sem plano de transição. O projeto atrasa, o time fica sem direção e seu ex-gestor assume a operação. Sua reputação de quem 'abandona o barco' te persegue na nova posição." },
+      { text: "Pedir que a promoção seja adiada 6 semanas para que você encerre o projeto atual.", score: 80, dimension: "etica", consequence: "A empresa aceita o adiamento. Você encerra o projeto com qualidade e assume a nova posição com reputação intacta. Correto e honrado — embora a transição estruturada fosse ainda mais elegante." }
+    ],
+    bestIndex: 0,
+    feedbackGood: "O líder maduro não escolhe entre ambição e responsabilidade — ele negocia para honrar os dois. Essa postura também sinaliza para a nova diretoria como você vai liderar lá.",
+    feedbackBad: "Aceitar sem preocupação com a transição abandona a equipe e compromete o projeto. Sua reputação é construída nas transições — não só nos sucessos.",
+    feedbackOk: "Recusar pode parecer nobre, mas oportunidades como essa raramente voltam. A empresa tem meios de fazer a transição funcionar — se você ajudar a estruturá-la."
+  }
+];
+
+var PROFILES = {
+  estrategista: {
+    name: "ESTRATEGISTA\nVISIONÁRIO",
+    desc: "Você enxerga além do imediato. Suas decisões são orientadas por impacto de longo prazo e posicionamento — mas às vezes a execução e o cuidado com pessoas precisam de mais atenção.",
+    traits: ["Pensamento sistêmico", "Foco em resultado", "Visão de futuro", "Alta tolerância à ambiguidade"]
+  },
+  humanista: {
+    name: "LÍDER\nHUMANISTA",
+    desc: "Pessoas são seu ativo central. Você desenvolve talentos, medeia conflitos com habilidade e constrói equipes de alta confiança. O desafio pode ser equilibrar cuidado com exigência de performance.",
+    traits: ["Empatia estratégica", "Desenvolvimento de talentos", "Comunicação assertiva", "Gestão de conflito"]
+  },
+  executor: {
+    name: "EXECUTOR\nDE ELITE",
+    desc: "Você entrega. Com disciplina, clareza e foco em resultado, transforma metas em realidade. O próximo nível de liderança pede mais espaço para as pessoas e para decisões de longo prazo.",
+    traits: ["Orientação a resultado", "Disciplina operacional", "Foco", "Confiabilidade"]
+  },
+  etico: {
+    name: "GUARDIÃO\nÉTICO",
+    desc: "Integridade é sua marca registrada. Você toma as decisões certas mesmo quando são difíceis. Líderes como você constroem organizações de alta confiança — o maior ativo de qualquer instituição.",
+    traits: ["Integridade", "Coragem moral", "Confiança", "Princípios sólidos"]
+  },
+  equilibrado: {
+    name: "LÍDER\nEQUILIBRADO",
+    desc: "Você navega com competência entre as múltiplas dimensões da liderança. Adapta seu estilo ao contexto, pensa em pessoas e resultados, e age com integridade. É o perfil de quem está pronto para crescer.",
+    traits: ["Adaptabilidade", "Visão integrada", "Maturidade de liderança", "Inteligência contextual"]
+  }
+};
+
+var DEV_MESSAGES = {
+  "Gestão de Equipe": "Desenvolver habilidades de liderança de pessoas — feedback, retenção de talentos e gestão de performance individual.",
+  "Decisão Estratégica": "Fortalecer o raciocínio estratégico sob pressão — tomar decisões com dados incompletos e pensar em longo prazo.",
+  "Ética": "Aprofundar a liderança ética — enfrentar dilemas morais com coragem e sem relativizar princípios.",
+  "Gestão de Conflito": "Desenvolver habilidades de mediação e resolução de conflitos interpessoais em equipe.",
+  "Comunicação": "Praticar comunicação assertiva e feedback difícil — clareza, empatia e impacto nas mensagens.",
+  "Visão e Propósito": "Cultivar pensamento de longo prazo e a capacidade de construir com visão, não apenas reagir à demanda."
+};
+
+var state = {};
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+var timerEnabled = true;
+var learningMode = false;
+var questionCount = 20;
+
+// ── SOUND ENGINE (Web Audio API — no external files) ──
+var _ac = null;
+function ac() {
+  if (!_ac) _ac = new (window.AudioContext || window.webkitAudioContext)();
+  return _ac;
+}
+function playTone(freq, type, vol, attack, decay, delay) {
+  try {
+    var ctx = ac();
+    var o = ctx.createOscillator();
+    var g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.type = type || 'sine';
+    o.frequency.value = freq;
+    var t = ctx.currentTime + (delay || 0);
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(vol || 0.18, t + (attack || 0.01));
+    g.gain.exponentialRampToValueAtTime(0.001, t + (attack || 0.01) + (decay || 0.25));
+    o.start(t);
+    o.stop(t + (attack || 0.01) + (decay || 0.25) + 0.05);
+  } catch(e) {}
+}
+function sfxClick() {
+  playTone(520, 'sine', 0.12, 0.005, 0.08);
+}
+function sfxResult(level) {
+  // level 1-4
+  if (level === 4) {
+    // Excellent — bright ascending chord
+    playTone(523, 'sine', 0.18, 0.01, 0.18, 0);
+    playTone(659, 'sine', 0.16, 0.01, 0.22, 0.1);
+    playTone(784, 'sine', 0.18, 0.01, 0.28, 0.2);
+    playTone(1047,'sine', 0.15, 0.01, 0.35, 0.32);
+  } else if (level === 3) {
+    // Positive — two rising notes
+    playTone(440, 'sine', 0.15, 0.01, 0.2, 0);
+    playTone(554, 'sine', 0.14, 0.01, 0.25, 0.14);
+  } else if (level === 2) {
+    // Neutral — single mid tone
+    playTone(370, 'triangle', 0.12, 0.01, 0.22, 0);
+  } else {
+    // Negative — low descending
+    playTone(280, 'triangle', 0.13, 0.01, 0.18, 0);
+    playTone(220, 'triangle', 0.11, 0.01, 0.22, 0.15);
+  }
+}
+function sfxNext() {
+  playTone(440, 'sine', 0.1, 0.005, 0.12, 0);
+  playTone(554, 'sine', 0.08, 0.005, 0.1, 0.08);
+}
+function sfxFanfare(scoreRatio) {
+  if (scoreRatio >= 0.8) {
+    [523,659,784,1047,1319].forEach(function(f,i){ playTone(f,'sine',0.16,0.01,0.4,i*0.1); });
+  } else if (scoreRatio >= 0.5) {
+    [440,554,659,880].forEach(function(f,i){ playTone(f,'sine',0.14,0.01,0.35,i*0.1); });
+  } else {
+    [330,415,494].forEach(function(f,i){ playTone(f,'triangle',0.12,0.01,0.3,i*0.12); });
+  }
+}
+function sfxTimerUrgent() {
+  playTone(880, 'square', 0.06, 0.005, 0.06);
+}
+
+// ── RIPPLE ──
+function addRipple(btn, e) {
+  var r = document.createElement('div');
+  r.className = 'ripple-el';
+  var rect = btn.getBoundingClientRect();
+  var x = (e && e.touches ? e.touches[0].clientX : (e ? e.clientX : rect.left + rect.width/2)) - rect.left;
+  var y = (e && e.touches ? e.touches[0].clientY : (e ? e.clientY : rect.top + rect.height/2)) - rect.top;
+  r.style.left = x + 'px';
+  r.style.top = y + 'px';
+  btn.appendChild(r);
+  setTimeout(function(){ if (r.parentNode) r.parentNode.removeChild(r); }, 600);
+}
+
+// ── SCORE FLASH ──
+function flashScore() {
+  var el = document.getElementById('score-display');
+  el.classList.remove('flash');
+  void el.offsetWidth;
+  el.classList.add('flash');
+  setTimeout(function(){ el.classList.remove('flash'); }, 450);
+}
+
+// Balanced 10-question set: covers all 6 categories and all 5 dimensions
+var BALANCED_10_IDS = [1, 2, 3, 6, 7, 10, 12, 13, 14, 19];
+
+
+
+function setQuestionCount(n) {
+  questionCount = n;
+  document.getElementById('btn-q10').classList.toggle('active', n === 10);
+  document.getElementById('btn-q20').classList.toggle('active', n === 20);
+  document.getElementById('stat-q-num').textContent = n;
+  document.getElementById('intro-subtitle').textContent = 'Você está no comando. ' + n + ' situações reais. Cada escolha revela seu estilo de liderança — e suas consequências.';
+}
+
+function toggleLearning() {
+  learningMode = !learningMode;
+  timerEnabled = !learningMode;
+  var sw = document.getElementById('toggle-learning');
+  var sub = document.getElementById('learning-toggle-sub');
+  var timerCard = document.querySelector('#stat-timer-display');
+  if (learningMode) {
+    sw.classList.add('on');
+    sub.textContent = 'Ativado — navegação livre, sem tempo, respostas alteráveis';
+    document.getElementById('stat-timer-val').textContent = '∞';
+    document.getElementById('stat-timer-card').style.opacity = '0.4';
+  } else {
+    sw.classList.remove('on');
+    sub.textContent = 'Desativado — cada questão permite apenas uma resposta';
+    document.getElementById('stat-timer-val').textContent = '60s';
+    document.getElementById('stat-timer-card').style.opacity = '1';
+  }
+}
+
+function startGame() {
+  var scenarioPool;
+  if (learningMode) {
+    // Fixed order — no shuffle
+    scenarioPool = questionCount === 10
+      ? SCENARIOS.filter(function(s) { return BALANCED_10_IDS.indexOf(s.id) !== -1; })
+      : SCENARIOS.slice();
+  } else if (questionCount === 10) {
+    var balanced = SCENARIOS.filter(function(s) { return BALANCED_10_IDS.indexOf(s.id) !== -1; });
+    scenarioPool = shuffle(balanced);
+  } else {
+    scenarioPool = shuffle(SCENARIOS.slice());
+  }
+  state = {
+    currentIndex: 0,
+    score: 0,
+    timer: null,
+    timeLeft: 60,
+    answered: false,
+    timedOut: false,
+    firstChoiceIndex: null,
+    firstChoiceScore: null,
+    shuffledScenarios: scenarioPool,
+    shuffledChoices: [],
+    shuffledBestIndex: 0,
+    dimensions: { estrategia: 0, pessoas: 0, comunicacao: 0, etica: 0, resultados: 0 },
+    choices: [],
+    categoryScores: {},
+    categoryMax: {}
+  };
+  showScreen('screen-game');
+  loadScenario();
+}
+
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  return a;
+}
+
+function loadScenario() {
+  var s = state.shuffledScenarios[state.currentIndex];
+  state.answered = false;
+  state.timedOut = false;
+  state.firstChoiceIndex = null;
+  state.firstChoiceScore = null;
+  state.timeLeft = 60;
+
+  var total = state.shuffledScenarios.length;
+  var pct = (state.currentIndex / total) * 100;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-text').textContent = 'Cenário ' + (state.currentIndex + 1) + ' de ' + total;
+  document.getElementById('score-display').textContent = state.score;
+  document.getElementById('scenario-num').textContent = String(state.currentIndex + 1).padStart(2, '0');
+  document.getElementById('scenario-title').textContent = s.title;
+  document.getElementById('scenario-desc').textContent = s.desc;
+
+  // Shuffle choices only in normal mode
+  var indexed = s.choices.map(function(c, i) { return Object.assign({}, c, { origIdx: i }); });
+  var ordered = learningMode ? indexed : shuffle(indexed);
+  state.shuffledChoices = ordered;
+  state.shuffledBestIndex = ordered.findIndex(function(c) { return c.origIdx === s.bestIndex; });
+
+  var container = document.getElementById('choices-container');
+  container.innerHTML = '';
+  ordered.forEach(function(c, i) {
+    var btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = '<span class="choice-letter">' + String.fromCharCode(65 + i) + '</span><span class="choice-text">' + c.text + '</span>';
+    (function(idx) {
+      btn.onclick = function(e) { addRipple(btn, e); selectChoice(idx); };
+    })(i);
+    container.appendChild(btn);
+  });
+
+  document.getElementById('feedback-panel').style.display = 'none';
+
+  if (learningMode) {
+    document.getElementById('nav-learning').style.display = 'flex';
+    document.getElementById('btn-next').style.display = 'none';
+    document.getElementById('btn-prev').style.opacity = state.currentIndex === 0 ? '0.3' : '1';
+    document.getElementById('btn-prev').disabled = state.currentIndex === 0;
+    var total2 = state.shuffledScenarios.length;
+    var isLast = state.currentIndex === total2 - 1;
+    document.getElementById('btn-next-learn').textContent = isLast ? 'Ver resultado ✓' : 'Próxima →';
+  } else {
+    document.getElementById('nav-learning').style.display = 'none';
+    document.getElementById('btn-next').style.display = 'none';
+  }
+
+  clearInterval(state.timer);
+  var timerWrap = document.getElementById('timer-wrap');
+  if (timerEnabled) {
+    timerWrap.style.display = 'flex';
+    updateTimerUI();
+    state.timer = setInterval(tickTimer, 1000);
+  } else {
+    timerWrap.style.display = 'none';
+  }
+}
+
+function tickTimer() {
+  state.timeLeft--;
+  updateTimerUI();
+  if (state.timeLeft <= 0) {
+    clearInterval(state.timer);
+    if (!state.answered) timeOut();
+  }
+}
+
+function updateTimerUI() {
+  var pct = (state.timeLeft / 60) * 100;
+  var fill = document.getElementById('timer-fill');
+  fill.style.width = pct + '%';
+  if (state.timeLeft <= 10) {
+    fill.style.background = 'var(--accent3)';
+    fill.classList.add('urgent');
+    if (state.timeLeft > 0 && state.timeLeft % 2 === 0) sfxTimerUrgent();
+  } else if (state.timeLeft <= 30) {
+    fill.style.background = 'var(--accent)';
+    fill.classList.remove('urgent');
+  } else {
+    fill.style.background = 'var(--accent2)';
+    fill.classList.remove('urgent');
+  }
+  document.getElementById('timer-num').textContent = state.timeLeft;
+}
+
+function timeOut() {
+  // Timer expired — flash warning but keep waiting for the player's answer
+  state.timedOut = true;
+  var fill = document.getElementById('timer-fill');
+  fill.style.width = '0%';
+  fill.style.background = 'var(--accent3)';
+  document.getElementById('timer-num').textContent = '0';
+
+  // Show a soft nudge without blocking interaction
+  var panel = document.getElementById('feedback-panel');
+  panel.style.display = 'block';
+  panel.innerHTML =
+    '<div class="fb-header">' +
+      '<span style="font-size:18px;">&#9201;</span>' +
+      '<span style="font-size:13px;color:var(--accent3);font-weight:600;">Tempo esgotado — ainda pode responder com 20% de desconto</span>' +
+    '</div>';
+}
+
+function selectChoice(index) {
+  sfxClick();
+  if (state.answered && !learningMode) return;
+
+  var s = state.shuffledScenarios[state.currentIndex];
+  var chosen = state.shuffledChoices[index];
+
+  // Learning mode: allow switching answer before advancing
+  if (learningMode && state.answered) {
+    // Remove previous selection highlight
+    document.querySelectorAll('.choice-btn').forEach(function(b) {
+      b.classList.remove('selected');
+      b.disabled = false;
+    });
+    // Re-select new one
+    document.querySelectorAll('.choice-btn')[index].classList.add('selected');
+    document.querySelectorAll('.choice-btn')[index].disabled = true;
+
+    // Score: base score of new answer with 20% penalty (already answered once)
+    var pts = Math.round(chosen.score * 0.8);
+    // Replace the last recorded score for this question
+    var last = state.choices[state.choices.length - 1];
+    state.score -= last.score;
+    state.dimensions[last.dimension] = (state.dimensions[last.dimension] || 0) - last.rawScore;
+    state.categoryScores[s.category] -= last.score;
+
+    state.score += pts;
+    state.dimensions[chosen.dimension] = (state.dimensions[chosen.dimension] || 0) + chosen.score;
+    state.categoryScores[s.category] += pts;
+
+    state.choices[state.choices.length - 1] = { category: s.category, score: pts, rawScore: chosen.score, dimension: chosen.dimension };
+    document.getElementById('score-display').textContent = state.score;
+    flashScore();
+    var lvl2 = chosen.score >= 85 ? 4 : chosen.score >= 60 ? 3 : chosen.score >= 30 ? 2 : 1;
+    sfxResult(lvl2);
+    showFeedback(index, s, chosen, true);
+    setTimeout(function() {
+      var panel = document.getElementById('feedback-panel');
+      panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 200);
+    return;
+  }
+
+  if (state.answered) return;
+  state.answered = true;
+  clearInterval(state.timer);
+
+  var pts = timerEnabled
+    ? (state.timedOut
+        ? Math.round(chosen.score * 0.8)
+        : Math.round(chosen.score * (state.timeLeft / 60) * 0.4 + chosen.score * 0.6))
+    : chosen.score;
+
+  state.score += pts;
+  state.dimensions[chosen.dimension] = (state.dimensions[chosen.dimension] || 0) + chosen.score;
+
+  if (!state.categoryScores[s.category]) { state.categoryScores[s.category] = 0; state.categoryMax[s.category] = 0; }
+  state.categoryScores[s.category] += pts;
+  state.categoryMax[s.category] += 100;
+
+  state.choices.push({ category: s.category, score: pts, rawScore: chosen.score, dimension: chosen.dimension });
+
+  var btns = document.querySelectorAll('.choice-btn');
+  btns[index].classList.add('selected');
+
+  if (learningMode) {
+    // Keep buttons enabled so user can switch — just disable the selected one visually
+    btns.forEach(function(b, i) { if (i !== index) b.disabled = false; else b.disabled = true; });
+  } else {
+    disableChoices();
+  }
+
+  showFeedback(index, s, chosen, false);
+  document.getElementById('score-display').textContent = state.score;
+  flashScore();
+
+  // Sound based on result level
+  var lvl = chosen.score >= 85 ? 4 : chosen.score >= 60 ? 3 : chosen.score >= 30 ? 2 : 1;
+  sfxResult(lvl);
+
+  if (!learningMode) {
+    document.getElementById('btn-next').style.display = 'flex';
+  }
+
+  setTimeout(function() {
+    var panel = document.getElementById('feedback-panel');
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 200);
+}
+
+function disableChoices() {
+  document.querySelectorAll('.choice-btn').forEach(function(b) { b.disabled = true; });
+}
+
+function showFeedback(choiceIndex, scenario, chosen, switched) {
+  var panel = document.getElementById('feedback-panel');
+  panel.style.display = 'block';
+
+  var score = chosen.score;
+  var level, levelClass, levelIcon, levelLabel;
+  if (score >= 85) {
+    level = 4; levelClass = 'consequence-best'; levelIcon = '&#9650;&#9650;'; levelLabel = 'Resultado excelente';
+  } else if (score >= 60) {
+    level = 3; levelClass = 'consequence-good'; levelIcon = '&#9650;'; levelLabel = 'Resultado positivo';
+  } else if (score >= 30) {
+    level = 2; levelClass = 'consequence-ok'; levelIcon = '&#9644;'; levelLabel = 'Resultado neutro';
+  } else {
+    level = 1; levelClass = 'consequence-bad'; levelIcon = '&#9660;'; levelLabel = 'Resultado negativo';
+  }
+
+  var bars = '';
+  for (var i = 1; i <= 4; i++) {
+    bars += '<div class="impact-bar' + (i <= level ? ' filled level-' + level : '') + '"></div>';
+  }
+
+  var switchedNote = switched
+    ? '<div style="font-family:\'DM Mono\',monospace;font-size:11px;color:var(--accent);margin-bottom:10px;">&#8635; Resposta alterada — pontuação base com desconto de 20%</div>'
+    : '';
+
+  panel.innerHTML =
+    '<div class="fb-header">' +
+      '<div class="impact-meter">' + bars + '</div>' +
+      '<span class="consequence-tag ' + levelClass + '">' + levelIcon + ' ' + levelLabel + '</span>' +
+    '</div>' +
+    switchedNote +
+    '<div class="consequence-text">' + chosen.consequence + '</div>' +
+    '<div class="feedback-reasoning">' + (score >= 85 ? scenario.feedbackGood : score >= 60 ? scenario.feedbackOk : score >= 30 ? scenario.feedbackOk : scenario.feedbackBad) + '</div>';
+}
+
+function prevScenario() {
+  if (state.currentIndex <= 0) return;
+  state.currentIndex--;
+  loadScenario();
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
+}
+
+function nextScenario() {
+  sfxNext();
+  state.currentIndex++;
+  if (state.currentIndex >= state.shuffledScenarios.length) showResult();
+  else {
+    loadScenario();
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }
+}
+
+function showResult() {
+  showScreen('screen-result');
+
+  var maxPts = questionCount === 10 ? 1000 : 2000;
+  sfxFanfare(state.score / maxPts);
+
+  document.getElementById('final-score').textContent = state.score;
+  document.getElementById('score-max').textContent = 'de ' + maxPts + ' pontos' + (timerEnabled ? '' : ' (sem tempo)');
+
+  var profile = determineProfile();
+  var p = PROFILES[profile];
+  var parts = p.name.split('\n');
+  document.getElementById('profile-name').innerHTML = parts[0] + '<br><em>' + parts[1] + '</em>';
+  document.getElementById('profile-desc').textContent = p.desc;
+  document.getElementById('profile-traits').innerHTML = p.traits.map(function(t) {
+    return '<span class="trait-pill">' + t + '</span>';
+  }).join('');
+
+  var dimLabels = { estrategia: 'Estratégia', pessoas: 'Pessoas', comunicacao: 'Comunicação', etica: 'Ética', resultados: 'Resultados' };
+  var maxDim = questionCount === 10 ? 300 : 600;
+  document.getElementById('profile-dims').innerHTML = Object.keys(state.dimensions).map(function(key) {
+    var val = state.dimensions[key];
+    var pct = Math.min(100, Math.round((val / maxDim) * 100));
+    return '<div class="dim-row">' +
+      '<span class="dim-label">' + dimLabels[key] + '</span>' +
+      '<div class="dim-bar"><div class="dim-fill" style="width:' + pct + '%"></div></div>' +
+      '<span class="dim-val">' + pct + '%</span>' +
+    '</div>';
+  }).join('');
+
+  // All profiles explorer (learning mode only)
+  var allProfilesSection = document.getElementById('all-profiles-section');
+  if (learningMode) {
+    allProfilesSection.style.display = 'block';
+    var profileKeys = ['estrategista', 'humanista', 'executor', 'etico', 'equilibrado'];
+    var profileLabels = { estrategista: 'Estrategista', humanista: 'Humanista', executor: 'Executor', etico: 'Guardião Ético', equilibrado: 'Equilibrado' };
+    document.getElementById('profile-tabs').innerHTML = profileKeys.map(function(key) {
+      return '<button class="profile-tab" id="ptab-' + key + '" onclick="showProfileTab(\'' + key + '\')">' + profileLabels[key] + '</button>';
+    }).join('');
+    showProfileTab(profile);
+  } else {
+    allProfilesSection.style.display = 'none';
+  }
+
+  // Category breakdown
+  var catRows = Object.keys(state.categoryScores).map(function(cat) {
+    return '<div class="breakdown-row"><span class="cat">' + cat + '</span><span class="pts-val">' + state.categoryScores[cat] + ' pts</span></div>';
+  }).join('');
+
+  // Weakest areas
+  var catPcts = Object.keys(state.categoryScores).map(function(cat) {
+    var maxPossible = state.categoryMax[cat] || 100;
+    return { cat: cat, pct: Math.round((state.categoryScores[cat] / maxPossible) * 100) };
+  });
+  catPcts.sort(function(a, b) { return a.pct - b.pct; });
+  var weakTwo = catPcts.slice(0, 2);
+
+  var devRows = weakTwo.map(function(w) {
+    var msg = DEV_MESSAGES[w.cat] || 'Área com oportunidade de desenvolvimento.';
+    return '<div class="dev-row">' +
+      '<div class="dev-pct">' + w.pct + '%</div>' +
+      '<div><div class="dev-cat">' + w.cat + '</div><div class="dev-msg">' + msg + '</div></div>' +
+    '</div>';
+  }).join('');
+
+  document.getElementById('result-breakdown').innerHTML =
+    '<div class="breakdown-title">Pontuação por categoria</div>' +
+    catRows +
+    '<div style="margin-top:20px;"><div class="breakdown-title">Onde investir em capacitação</div>' +
+    devRows + '</div>';
+}
+
+function determineProfile() {
+  var d = state.dimensions;
+  var keys = Object.keys(d);
+  var maxVal = -1, maxKey = keys[0];
+  keys.forEach(function(k) { if (d[k] > maxVal) { maxVal = d[k]; maxKey = k; } });
+  var minVal = Infinity;
+  keys.forEach(function(k) { if (d[k] < minVal) minVal = d[k]; });
+  var spread = maxVal - minVal;
+  var scoreRatio = state.score / 1000;
+  if (spread < 60 && scoreRatio > 0.6) return 'equilibrado';
+  if (maxKey === 'estrategia') return 'estrategista';
+  if (maxKey === 'pessoas') return 'humanista';
+  if (maxKey === 'resultados') return 'executor';
+  if (maxKey === 'etica') return 'etico';
+  if (maxKey === 'comunicacao') return 'humanista';
+  return 'equilibrado';
+}
+
+function showProfileTab(key) {
+  document.querySelectorAll('.profile-tab').forEach(function(b) { b.classList.remove('active'); });
+  var tab = document.getElementById('ptab-' + key);
+  if (tab) tab.classList.add('active');
+  var p = PROFILES[key];
+  var parts = p.name.split('\n');
+  document.getElementById('profile-explorer').innerHTML =
+    '<div class="pe-name">' + parts[0] + '<br><em>' + parts[1] + '</em></div>' +
+    '<div class="pe-desc">' + p.desc + '</div>' +
+    '<div class="pe-traits">' +
+      p.traits.map(function(t) { return '<span class="trait-pill">' + t + '</span>'; }).join('') +
+    '</div>';
+}
+</script>
+</body>
+</html>
