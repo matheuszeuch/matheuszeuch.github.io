@@ -105,6 +105,90 @@
   }
 
 
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    15% { transform: translateX(-6px); }
+    30% { transform: translateX(6px); }
+    45% { transform: translateX(-5px); }
+    60% { transform: translateX(5px); }
+    75% { transform: translateX(-3px); }
+    90% { transform: translateX(3px); }
+  }
+  @keyframes btnPulse {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.04); }
+    100% { transform: scale(1); }
+  }
+  @keyframes cardFlip {
+    0% { opacity: 1; transform: rotateY(0deg); }
+    50% { opacity: 0; transform: rotateY(90deg); }
+    51% { opacity: 0; transform: rotateY(-90deg); }
+    100% { opacity: 1; transform: rotateY(0deg); }
+  }
+  @keyframes slideOutLeft {
+    to { opacity: 0; transform: translateX(-40px); }
+  }
+  @keyframes slideInRight {
+    from { opacity: 0; transform: translateX(40px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes fadeOutScreen {
+    to { opacity: 0; }
+  }
+  @keyframes timerHeightPulse {
+    0%, 100% { height: 3px; }
+    50% { height: 6px; }
+  }
+  @keyframes timerNumShake {
+    0%, 100% { transform: translateX(0) rotate(0deg); }
+    25% { transform: translateX(-2px) rotate(-1deg); }
+    75% { transform: translateX(2px) rotate(1deg); }
+  }
+  @keyframes radarGrow {
+    from { opacity: 0; transform: scale(0.3); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes traitPop {
+    from { opacity: 0; transform: scale(0.7) translateY(8px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  @keyframes redFlash {
+    0% { opacity: 0; }
+    20% { opacity: 0.35; }
+    100% { opacity: 0; }
+  }
+  @keyframes strikeThrough {
+    from { width: 0; }
+    to { width: 100%; }
+  }
+  .choice-btn.shake { animation: shake 0.35s ease both; }
+  .choice-btn.btn-pulse { animation: btnPulse 0.3s ease both; }
+  .scenario-card.flip { animation: cardFlip 0.45s ease both; perspective: 800px; }
+  .scenario-card.slide-in { animation: slideInRight 0.35s cubic-bezier(0.22,1,0.36,1) both; }
+  .timer-bar.pulse-height .timer-fill { animation: timerPulse 0.65s ease-in-out infinite, timerHeightPulse 0.65s ease-in-out infinite; }
+  .timer-num.shake-num { animation: timerNumShake 0.18s ease-in-out infinite; }
+  #radar-svg { animation: radarGrow 0.6s cubic-bezier(0.22,1,0.36,1) 0.2s both; }
+  .trait-pill.pop { animation: traitPop 0.35s cubic-bezier(0.34,1.56,0.64,1) both; }
+  #red-flash {
+    position: fixed;
+    inset: 0;
+    background: #ff2020;
+    pointer-events: none;
+    z-index: 997;
+    opacity: 0;
+  }
+  #red-flash.show { animation: redFlash 0.35s ease forwards; }
+  .strike-line {
+    position: absolute;
+    height: 2px;
+    background: var(--accent3);
+    top: 50%;
+    left: 16px;
+    animation: strikeThrough 0.4s cubic-bezier(0.4,0,0.2,1) forwards;
+    border-radius: 1px;
+  }
+
   /* ── TRANSITION OVERLAY (feat 1) ── */
   #scenario-transition {
     position: fixed;
@@ -1231,7 +1315,7 @@
       <div class="timer-num" id="timer-num">30</div>
     </div>
 
-    <div class="scenario-card">
+    <div class="scenario-card" id="scenario-card-el">
       <div class="scenario-num" id="scenario-num">01</div>
       <div class="category-icon" id="scenario-category-icon"></div>
       <div class="scenario-title" id="scenario-title"></div>
@@ -1350,6 +1434,9 @@
   </section>
 
 </div>
+
+<!-- RED FLASH -->
+<div id="red-flash"></div>
 
 <!-- TRANSITION OVERLAY -->
 <div id="scenario-transition">
@@ -2185,7 +2272,10 @@ function drawRadar(dimensions, maxDim) {
     dot.setAttribute('fill', '#5ecfcf');
     dot.setAttribute('stroke', '#0f1e26');
     dot.setAttribute('stroke-width', '2');
+    dot.style.opacity = '0';
+    dot.style.transition = 'opacity 0.3s ease ' + (i * 0.12) + 's';
     svg.appendChild(dot);
+    setTimeout(function(d) { d.style.opacity = '1'; }(dot), 50);
 
     // Label
     var labelP = polar(angle, R + 22);
@@ -2380,6 +2470,99 @@ function buildInstagramCard(profileKey, score, maxPts) {
   }).join('');
 }
 
+
+// ── ANIMATION UTILITIES ──
+
+// Effect 3: Animated score counter
+function animateScore(fromVal, toVal, el, duration) {
+  var start = null;
+  var diff = toVal - fromVal;
+  function step(ts) {
+    if (!start) start = ts;
+    var progress = Math.min((ts - start) / duration, 1);
+    // ease out cubic
+    var ease = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(fromVal + diff * ease);
+    if (progress < 1) requestAnimationFrame(step);
+    else el.textContent = toVal;
+  }
+  requestAnimationFrame(step);
+}
+
+// Effect 1: Shake on low score
+function shakeChoice(btn) {
+  btn.classList.remove('shake');
+  void btn.offsetWidth;
+  btn.classList.add('shake');
+  setTimeout(function() { btn.classList.remove('shake'); }, 400);
+}
+
+// Effect 2: Pulse on selected
+function pulseChoice(btn) {
+  btn.classList.remove('btn-pulse');
+  void btn.offsetWidth;
+  btn.classList.add('btn-pulse');
+  setTimeout(function() { btn.classList.remove('btn-pulse'); }, 350);
+}
+
+// Effect 4: Flip card on next scenario
+function flipCard(callback) {
+  var card = document.getElementById('scenario-card-el');
+  if (!card) { callback(); return; }
+  card.classList.add('flip');
+  setTimeout(function() {
+    card.classList.remove('flip');
+    card.classList.add('slide-in');
+    callback();
+    setTimeout(function() { card.classList.remove('slide-in'); }, 400);
+  }, 225);
+}
+
+// Effect 6: Fade screen on cancel
+function fadeOutThenGo(screen, callback) {
+  screen.style.transition = 'opacity 0.25s ease';
+  screen.style.opacity = '0';
+  setTimeout(function() {
+    screen.style.transition = '';
+    screen.style.opacity = '';
+    callback();
+  }, 260);
+}
+
+// Effect 9: Radar axes grow sequentially — handled in drawRadar
+// Effect 10: Score counts from zero — uses animateScore
+// Effect 11: Traits cascade
+function cascadeTraits(container) {
+  var pills = container.querySelectorAll('.trait-pill');
+  pills.forEach(function(pill, i) {
+    pill.style.opacity = '0';
+    setTimeout(function() {
+      pill.classList.add('pop');
+      pill.style.opacity = '';
+    }, i * 80);
+  });
+}
+
+// Effect 13: Red flash on max damage
+function redFlash() {
+  var el = document.getElementById('red-flash');
+  if (!el) return;
+  el.classList.remove('show');
+  void el.offsetWidth;
+  el.classList.add('show');
+  setTimeout(function() { el.classList.remove('show'); }, 400);
+}
+
+// Effect 14: Strike-through on toxic high-damage choice
+function strikeChoice(btn) {
+  var existing = btn.querySelector('.strike-line');
+  if (existing) existing.remove();
+  var line = document.createElement('div');
+  line.className = 'strike-line';
+  line.style.right = '16px';
+  btn.appendChild(line);
+}
+
 // ── SOUND ENGINE (Web Audio API — no external files) ──
 var _ac = null;
 function ac() {
@@ -2565,7 +2748,16 @@ function loadScenario(skipTransition) {
   var pct = (state.currentIndex / total) * 100;
   document.getElementById('progress-fill').style.width = pct + '%';
   document.getElementById('progress-text').textContent = 'Cenário ' + (state.currentIndex + 1) + ' de ' + total;
-  document.getElementById('score-display').textContent = toxicMode ? (state.toxicScore + ' dmg') : state.score;
+  var scoreEl = document.getElementById('score-display');
+  var prevScore = parseInt(scoreEl.textContent) || 0;
+  var newScore = toxicMode ? state.toxicScore : state.score;
+  if (!toxicMode) {
+    animateScore(prevScore, newScore, scoreEl, 400);
+  } else {
+    animateScore(prevScore, newScore, scoreEl, 400);
+    scoreEl.textContent = newScore + ' dmg'; // override after animation
+    setTimeout(function() { scoreEl.textContent = newScore + ' dmg'; }, 420);
+  }
   var catIcon = CATEGORY_ICONS[s.category] || '';
   document.getElementById('scenario-num').textContent = String(state.currentIndex + 1).padStart(2, '0');
   document.getElementById('scenario-category-icon').textContent = catIcon;
@@ -2630,16 +2822,30 @@ function updateTimerUI() {
   var pct = (state.timeLeft / 60) * 100;
   var fill = document.getElementById('timer-fill');
   fill.style.width = pct + '%';
-  if (state.timeLeft <= 10) {
+  var timerBar = document.getElementById('timer-wrap').querySelector('.timer-bar');
+  var timerNumEl = document.getElementById('timer-num');
+  if (state.timeLeft <= 5) {
     fill.style.background = 'var(--accent3)';
     fill.classList.add('urgent');
+    timerBar && timerBar.classList.add('pulse-height');
+    timerNumEl && timerNumEl.classList.add('shake-num');
+    if (state.timeLeft > 0) sfxTimerUrgent();
+  } else if (state.timeLeft <= 10) {
+    fill.style.background = 'var(--accent3)';
+    fill.classList.add('urgent');
+    timerBar && timerBar.classList.remove('pulse-height');
+    timerNumEl && timerNumEl.classList.remove('shake-num');
     if (state.timeLeft > 0 && state.timeLeft % 2 === 0) sfxTimerUrgent();
   } else if (state.timeLeft <= 30) {
     fill.style.background = 'var(--accent)';
     fill.classList.remove('urgent');
+    timerBar && timerBar.classList.remove('pulse-height');
+    timerNumEl && timerNumEl.classList.remove('shake-num');
   } else {
     fill.style.background = 'var(--accent2)';
     fill.classList.remove('urgent');
+    timerBar && timerBar.classList.remove('pulse-height');
+    timerNumEl && timerNumEl.classList.remove('shake-num');
   }
   document.getElementById('timer-num').textContent = state.timeLeft;
 }
@@ -2693,7 +2899,16 @@ function selectChoice(index) {
     state.categoryScores[s.category] += pts;
 
     state.choices[state.choices.length - 1] = { category: s.category, score: pts, rawScore: chosen.score, dimension: chosen.dimension || '' };
-    document.getElementById('score-display').textContent = toxicMode ? (state.toxicScore + ' dmg') : state.score;
+    var scoreEl = document.getElementById('score-display');
+  var prevScore = parseInt(scoreEl.textContent) || 0;
+  var newScore = toxicMode ? state.toxicScore : state.score;
+  if (!toxicMode) {
+    animateScore(prevScore, newScore, scoreEl, 400);
+  } else {
+    animateScore(prevScore, newScore, scoreEl, 400);
+    scoreEl.textContent = newScore + ' dmg'; // override after animation
+    setTimeout(function() { scoreEl.textContent = newScore + ' dmg'; }, 420);
+  }
     flashScore();
     var lvl2 = chosen.score >= 85 ? 4 : chosen.score >= 60 ? 3 : chosen.score >= 30 ? 2 : 1;
     sfxResult(lvl2);
@@ -2736,6 +2951,16 @@ function selectChoice(index) {
 
   var btns = document.querySelectorAll('.choice-btn');
   btns[index].classList.add('selected');
+  pulseChoice(btns[index]);
+
+  // Effects 1, 13, 14
+  var isLowScore = chosen.score < 30;
+  var isMaxDamage = toxicMode && chosen.score >= 90;
+  if (isLowScore && !toxicMode) shakeChoice(btns[index]);
+  if (isMaxDamage) {
+    setTimeout(redFlash, 150);
+    strikeChoice(btns[index]);
+  }
 
   if (learningMode) {
     // Keep buttons enabled so user can switch — just disable the selected one visually
@@ -2745,7 +2970,16 @@ function selectChoice(index) {
   }
 
   showFeedback(index, s, chosen, false);
-  document.getElementById('score-display').textContent = toxicMode ? (state.toxicScore + ' dmg') : state.score;
+  var scoreEl = document.getElementById('score-display');
+  var prevScore = parseInt(scoreEl.textContent) || 0;
+  var newScore = toxicMode ? state.toxicScore : state.score;
+  if (!toxicMode) {
+    animateScore(prevScore, newScore, scoreEl, 400);
+  } else {
+    animateScore(prevScore, newScore, scoreEl, 400);
+    scoreEl.textContent = newScore + ' dmg'; // override after animation
+    setTimeout(function() { scoreEl.textContent = newScore + ' dmg'; }, 420);
+  }
   flashScore();
 
   // Sound based on result level
@@ -2846,9 +3080,11 @@ function nextScenario() {
     var s = state.shuffledScenarios[state.currentIndex];
     var total = state.shuffledScenarios.length;
     if (!learningMode) {
-      showTransition(state.currentIndex + 1, total, s.category, function() { loadScenario(); });
+      showTransition(state.currentIndex + 1, total, s.category, function() {
+        flipCard(function() { loadScenario(); });
+      });
     } else {
-      loadScenario();
+      flipCard(function() { loadScenario(); });
     }
   }
 }
@@ -2863,10 +3099,31 @@ function showResult() {
 
   // Sound + confetti
   sfxFanfare(state.score / maxPts);
-  if (state.score / maxPts >= 0.75) setTimeout(launchConfetti, 400);
+  // Effect 12: always burst small confetti, big burst for high score
+  setTimeout(function() {
+    var container = document.getElementById('confetti-container');
+    container.innerHTML = '';
+    var colors = ['var(--accent)', 'var(--accent2)', 'var(--accent3)', '#fff', '#a0e8ff'];
+    var count = state.score / maxPts >= 0.75 ? 80 : 30;
+    for (var ci = 0; ci < count; ci++) {
+      var piece = document.createElement('div');
+      piece.className = 'confetti-piece';
+      piece.style.left = Math.random() * 100 + 'vw';
+      piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+      piece.style.width = (6 + Math.random() * 6) + 'px';
+      piece.style.height = (10 + Math.random() * 8) + 'px';
+      piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      piece.style.animationDuration = (1.5 + Math.random() * 2) + 's';
+      piece.style.animationDelay = (Math.random() * 0.6) + 's';
+      container.appendChild(piece);
+    }
+    setTimeout(function() { container.innerHTML = ''; }, 4000);
+  }, 300);
 
   // Score
-  document.getElementById('final-score').textContent = state.score;
+  var finalScoreEl = document.getElementById('final-score');
+  finalScoreEl.textContent = '0';
+  setTimeout(function() { animateScore(0, state.score, finalScoreEl, 900); }, 200);
   document.getElementById('score-max').textContent = 'de ' + maxPts + ' pontos' + (timerEnabled ? '' : ' (sem tempo)');
 
   // Insight phrase (feat 9)
@@ -2881,6 +3138,7 @@ function showResult() {
   document.getElementById('profile-traits').innerHTML = p.traits.map(function(t) {
     return '<span class="trait-pill">' + t + '</span>';
   }).join('');
+  setTimeout(function() { cascadeTraits(document.getElementById('profile-traits')); }, 350);
 
   // Radar chart (feat 6)
   drawRadar(state.dimensions, maxDim);
