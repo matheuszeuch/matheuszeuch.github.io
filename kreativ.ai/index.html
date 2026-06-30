@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kreativ — Marketing Intelligence</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:   #080810;
+      --dark:    #0f0f1a;
+      --card:    #13131f;
+      --border:  #ffffff0f;
+      --accent:  #7c5cfc;
+      --accent2: #c45cfc;
+      --text:    #e8e8f0;
+      --muted:   #7a7a9a;
+      --white:   #ffffff;
+      --radius:  16px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--text);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── TYPOGRAPHY ── */
+    h1 { font-size: clamp(2.4rem, 5vw, 4.2rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.03em; }
+    h2 { font-size: clamp(1.8rem, 3vw, 2.8rem); font-weight: 700; line-height: 1.2; letter-spacing: -0.02em; }
+    h3 { font-size: 1.15rem; font-weight: 600; }
+    p  { color: var(--muted); }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #a78bfa, #e879f9, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── LAYOUT ── */
+    section { padding: 100px 24px; }
+    .container { max-width: 1100px; margin: 0 auto; }
+    .center { text-align: center; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 18px 40px;
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(8, 8, 16, 0.75);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-size: 1.4rem; font-weight: 800; letter-spacing: -0.04em;
+      background: linear-gradient(135deg, #a78bfa, #e879f9);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .nav-cta {
+      background: var(--accent);
+      color: var(--white);
+      border: none; border-radius: 8px;
+      padding: 10px 22px; font-size: 0.875rem; font-weight: 600;
+      cursor: pointer; text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .nav-cta:hover { opacity: 0.85; }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex; align-items: center;
+      padding-top: 100px;
+      background: radial-gradient(ellipse 80% 60% at 50% -10%, #3b1d8a22, transparent),
+                  radial-gradient(ellipse 40% 30% at 80% 60%, #7c3aed0d, transparent);
+    }
+    .hero-inner { text-align: center; max-width: 820px; margin: 0 auto; }
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #7c5cfc18; border: 1px solid #7c5cfc44;
+      color: #a78bfa; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 6px 16px; border-radius: 100px; margin-bottom: 32px;
+    }
+    .hero-tag .dot { width: 6px; height: 6px; background: #a78bfa; border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .hero h1 { margin-bottom: 24px; }
+    .hero p { font-size: 1.2rem; max-width: 600px; margin: 0 auto 40px; color: #9898b8; }
+    .hero-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: var(--white); border: none; border-radius: 10px;
+      padding: 16px 32px; font-size: 1rem; font-weight: 700;
+      cursor: pointer; text-decoration: none;
+      box-shadow: 0 0 40px #7c5cfc44;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 60px #7c5cfc66; }
+    .btn-ghost {
+      background: transparent; border: 1px solid var(--border);
+      color: var(--text); border-radius: 10px;
+      padding: 16px 32px; font-size: 1rem; font-weight: 600;
+      cursor: pointer; text-decoration: none;
+      transition: border-color 0.2s;
+    }
+    .btn-ghost:hover { border-color: #7c5cfc88; }
+
+    .hero-stats {
+      display: flex; gap: 48px; justify-content: center; flex-wrap: wrap;
+      margin-top: 80px; padding-top: 48px;
+      border-top: 1px solid var(--border);
+    }
+    .stat-item { text-align: center; }
+    .stat-value { font-size: 2rem; font-weight: 800; color: var(--white); letter-spacing: -0.03em; }
+    .stat-label { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
+
+    /* ── PROBLEM ── */
+    #problema { background: var(--dark); }
+    .problem-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px; margin-top: 56px;
+    }
+    .problem-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+    }
+    .problem-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: #ff4d4d12; border: 1px solid #ff4d4d22;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; margin-bottom: 20px;
+    }
+    .problem-card h3 { color: var(--white); margin-bottom: 10px; }
+
+    /* ── HOW IT WORKS ── */
+    #como-funciona { background: var(--black); }
+    .section-label {
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: #a78bfa; margin-bottom: 16px;
+    }
+    .phases {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2px; margin-top: 56px;
+      border-radius: var(--radius); overflow: hidden;
+    }
+    .phase {
+      background: var(--card);
+      padding: 40px 32px;
+      border: 1px solid var(--border);
+      position: relative;
+    }
+    .phase:first-child { border-radius: var(--radius) 0 0 var(--radius); }
+    .phase:last-child  { border-radius: 0 var(--radius) var(--radius) 0; }
+    .phase-number {
+      font-size: 3.5rem; font-weight: 900; letter-spacing: -0.05em;
+      color: #7c5cfc18; line-height: 1; margin-bottom: 16px;
+    }
+    .phase h3 { color: var(--white); font-size: 1.1rem; margin-bottom: 8px; }
+    .phase-duration {
+      display: inline-block;
+      font-size: 0.75rem; font-weight: 600; color: #a78bfa;
+      background: #7c5cfc14; border: 1px solid #7c5cfc33;
+      padding: 3px 10px; border-radius: 100px; margin-bottom: 16px;
+    }
+    .phase ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .phase ul li { font-size: 0.9rem; color: var(--muted); padding-left: 18px; position: relative; }
+    .phase ul li::before { content: '→'; position: absolute; left: 0; color: #7c5cfc; }
+
+    /* ── PILLARS ── */
+    #pilares { background: var(--dark); }
+    .pillars-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px; margin-top: 56px;
+    }
+    .pillar-card {
+      background: var(--black);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .pillar-card:hover { border-color: #7c5cfc55; transform: translateY(-4px); }
+    .pillar-icon {
+      width: 56px; height: 56px; border-radius: 14px;
+      background: linear-gradient(135deg, #7c5cfc22, #c45cfc22);
+      border: 1px solid #7c5cfc33;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; margin-bottom: 24px;
+    }
+    .pillar-card h3 { color: var(--white); margin-bottom: 10px; font-size: 1.1rem; }
+
+    /* ── COMPARISON ── */
+    #comparacao { background: var(--black); }
+    .compare-table {
+      margin-top: 56px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .compare-row {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      border-bottom: 1px solid var(--border);
+    }
+    .compare-row:last-child { border-bottom: none; }
+    .compare-cell {
+      padding: 18px 24px;
+      font-size: 0.9rem;
+      border-right: 1px solid var(--border);
+    }
+    .compare-cell:last-child { border-right: none; }
+    .compare-header { background: var(--card); font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; }
+    .compare-header .col-kreativ { color: #a78bfa; }
+    .compare-row:nth-child(even) .compare-cell { background: #ffffff03; }
+    .compare-cell.negative { color: #ff6b6b; }
+    .compare-cell.positive { color: #6bffb8; }
+    .compare-cell.kreativ  { color: var(--text); }
+
+    /* ── PRICING ── */
+    #investimento { background: var(--dark); }
+    .pricing-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px; margin-top: 56px;
+    }
+    .pricing-card {
+      background: var(--black);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px;
+      position: relative;
+    }
+    .pricing-card.featured {
+      border-color: #7c5cfc66;
+      background: linear-gradient(145deg, #13131f, #1a1030);
+      box-shadow: 0 0 60px #7c5cfc1a;
+    }
+    .featured-badge {
+      position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: white; font-size: 0.7rem; font-weight: 700;
+      padding: 4px 16px; border-radius: 100px; letter-spacing: 0.06em; text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .pricing-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+    .pricing-value { font-size: 2.2rem; font-weight: 800; color: var(--white); line-height: 1; margin-bottom: 4px; }
+    .pricing-period { font-size: 0.85rem; color: var(--muted); margin-bottom: 24px; }
+    .pricing-divider { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .pricing-features { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .pricing-features li { font-size: 0.9rem; color: var(--muted); padding-left: 24px; position: relative; }
+    .pricing-features li::before { content: '✓'; position: absolute; left: 0; color: #6bffb8; font-weight: 700; }
+
+    /* ── CTA ── */
+    #diagnostico {
+      background: var(--black);
+      position: relative; overflow: hidden;
+    }
+    #diagnostico::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 70% at 50% 50%, #7c5cfc18, transparent);
+      pointer-events: none;
+    }
+    .cta-inner {
+      max-width: 700px; margin: 0 auto; text-align: center;
+      position: relative;
+    }
+    .cta-inner h2 { margin-bottom: 16px; }
+    .cta-inner p { font-size: 1.1rem; margin-bottom: 40px; color: #9898b8; }
+    .cta-bullets {
+      display: flex; flex-direction: column; gap: 12px;
+      margin-bottom: 48px; text-align: left;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 28px 32px;
+    }
+    .cta-bullet { display: flex; gap: 12px; align-items: flex-start; }
+    .cta-bullet-icon { color: #a78bfa; font-size: 1rem; margin-top: 2px; flex-shrink: 0; }
+    .cta-bullet-text { font-size: 0.95rem; color: var(--muted); }
+    .cta-note { font-size: 0.8rem; color: var(--muted); margin-top: 16px; }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 40px 24px;
+      border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 16px;
+    }
+    .footer-logo { font-size: 1.2rem; font-weight: 800; letter-spacing: -0.04em; color: var(--white); }
+    footer p { font-size: 0.8rem; color: var(--muted); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 640px) {
+      nav { padding: 16px 20px; }
+      section { padding: 72px 20px; }
+      .phase:first-child, .phase:last-child { border-radius: var(--radius); }
+      .compare-table { font-size: 0.82rem; overflow-x: auto; }
+      .compare-cell { padding: 14px 16px; }
+      footer { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-logo">Kreativ</span>
+  <a href="#diagnostico" class="nav-cta">Diagnóstico gratuito</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="container hero-inner">
+    <div class="hero-tag">
+      <span class="dot"></span>
+      Marketing Intelligence
+    </div>
+    <h1>Marketing que <span class="gradient-text">pensa, executa<br>e evolui</span> — sem depender<br>de agência tradicional.</h1>
+    <p>A Kreativ entrega um departamento de marketing operado por IA, construído especificamente para o seu negócio.</p>
+    <div class="hero-actions">
+      <a href="#diagnostico" class="btn-primary">Quero um diagnóstico gratuito</a>
+      <a href="#como-funciona" class="btn-ghost">Como funciona</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-value">4–8</div>
+        <div class="stat-label">semanas para operar</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">3×</div>
+        <div class="stat-label">menos reuniões de alinhamento</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">100%</div>
+        <div class="stat-label">contexto do seu negócio</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEMA -->
+<section id="problema">
+  <div class="container">
+    <div class="center">
+      <p class="section-label">O problema</p>
+      <h2>Por que o marketing das<br>empresas em crescimento trava</h2>
+    </div>
+    <div class="problem-grid">
+      <div class="problem-card">
+        <div class="problem-icon">🏭</div>
+        <h3>Agências tradicionais</h3>
+        <p>Cobram caro, entregam lento e não entendem o negócio do cliente. Mais burocracia, menos resultado.</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">⚡</div>
+        <h3>Equipe interna sobrecarregada</h3>
+        <p>Profissionais excelentes engolidos pela execução. Sem tempo para estratégia, sem visão do quadro completo.</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">🤖</div>
+        <h3>IA genérica sem contexto</h3>
+        <p>Ferramentas que produzem conteúdo sem identidade, sem consistência, sem entender quem é a sua empresa.</p>
+      </div>
+    </div>
+    <div style="margin-top: 40px; padding: 28px 32px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); text-align: center;">
+      <p style="font-size: 1.1rem; color: var(--text);">O resultado: marketing que consome orçamento sem gerar <strong style="color: var(--white);">inteligência nem escala</strong>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- COMO FUNCIONA -->
+<section id="como-funciona">
+  <div class="container">
+    <div class="center">
+      <p class="section-label">Como funciona</p>
+      <h2>Da implantação à inteligência contínua</h2>
+    </div>
+    <div class="phases">
+      <div class="phase">
+        <div class="phase-number">01</div>
+        <span class="phase-duration">4–8 semanas</span>
+        <h3>Implantação do Company Brain</h3>
+        <ul>
+          <li>Mapeamos posicionamento, personas, voz e objetivos</li>
+          <li>Construímos a base de conhecimento do seu negócio</li>
+          <li>Criamos os primeiros agentes especializados</li>
+          <li>Validamos antes de ativar</li>
+        </ul>
+      </div>
+      <div class="phase" style="border-color: #7c5cfc33; background: linear-gradient(145deg, #13131f, #180f2f);">
+        <div class="phase-number" style="color: #7c5cfc33;">02</div>
+        <span class="phase-duration">Recorrente</span>
+        <h3>Operação Contínua</h3>
+        <ul>
+          <li>Agentes executam conteúdo, social e análise de mercado</li>
+          <li>Relatório mensal com recomendações estratégicas</li>
+          <li>Reunião executiva de resultados</li>
+          <li>Company Brain evolui com o negócio</li>
+        </ul>
+      </div>
+      <div class="phase">
+        <div class="phase-number">03</div>
+        <span class="phase-duration">A partir do mês 6</span>
+        <h3>Expansão</h3>
+        <ul>
+          <li>Novos agentes: SEO, e-mail, inteligência competitiva</li>
+          <li>Integração com novos canais e sistemas</li>
+          <li>Projetos estratégicos pontuais</li>
+          <li>O sistema fica mais inteligente a cada mês</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PILARES -->
+<section id="pilares">
+  <div class="container">
+    <div class="center">
+      <p class="section-label">Os três pilares</p>
+      <h2>O que torna a Kreativ diferente</h2>
+    </div>
+    <div class="pillars-grid">
+      <div class="pillar-card">
+        <div class="pillar-icon">🧠</div>
+        <h3>Company Brain</h3>
+        <p>Base de conhecimento viva com tudo que define o seu negócio — posicionamento, personas, voz, histórico. É o que garante que a IA nunca produz conteúdo genérico.</p>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-icon">⚙️</div>
+        <h3>Agentes Especializados</h3>
+        <p>IA treinada no Company Brain para executar marketing com consistência. Conteúdo, social media, performance, pesquisa de mercado — cada agente é construído para o seu negócio.</p>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-icon">🎯</div>
+        <h3>Supervisão Estratégica</h3>
+        <p>Especialistas que orientam decisões, revisam outputs críticos e evoluem os agentes continuamente. Inteligência humana onde ela mais importa.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARAÇÃO -->
+<section id="comparacao">
+  <div class="container">
+    <div class="center">
+      <p class="section-label">Comparação</p>
+      <h2>O que muda quando você sai<br>do modelo tradicional</h2>
+    </div>
+    <div class="compare-table">
+      <div class="compare-row">
+        <div class="compare-cell compare-header">Dimensão</div>
+        <div class="compare-cell compare-header">Agência tradicional</div>
+        <div class="compare-cell compare-header col-kreativ">Kreativ</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-cell" style="color: var(--muted); font-weight: 600;">Modelo de cobrança</div>
+        <div class="compare-cell negative">Vende horas e peças</div>
+        <div class="compare-cell positive">Vende inteligência contínua</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-cell" style="color: var(--muted); font-weight: 600;">Contexto do negócio</div>
+        <div class="compare-cell negative">Briefing a cada demanda</div>
+        <div class="compare-cell positive">Company Brain permanente</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-cell" style="color: var(--muted); font-weight: 600;">Escala</div>
+        <div class="compare-cell negative">Escalar = contratar mais gente</div>
+        <div class="compare-cell positive">Escalar = adicionar agentes</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-cell" style="color: var(--muted); font-weight: 600;">Velocidade</div>
+        <div class="compare-cell negative">Lento, dependente de aprovações</div>
+        <div class="compare-cell positive">Entrega contínua, supervisão humana</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-cell" style="color: var(--muted); font-weight: 600;">Visão estratégica</div>
+        <div class="compare-cell negative">Separada da execução</div>
+        <div class="compare-cell positive">Integrada à operação</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-cell" style="color: var(--muted); font-weight: 600;">Evolução</div>
+        <div class="compare-cell negative">Estático, contrato por projeto</div>
+        <div class="compare-cell positive">Sistema aprende a cada mês</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INVESTIMENTO -->
+<section id="investimento">
+  <div class="container">
+    <div class="center">
+      <p class="section-label">Investimento</p>
+      <h2>Planos para cada momento<br>do crescimento</h2>
+    </div>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <p class="pricing-label">Implantação</p>
+        <div class="pricing-value">R$ 20–40k</div>
+        <p class="pricing-period">pagamento único</p>
+        <hr class="pricing-divider" />
+        <ul class="pricing-features">
+          <li>Construção do Company Brain</li>
+          <li>2–3 agentes especializados</li>
+          <li>Integrações com stack atual</li>
+          <li>Treinamento da equipe</li>
+          <li>Relatório de baseline</li>
+        </ul>
+      </div>
+      <div class="pricing-card featured">
+        <div class="featured-badge">Mais popular</div>
+        <p class="pricing-label">Operação Contínua</p>
+        <div class="pricing-value">R$ 15–30k</div>
+        <p class="pricing-period">por mês</p>
+        <hr class="pricing-divider" />
+        <ul class="pricing-features">
+          <li>Execução contínua pelos agentes</li>
+          <li>Relatório mensal de performance</li>
+          <li>Reunião estratégica executiva</li>
+          <li>Atualização do Company Brain</li>
+          <li>Ajuste e evolução dos agentes</li>
+          <li>Supervisão humana especializada</li>
+        </ul>
+      </div>
+      <div class="pricing-card">
+        <p class="pricing-label">Módulos adicionais</p>
+        <div class="pricing-value">A partir de R$ 5k</div>
+        <p class="pricing-period">por mês</p>
+        <hr class="pricing-divider" />
+        <ul class="pricing-features">
+          <li>Agente de SEO</li>
+          <li>Agente de e-mail marketing</li>
+          <li>Inteligência competitiva</li>
+          <li>Geração de criativos</li>
+          <li>Pesquisa de mercado automatizada</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="diagnostico">
+  <div class="container">
+    <div class="cta-inner">
+      <p class="section-label">Próximo passo</p>
+      <h2>Diagnóstico gratuito<br>de <span class="gradient-text">60 minutos</span></h2>
+      <p>Sem compromisso. Você sai com clareza sobre o que fazer, independente de contratar.</p>
+      <div class="cta-bullets">
+        <div class="cta-bullet">
+          <span class="cta-bullet-icon">→</span>
+          <span class="cta-bullet-text">Mapeamos o marketing atual da sua empresa e os principais gargalos</span>
+        </div>
+        <div class="cta-bullet">
+          <span class="cta-bullet-icon">→</span>
+          <span class="cta-bullet-text">Identificamos os 3 maiores pontos de alavanca para crescimento</span>
+        </div>
+        <div class="cta-bullet">
+          <span class="cta-bullet-icon">→</span>
+          <span class="cta-bullet-text">Apresentamos um escopo personalizado de implantação do Company Brain</span>
+        </div>
+      </div>
+      <a href="mailto:ola@kreativ.com.br" class="btn-primary" style="display: inline-block; font-size: 1.05rem; padding: 18px 40px;">
+        Agendar diagnóstico gratuito
+      </a>
+      <p class="cta-note">Respondemos em até 24h úteis · Sem apresentação de vendas · Foco total no seu negócio</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; width: 100%;">
+    <span class="footer-logo">Kreativ</span>
+    <p>Marketing Intelligence Company · ola@kreativ.com.br</p>
+    <p>© 2025 Kreativ. Todos os direitos reservados.</p>
+  </div>
+</footer>
+
+</body>
+</html>
